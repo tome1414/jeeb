@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>鮨 さいとう トンロー店 - JEEB</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, 'Helvetica Neue', sans-serif; background: #f7f5f0; color: #1a1a1a; }
+
+  /* Header */
+  .top-bar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 14px 16px;
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid #eee;
+  }
+  .back-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: #f0f0f0; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 18px; text-decoration: none; color: #333;
+  }
+  .top-title { font-size: 15px; font-weight: 700; }
+  .share-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: #f0f0f0; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 16px;
+  }
+
+  /* Hero image */
+  .hero-img {
+    margin-top: 65px;
+    height: 240px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-img img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .hero-img .img-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.5));
+  }
+  .status-pill {
+    position: absolute; bottom: 14px; left: 14px;
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(0,0,0,0.75); backdrop-filter: blur(4px);
+    padding: 6px 12px; border-radius: 20px;
+    color: white; font-size: 13px; font-weight: 600;
+  }
+  .dot-green { width: 8px; height: 8px; background: #4ade80; border-radius: 50%; animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  .last-check {
+    position: absolute; bottom: 14px; right: 14px;
+    background: rgba(0,0,0,0.6); padding: 4px 10px;
+    border-radius: 20px; color: rgba(255,255,255,0.8); font-size: 11px;
+  }
+
+  /* Main content */
+  .content { padding: 0 0 100px; }
+
+  .info-block {
+    background: white; padding: 18px 16px;
+    border-bottom: 8px solid #f7f5f0;
+  }
+
+  .restaurant-name { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+  .restaurant-sub { font-size: 13px; color: #888; margin-bottom: 14px; }
+
+  /* Status row */
+  .status-row {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px;
+  }
+  .tag {
+    padding: 5px 12px; border-radius: 20px;
+    font-size: 12px; font-weight: 600;
+  }
+  .tag-open { background: #dcfce7; color: #16a34a; }
+  .tag-crowd { background: #fef9c3; color: #b45309; }
+  .tag-lo { background: #ede9fe; color: #7c3aed; }
+  .tag-updated { background: #f0f9ff; color: #0369a1; }
+
+  /* Crowd visualizer */
+  .crowd-section {
+    background: #f8f8f8; border-radius: 12px; padding: 12px 14px; margin-bottom: 14px;
+  }
+  .crowd-title { font-size: 12px; color: #888; margin-bottom: 8px; display: flex; justify-content: space-between; }
+  .crowd-title span { font-weight: 700; color: #1a1a1a; }
+  .crowd-hours { display: flex; gap: 3px; align-items: flex-end; height: 36px; }
+  .hour-bar {
+    flex: 1; border-radius: 3px 3px 0 0; min-width: 0;
+    transition: height 0.3s;
+  }
+  .hour-labels {
+    display: flex; gap: 3px; margin-top: 4px;
+  }
+  .hour-label { flex: 1; font-size: 8px; color: #bbb; text-align: center; }
+  .hour-now { color: #e8451a !important; font-weight: 700; }
+
+  /* Multi-score */
+  .score-section { margin-bottom: 4px; }
+  .score-title { font-size: 13px; font-weight: 700; margin-bottom: 10px; color: #555; }
+  .score-grid { display: flex; flex-direction: column; gap: 8px; }
+  .score-row {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .score-source { font-size: 12px; color: #888; width: 80px; flex-shrink: 0; }
+  .score-bar-wrap { flex: 1; background: #f0f0f0; border-radius: 4px; height: 8px; overflow: hidden; }
+  .score-bar { height: 100%; border-radius: 4px; }
+  .score-val { font-size: 13px; font-weight: 700; width: 32px; text-align: right; }
+  .score-count { font-size: 10px; color: #bbb; width: 48px; }
+
+  .score-avg {
+    margin-top: 12px;
+    background: #fff8f2;
+    border: 1.5px solid #fcd5b8;
+    border-radius: 12px;
+    padding: 10px 14px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .avg-label { font-size: 12px; color: #888; }
+  .avg-val { font-size: 24px; font-weight: 800; color: #e8451a; }
+  .avg-stars { font-size: 14px; color: #f59e0b; }
+
+  .score-alert {
+    margin-top: 8px;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 11px;
+    color: #92400e;
+    display: flex; gap: 6px; align-items: flex-start;
+  }
+
+  /* Daily menu */
+  .daily-section {
+    background: #fff8f0;
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 4px;
+  }
+  .daily-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 10px;
+  }
+  .daily-header .title { font-size: 14px; font-weight: 700; }
+  .daily-header .updated { font-size: 10px; color: #e8451a; }
+  .menu-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px dashed #fde8d0;
+  }
+  .menu-item:last-child { border-bottom: none; }
+  .menu-name { font-size: 13px; color: #333; }
+  .menu-price { font-size: 14px; font-weight: 700; color: #e8451a; }
+
+  /* Info details */
+  .detail-list { }
+  .detail-row {
+    display: flex; gap: 12px; padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0; align-items: flex-start;
+  }
+  .detail-row:last-child { border-bottom: none; }
+  .detail-icon { font-size: 16px; width: 24px; flex-shrink: 0; }
+  .detail-text { font-size: 13px; color: #333; line-height: 1.5; }
+  .detail-text .label { font-size: 11px; color: #aaa; display: block; margin-bottom: 1px; }
+
+  /* Report */
+  .report-section {
+    background: white;
+    padding: 18px 16px;
+    border-bottom: 8px solid #f7f5f0;
+  }
+  .report-title { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+  .report-row { display: flex; gap: 10px; }
+  .report-btn {
+    flex: 1; padding: 12px; border-radius: 12px; border: none;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .report-open { background: #dcfce7; color: #16a34a; }
+  .report-closed { background: #fee2e2; color: #dc2626; }
+
+  /* Pointing card */
+  .point-section {
+    background: white;
+    padding: 18px 16px;
+    border-bottom: 8px solid #f7f5f0;
+  }
+  .point-title { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+  .point-options { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .point-tag {
+    padding: 6px 14px; border-radius: 20px;
+    background: #f5f5f5; font-size: 12px; cursor: pointer;
+    border: 2px solid transparent;
+  }
+  .point-tag.selected { background: #fff0eb; border-color: #e8451a; color: #e8451a; }
+  .point-preview {
+    background: #1a1a2e; color: white;
+    border-radius: 12px; padding: 16px;
+    text-align: center;
+  }
+  .point-jp { font-size: 13px; color: rgba(255,255,255,0.6); margin-bottom: 8px; }
+  .point-th { font-size: 20px; font-weight: 700; line-height: 1.5; }
+
+  /* Review filter */
+  .review-section {
+    background: white;
+    padding: 18px 16px;
+  }
+  .review-title { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+  .review-filters { display: flex; gap: 8px; margin-bottom: 14px; overflow-x: auto; }
+  .rf-btn {
+    padding: 6px 14px; border-radius: 20px; border: 1.5px solid #eee;
+    font-size: 12px; background: white; cursor: pointer; white-space: nowrap; flex-shrink: 0;
+  }
+  .rf-btn.active { background: #1a1a2e; color: white; border-color: #1a1a2e; }
+  .review-card {
+    background: #f8f8f8; border-radius: 12px; padding: 12px 14px; margin-bottom: 8px;
+  }
+  .review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .reviewer { font-size: 12px; font-weight: 700; }
+  .review-meta { font-size: 10px; color: #aaa; }
+  .review-text { font-size: 12px; color: #555; line-height: 1.6; }
+  .review-stars { color: #f59e0b; font-size: 12px; }
+
+  /* Bottom CTA */
+  .bottom-cta {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: white;
+    padding: 12px 16px 28px;
+    border-top: 1px solid #eee;
+    display: flex; gap: 10px;
+  }
+  .cta-map {
+    flex: 0 0 48px; height: 48px; border-radius: 12px;
+    background: #f0f0f0; display: flex; align-items: center; justify-content: center;
+    font-size: 20px; cursor: pointer;
+  }
+  .cta-point {
+    flex: 1; height: 48px; border-radius: 12px;
+    background: #e8451a; color: white;
+    border: none; font-size: 15px; font-weight: 700;
+    cursor: pointer;
+  }
+  .cta-fav {
+    flex: 0 0 48px; height: 48px; border-radius: 12px;
+    background: #f0f0f0; display: flex; align-items: center; justify-content: center;
+    font-size: 20px; cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<!-- Top bar -->
+<div class="top-bar">
+  <a href="index.html" class="back-btn">←</a>
+  <div class="top-title">鮨 さいとう トンロー店</div>
+  <div class="share-btn">⬆</div>
+</div>
+
+<!-- Hero -->
+<div class="hero-img">
+  <div style="width:100%;height:100%;background:linear-gradient(160deg,#0d0d0d 0%,#2c1810 30%,#8b4513 60%,#d4956a 85%,#f5e6d0 100%);display:flex;align-items:center;justify-content:center;gap:20px;">
+    <span style="font-size:64px;filter:drop-shadow(0 6px 12px rgba(0,0,0,0.6));">🍣</span>
+    <span style="font-size:48px;filter:drop-shadow(0 6px 12px rgba(0,0,0,0.5));">🍱</span>
+    <span style="font-size:56px;filter:drop-shadow(0 6px 12px rgba(0,0,0,0.5));">🫙</span>
+  </div>
+  <div class="img-overlay"></div>
+  <div class="status-pill">
+    <div class="dot-green"></div>
+    営業中 · 22:00まで
+  </div>
+  <div class="last-check">最終確認 本日 14:32</div>
+</div>
+
+<div class="content">
+
+  <!-- Basic info -->
+  <div class="info-block">
+    <div class="restaurant-name">鮨 さいとう トンロー店</div>
+    <div class="restaurant-sub">和食・寿司 · トンロー · ¥¥¥</div>
+
+    <div class="status-row">
+      <span class="tag tag-open">🟢 営業中</span>
+      <span class="tag tag-crowd">🟡 やや混雑</span>
+      <span class="tag tag-updated">🕐 2分前更新</span>
+    </div>
+
+    <!-- Crowd chart -->
+    <div class="crowd-section">
+      <div class="crowd-title">今日の混雑予測 <span>現在 19:00</span></div>
+      <div class="crowd-hours">
+        <div class="hour-bar" style="height:15%;background:#4ade80"></div>
+        <div class="hour-bar" style="height:20%;background:#4ade80"></div>
+        <div class="hour-bar" style="height:30%;background:#4ade80"></div>
+        <div class="hour-bar" style="height:55%;background:#f59e0b"></div>
+        <div class="hour-bar" style="height:80%;background:#f59e0b"></div>
+        <div class="hour-bar" style="height:95%;background:#ef4444"></div>
+        <div class="hour-bar" style="height:90%;background:#ef4444;border:2px solid #e8451a"></div>
+        <div class="hour-bar" style="height:70%;background:#f59e0b"></div>
+        <div class="hour-bar" style="height:45%;background:#4ade80"></div>
+        <div class="hour-bar" style="height:20%;background:#4ade80"></div>
+        <div class="hour-bar" style="height:10%;background:#4ade80"></div>
+      </div>
+      <div class="hour-labels">
+        <div class="hour-label">11</div>
+        <div class="hour-label">12</div>
+        <div class="hour-label">13</div>
+        <div class="hour-label">14</div>
+        <div class="hour-label">16</div>
+        <div class="hour-label">18</div>
+        <div class="hour-label hour-now">19▲</div>
+        <div class="hour-label">20</div>
+        <div class="hour-label">21</div>
+        <div class="hour-label">22</div>
+        <div class="hour-label">23</div>
+      </div>
+    </div>
+
+    <!-- Multi-score -->
+    <div class="score-section">
+      <div class="score-title">マルチソース評価</div>
+      <div class="score-grid">
+        <div class="score-row">
+          <div class="score-source">🌐 Google</div>
+          <div class="score-bar-wrap"><div class="score-bar" style="width:92%;background:#4285f4"></div></div>
+          <div class="score-val" style="color:#4285f4">4.6</div>
+          <div class="score-count">2,847件</div>
+        </div>
+        <div class="score-row">
+          <div class="score-source">✈ TripAdvisor</div>
+          <div class="score-bar-wrap"><div class="score-bar" style="width:86%;background:#00aa6c"></div></div>
+          <div class="score-val" style="color:#00aa6c">4.3</div>
+          <div class="score-count">312件</div>
+        </div>
+        <div class="score-row">
+          <div class="score-source">🇹🇭 Wongnai</div>
+          <div class="score-bar-wrap"><div class="score-bar" style="width:90%;background:#ff6b35"></div></div>
+          <div class="score-val" style="color:#ff6b35">4.5</div>
+          <div class="score-count">891件</div>
+        </div>
+        <div class="score-row">
+          <div class="score-source">🚗 Grab</div>
+          <div class="score-bar-wrap"><div class="score-bar" style="width:94%;background:#00b14f"></div></div>
+          <div class="score-val" style="color:#00b14f">4.7</div>
+          <div class="score-count">1,204件</div>
+        </div>
+      </div>
+      <div class="score-avg">
+        <div>
+          <div class="avg-label">総合平均</div>
+          <div class="avg-stars">★★★★★</div>
+        </div>
+        <div class="avg-val">4.5</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Daily menu -->
+  <div class="info-block">
+    <div class="daily-section">
+      <div class="daily-header">
+        <div class="title">🍱 本日のメニュー</div>
+        <div class="updated">🕐 1時間前に更新</div>
+      </div>
+      <div class="menu-item">
+        <span class="menu-name">大トロ入り特上にぎり</span>
+        <span class="menu-price">1,800฿</span>
+      </div>
+      <div class="menu-item">
+        <span class="menu-name">ランチにぎりセット（11品）</span>
+        <span class="menu-price">890฿</span>
+      </div>
+      <div class="menu-item">
+        <span class="menu-name">本日の一品：サーモン刺身</span>
+        <span class="menu-price">450฿</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Store info -->
+  <div class="info-block">
+    <div class="detail-list">
+      <div class="detail-row">
+        <div class="detail-icon">🕐</div>
+        <div class="detail-text">
+          <span class="label">営業時間</span>
+          月〜金 11:30〜14:00 / 17:30〜22:00<br>
+          土日祝 11:30〜22:00（通し）
+        </div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-icon">📍</div>
+        <div class="detail-text">
+          <span class="label">住所</span>
+          55/5 Sukhumvit Soi 55, Thonglor, Bangkok
+        </div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-icon">🚇</div>
+        <div class="detail-text">
+          <span class="label">アクセス</span>
+          BTSトンロー駅 3番出口から徒歩3分
+        </div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-icon">✅</div>
+        <div class="detail-text">
+          <span class="label">確認状況</span>
+          <span style="color:#16a34a;font-weight:700;">オーナー確認済み</span> · 2025年4月更新
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- User report -->
+  <div class="report-section">
+    <div class="report-title">📣 今日の営業状況を報告する</div>
+    <div class="report-row">
+      <button class="report-btn report-open">✅ 営業してた</button>
+      <button class="report-btn report-closed">❌ 閉まってた</button>
+    </div>
+  </div>
+
+  <!-- Pointing card -->
+  <div class="point-section">
+    <div class="point-title">👆 指差し注文カード</div>
+    <div class="point-options">
+      <div class="point-tag selected">辛さ控えめ</div>
+      <div class="point-tag">パクチー抜き</div>
+      <div class="point-tag">アレルギー：卵</div>
+      <div class="point-tag">テイクアウト</div>
+    </div>
+    <div class="point-preview">
+      <div class="point-jp">辛さ控えめでお願いします</div>
+      <div class="point-th">ขอให้เผ็ดน้อยหน่อยนะครับ</div>
+    </div>
+  </div>
+
+  <!-- Review filter -->
+  <div class="review-section">
+    <div class="review-title">💬 みんなの声</div>
+    <div class="review-filters">
+      <button class="rf-btn active">すべて</button>
+      <button class="rf-btn">🇯🇵 日本人</button>
+      <button class="rf-btn">🇹🇭 タイ人</button>
+      <button class="rf-btn">🌍 英語圏</button>
+      <button class="rf-btn">🇨🇳 中国語圏</button>
+    </div>
+    <div class="review-card">
+      <div class="review-header">
+        <div>
+          <div class="reviewer">🇯🇵 Taro M.</div>
+          <div class="review-stars">★★★★★</div>
+        </div>
+        <div class="review-meta">Google · 3日前</div>
+      </div>
+      <div class="review-text">バンコクでここまで本格的な江戸前寿司が食べられるとは。シャリの温度とネタの鮮度が抜群です。</div>
+    </div>
+    <div class="review-card">
+      <div class="review-header">
+        <div>
+          <div class="reviewer">🇹🇭 Nong K.</div>
+          <div class="review-stars">★★★★☆</div>
+        </div>
+        <div class="review-meta">Wongnai · 1週間前</div>
+      </div>
+      <div class="review-text">ปลาแซลมอนสดมากๆ บรรยากาศเหมือนอยู่ญี่ปุ่นเลย ราคาสูงนิดนึงแต่คุ้มค่า</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Bottom CTA -->
+<div class="bottom-cta">
+  <div class="cta-map">🗺</div>
+  <button class="cta-point">👆 指差し注文カードを開く</button>
+  <div class="cta-fav">❤️</div>
+</div>
+
+</body>
+</html>

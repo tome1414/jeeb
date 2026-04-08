@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JEEB - バンコク飲食ポータル</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, 'Helvetica Neue', sans-serif; background: #f7f5f0; color: #1a1a1a; }
+
+  /* Header */
+  header {
+    background: #fff;
+    padding: 14px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo { font-size: 22px; font-weight: 800; color: #e8451a; letter-spacing: -0.5px; }
+  .logo span { color: #1a1a1a; }
+  .lang-switch {
+    display: flex; gap: 6px;
+  }
+  .lang-btn {
+    padding: 4px 10px; border-radius: 20px; font-size: 12px; border: 1px solid #ddd;
+    cursor: pointer; background: #fff; color: #555;
+  }
+  .lang-btn.active { background: #e8451a; color: #fff; border-color: #e8451a; }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, #e8451a 0%, #ff7a45 100%);
+    padding: 36px 20px 48px;
+    text-align: center;
+    color: white;
+  }
+  .hero h1 { font-size: 24px; font-weight: 800; margin-bottom: 6px; line-height: 1.3; }
+  .hero p { font-size: 13px; opacity: 0.9; margin-bottom: 20px; }
+  .search-box {
+    background: white;
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  }
+  .search-box input {
+    border: none; outline: none; flex: 1;
+    font-size: 15px; color: #333;
+  }
+  .search-box .search-icon { color: #e8451a; font-size: 18px; }
+
+  /* Live badge */
+  .live-bar {
+    background: #1a1a1a;
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .live-dot {
+    width: 8px; height: 8px; background: #4ade80;
+    border-radius: 50%; animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .live-bar span { opacity: 0.6; margin: 0 6px; }
+
+  /* Area tabs */
+  .area-tabs {
+    padding: 16px 20px 0;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+  }
+  .area-tab {
+    padding: 10px 18px;
+    border-radius: 0;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    color: #888;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .area-tab.active { color: #e8451a; border-bottom-color: #e8451a; }
+
+  /* Category */
+  .section { padding: 20px; }
+  .section-title {
+    font-size: 16px; font-weight: 700; margin-bottom: 14px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .section-title a { font-size: 13px; color: #e8451a; font-weight: 400; }
+
+  .cat-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; }
+  .cat-item {
+    flex-shrink: 0;
+    background: white;
+    border-radius: 12px;
+    padding: 14px 16px;
+    text-align: center;
+    min-width: 80px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    cursor: pointer;
+    border: 2px solid transparent;
+  }
+  .cat-item.active { border-color: #e8451a; background: #fff5f2; }
+  .cat-item .emoji { font-size: 26px; display: block; margin-bottom: 4px; }
+  .cat-item span { font-size: 11px; color: #555; }
+
+  /* Restaurant cards */
+  .cards { display: flex; flex-direction: column; gap: 14px; }
+  .card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+  .card:active { transform: scale(0.98); }
+  .card-img {
+    width: 100%; height: 180px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card-img img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .card-img .img-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.05), rgba(0,0,0,0.35));
+  }
+  .status-badge {
+    position: absolute;
+    top: 10px; left: 10px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+  .status-open { background: #4ade80; color: #fff; }
+  .status-busy { background: #f59e0b; color: #fff; }
+  .status-closed { background: #ef4444; color: #fff; }
+  .status-last { background: #8b5cf6; color: #fff; }
+
+  .crowd-bar-wrap {
+    position: absolute;
+    bottom: 10px; left: 10px; right: 10px;
+    background: rgba(0,0,0,0.6);
+    border-radius: 8px;
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .crowd-label { font-size: 10px; color: rgba(255,255,255,0.8); white-space: nowrap; }
+  .crowd-bar {
+    flex: 1; height: 6px; background: rgba(255,255,255,0.2);
+    border-radius: 3px; overflow: hidden;
+  }
+  .crowd-fill { height: 100%; border-radius: 3px; }
+  .crowd-low { background: #4ade80; width: 25%; }
+  .crowd-mid { background: #f59e0b; width: 60%; }
+  .crowd-high { background: #ef4444; width: 85%; }
+
+  .card-body { padding: 14px 16px; }
+  .card-name { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .card-sub { font-size: 12px; color: #888; margin-bottom: 10px; }
+
+  .scores {
+    display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;
+  }
+  .score-chip {
+    display: flex; align-items: center; gap: 4px;
+    background: #f5f5f5; border-radius: 8px;
+    padding: 4px 8px; font-size: 11px;
+  }
+  .score-chip .src { color: #888; }
+  .score-chip .val { font-weight: 700; }
+  .score-chip .val.high { color: #16a34a; }
+  .score-chip .val.mid { color: #d97706; }
+
+  .daily-menu {
+    background: #fff8f0;
+    border: 1px solid #fde8d0;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .daily-menu .dm-label { color: #e8451a; font-weight: 700; white-space: nowrap; }
+  .daily-menu .dm-text { color: #555; }
+  .daily-menu .dm-time { color: #aaa; font-size: 10px; margin-left: auto; white-space: nowrap; }
+
+  .card-footer {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 10px;
+  }
+  .distance { font-size: 12px; color: #888; }
+  .point-btn {
+    background: #e8451a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* Bottom nav */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: white;
+    border-top: 1px solid #eee;
+    display: flex;
+    padding: 10px 0 20px;
+  }
+  .nav-item {
+    flex: 1; text-align: center; cursor: pointer;
+  }
+  .nav-item .nav-icon { font-size: 22px; }
+  .nav-item .nav-label { font-size: 10px; color: #aaa; display: block; margin-top: 2px; }
+  .nav-item.active .nav-label { color: #e8451a; }
+  .nav-item.active .nav-icon { filter: none; }
+
+  .pb-nav { padding-bottom: 80px; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div class="logo">JEEB<span>.</span></div>
+  <div class="lang-switch">
+    <button class="lang-btn active">JP</button>
+    <button class="lang-btn">EN</button>
+    <button class="lang-btn">TH</button>
+  </div>
+</header>
+
+<!-- Hero -->
+<div class="hero">
+  <h1>バンコクの「今」がわかる<br>飲食ポータル</h1>
+  <p>プロンポン・トンロー・エカマイ エリア</p>
+  <div class="search-box">
+    <span class="search-icon">🔍</span>
+    <input type="text" placeholder="店名・料理・エリアで検索">
+  </div>
+</div>
+
+<!-- Live bar -->
+<div class="live-bar">
+  <div class="live-dot"></div>
+  <strong>リアルタイム更新中</strong>
+  <span>|</span>
+  🟢 現在 247店が営業中
+  <span>|</span>
+  🟡 混雑: トンロー周辺 高め
+  <span>|</span>
+  🕐 最終更新 2分前
+</div>
+
+<!-- Area tabs -->
+<div class="area-tabs">
+  <div class="area-tab active">すべて</div>
+  <div class="area-tab">プロンポン</div>
+  <div class="area-tab">トンロー</div>
+  <div class="area-tab">エカマイ</div>
+</div>
+
+<div class="pb-nav">
+
+<!-- Category -->
+<div class="section">
+  <div class="section-title">カテゴリ</div>
+  <div class="cat-scroll">
+    <div class="cat-item active">
+      <span class="emoji">🍱</span>
+      <span>和食</span>
+    </div>
+    <div class="cat-item">
+      <span class="emoji">🍜</span>
+      <span>タイ料理</span>
+    </div>
+    <div class="cat-item">
+      <span class="emoji">🍕</span>
+      <span>洋食</span>
+    </div>
+    <div class="cat-item">
+      <span class="emoji">🥩</span>
+      <span>焼肉</span>
+    </div>
+    <div class="cat-item">
+      <span class="emoji">☕</span>
+      <span>カフェ</span>
+    </div>
+    <div class="cat-item">
+      <span class="emoji">🍺</span>
+      <span>居酒屋</span>
+    </div>
+  </div>
+</div>
+
+<!-- Restaurant cards -->
+<div class="section">
+  <div class="section-title">
+    今すぐ行ける店 <a href="#">すべて見る</a>
+  </div>
+  <div class="cards">
+
+    <!-- Card 1 -->
+    <div class="card" onclick="location.href='restaurant.html'">
+      <div class="card-img" style="background:#5c2a00;">
+        <div style="width:100%;height:100%;background:linear-gradient(135deg,#2d1000 0%,#7a3810 50%,#c47a40 100%);display:flex;align-items:center;justify-content:center;">
+          <span style="font-size:80px;filter:drop-shadow(0 6px 16px rgba(0,0,0,0.7));">🍣</span>
+        </div>
+        <div class="img-overlay" style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.1),rgba(0,0,0,0.5));"></div>
+        <span class="status-badge status-open">● 営業中</span>
+        <div class="crowd-bar-wrap">
+          <span class="crowd-label">混雑</span>
+          <div class="crowd-bar"><div class="crowd-fill crowd-low"></div></div>
+          <span style="font-size:10px;color:#4ade80;font-weight:700;">空いてる</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">鮨 さいとう トンロー店</div>
+        <div class="card-sub">和食・寿司 · トンロー · 11:30〜22:00</div>
+        <div class="scores">
+          <div class="score-chip"><span class="src">G</span><span class="val high">4.6</span></div>
+          <div class="score-chip"><span class="src">TA</span><span class="val high">4.3</span></div>
+          <div class="score-chip"><span class="src">WN</span><span class="val high">4.5</span></div>
+          <div class="score-chip"><span class="src">平均</span><span class="val high">★4.5</span></div>
+        </div>
+        <div class="daily-menu">
+          <span class="dm-label">本日</span>
+          <span class="dm-text">大トロ入り特上にぎり 1,800฿</span>
+          <span class="dm-time">1時間前更新</span>
+        </div>
+        <div class="card-footer">
+          <span class="distance">📍 トンロー駅 徒歩3分</span>
+          <button class="point-btn">指差し注文</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card">
+      <div class="card-img" style="background:#1a4a00;">
+        <div style="width:100%;height:100%;background:linear-gradient(135deg,#0d2900 0%,#2d6b10 50%,#c49820 100%);display:flex;align-items:center;justify-content:center;">
+          <span style="font-size:80px;filter:drop-shadow(0 6px 16px rgba(0,0,0,0.7));">🍜</span>
+        </div>
+        <div class="img-overlay" style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.1),rgba(0,0,0,0.5));"></div>
+        <span class="status-badge status-busy">● 混雑中</span>
+        <div class="crowd-bar-wrap">
+          <span class="crowd-label">混雑</span>
+          <div class="crowd-bar"><div class="crowd-fill crowd-high"></div></div>
+          <span style="font-size:10px;color:#ef4444;font-weight:700;">かなり混む</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">ソムタムダー エカマイ</div>
+        <div class="card-sub">タイ料理 · エカマイ · 10:00〜21:00</div>
+        <div class="scores">
+          <div class="score-chip"><span class="src">G</span><span class="val high">4.5</span></div>
+          <div class="score-chip"><span class="src">TA</span><span class="val mid">4.0</span></div>
+          <div class="score-chip"><span class="src">WN</span><span class="val high">4.3</span></div>
+          <div class="score-chip"><span class="src">平均</span><span class="val high">★4.3</span></div>
+        </div>
+        <div class="daily-menu">
+          <span class="dm-label">本日</span>
+          <span class="dm-text">ランチセット パパイヤサラダ+カオマンガイ 220฿</span>
+          <span class="dm-time">30分前更新</span>
+        </div>
+        <div class="card-footer">
+          <span class="distance">📍 エカマイ駅 徒歩5分</span>
+          <button class="point-btn">指差し注文</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card">
+      <div class="card-img" style="background:#1a0800;">
+        <div style="width:100%;height:100%;background:linear-gradient(135deg,#0d0400 0%,#4a1200 50%,#8b3a0a 100%);display:flex;align-items:center;justify-content:center;">
+          <span style="font-size:80px;filter:drop-shadow(0 6px 16px rgba(0,0,0,0.7));">🥩</span>
+        </div>
+        <div class="img-overlay" style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.1),rgba(0,0,0,0.5));"></div>
+        <span class="status-badge status-last">● L.O.まで45分</span>
+        <div class="crowd-bar-wrap">
+          <span class="crowd-label">混雑</span>
+          <div class="crowd-bar"><div class="crowd-fill crowd-mid"></div></div>
+          <span style="font-size:10px;color:#f59e0b;font-weight:700;">やや混む</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">和牛焼肉 黒毛 プロンポン</div>
+        <div class="card-sub">焼肉 · プロンポン · 17:00〜23:00</div>
+        <div class="scores">
+          <div class="score-chip"><span class="src">G</span><span class="val high">4.4</span></div>
+          <div class="score-chip"><span class="src">TA</span><span class="val high">4.2</span></div>
+          <div class="score-chip"><span class="src">WN</span><span class="val mid">3.9</span></div>
+          <div class="score-chip"><span class="src">平均</span><span class="val mid">★4.2</span></div>
+        </div>
+        <div class="card-footer">
+          <span class="distance">📍 プロンポン駅 徒歩7分</span>
+          <button class="point-btn">指差し注文</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- pb-nav -->
+
+<!-- Bottom nav -->
+<div class="bottom-nav">
+  <div class="nav-item active">
+    <div class="nav-icon">🏠</div>
+    <span class="nav-label">ホーム</span>
+  </div>
+  <div class="nav-item">
+    <div class="nav-icon">🔍</div>
+    <span class="nav-label">検索</span>
+  </div>
+  <div class="nav-item">
+    <div class="nav-icon">🗺️</div>
+    <span class="nav-label">地図</span>
+  </div>
+  <div class="nav-item">
+    <div class="nav-icon">❤️</div>
+    <span class="nav-label">お気に入り</span>
+  </div>
+  <div class="nav-item">
+    <div class="nav-icon">👤</div>
+    <span class="nav-label">マイページ</span>
+  </div>
+</div>
+
+</body>
+</html>
