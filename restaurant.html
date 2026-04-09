@@ -23,10 +23,23 @@
     cursor: pointer; font-size: 18px; text-decoration: none; color: #333;
   }
   .top-title { font-size: 15px; font-weight: 700; }
+  .lang-buttons {
+    display: flex; gap: 4px;
+  }
+  .lang-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: #f0f0f0; border: none;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 12px; font-weight: 600;
+    color: #888;
+  }
+  .lang-btn.active {
+    background: #e8451a; color: white;
+  }
   .share-btn {
     width: 36px; height: 36px; border-radius: 50%;
     background: #f0f0f0; display: flex; align-items: center; justify-content: center;
-    cursor: pointer; font-size: 16px;
+    cursor: pointer; font-size: 16px; margin-left: 8px;
   }
 
   /* Hero image */
@@ -241,9 +254,16 @@
     background: #f0f0f0; display: flex; align-items: center; justify-content: center;
     font-size: 20px; cursor: pointer;
   }
+  .cta-buttons { display: flex; gap: 10px; flex: 1; }
   .cta-point {
     flex: 1; height: 48px; border-radius: 12px;
     background: #e8451a; color: white;
+    border: none; font-size: 15px; font-weight: 700;
+    cursor: pointer;
+  }
+  .cta-reserve {
+    flex: 1; height: 48px; border-radius: 12px;
+    background: #1a1a2e; color: white;
     border: none; font-size: 15px; font-weight: 700;
     cursor: pointer;
   }
@@ -256,11 +276,60 @@
 </head>
 <body>
 
+<script>
+  let currentLang = 'ja';
+
+  const translations = {
+    'restaurant-name': { ja: '鮨 さいとう トンロー店', en: 'Saitou Sushi Thonglor', th: 'ซูชิ ไซโต้ ทองหล่อ' },
+    'restaurant-sub': { ja: '和食・寿司 · トンロー · ¥¥¥', en: 'Japanese · Sushi · Thonglor · ¥¥¥', th: 'ญี่ปุ่น · ซูชิ · ทองหล่อ · ¥¥¥' },
+    'open': { ja: '営業中', en: 'Open', th: 'เปิดแล้ว' },
+    'slightly-crowded': { ja: 'やや混雑', en: 'Slightly Crowded', th: 'ค่อนข้างแออัด' },
+    'updated': { ja: '分前更新', en: 'min ago', th: 'นาทีที่แล้ว' },
+    'hours': { ja: '営業時間', en: 'Hours', th: 'เวลาเปิด' },
+    'address': { ja: '住所', en: 'Address', th: 'ที่อยู่' },
+    'access': { ja: 'アクセス', en: 'Access', th: 'การเดินทาง' },
+    'status': { ja: '確認状況', en: 'Verification', th: 'สถานะการยืนยัน' },
+    'verified': { ja: 'オーナー確認済み', en: 'Owner Verified', th: 'ยืนยันโดยเจ้าของ' },
+    'today-menu': { ja: '本日のメニュー', en: "Today's Menu", th: "เมนูของวันนี้" },
+    'peoples-voice': { ja: 'みんなの声', en: "People's Reviews", th: 'ความเห็นของทุกคน' },
+    'point-card': { ja: '指差し注文カード', en: 'Pointing Card', th: 'การ์ดชี้' },
+    'report': { ja: '今日の営業状況を報告する', en: 'Report Today Status', th: 'รายงานสถานะของวันนี้' },
+    'open-status': { ja: '営業してた', en: 'Was Open', th: 'เปิดแล้ว' },
+    'closed-status': { ja: '閉まってた', en: 'Was Closed', th: 'ปิด' },
+    'menu-link': { ja: 'メニュー詳細', en: 'View Menu', th: 'ดูเมนูเต็ม' },
+    'reserve': { ja: '予約', en: 'Reserve', th: 'จองโต๊ะ' },
+    'pointing': { ja: '指差し注文', en: 'Point & Order', th: 'ชี้เพื่อสั่ง' }
+  };
+
+  function switchLang(lang) {
+    currentLang = lang;
+    document.querySelectorAll('[data-ja]').forEach(el => {
+      el.textContent = el.dataset[lang] || el.dataset.ja;
+    });
+    document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector(`button[onclick="switchLang('${lang}')"]`).classList.add('active');
+    localStorage.setItem('jeeb-lang', lang);
+  }
+
+  window.addEventListener('load', () => {
+    const saved = localStorage.getItem('jeeb-lang') || 'ja';
+    if(saved !== 'ja') switchLang(saved);
+  });
+</script>
+
+
 <!-- Top bar -->
 <div class="top-bar">
   <a href="index.html" class="back-btn">←</a>
-  <div class="top-title">鮨 さいとう トンロー店</div>
-  <div class="share-btn">⬆</div>
+  <div class="top-title" data-ja="鮨 さいとう トンロー店" data-en="Saitou Sushi Thonglor" data-th="ซูชิ ไซโต้ ทองหล่อ">鮨 さいとう トンロー店</div>
+  <div style="display: flex; gap: 4px; align-items: center;">
+    <div class="lang-buttons">
+      <button class="lang-btn active" onclick="switchLang('ja')">JP</button>
+      <button class="lang-btn" onclick="switchLang('en')">EN</button>
+      <button class="lang-btn" onclick="switchLang('th')">TH</button>
+    </div>
+    <div class="share-btn">⬆</div>
+  </div>
 </div>
 
 <!-- Hero -->
@@ -282,13 +351,13 @@
 
   <!-- Basic info -->
   <div class="info-block">
-    <div class="restaurant-name">鮨 さいとう トンロー店</div>
-    <div class="restaurant-sub">和食・寿司 · トンロー · ¥¥¥</div>
+    <div class="restaurant-name" data-ja="鮨 さいとう トンロー店" data-en="Saitou Sushi Thonglor" data-th="ซูชิ ไซโต้ ทองหล่อ">鮨 さいとう トンロー店</div>
+    <div class="restaurant-sub" data-ja="和食・寿司 · トンロー · ¥¥¥" data-en="Japanese · Sushi · Thonglor · ¥¥¥" data-th="ญี่ปุ่น · ซูชิ · ทองหล่อ · ¥¥¥">和食・寿司 · トンロー · ¥¥¥</div>
 
     <div class="status-row">
-      <span class="tag tag-open">🟢 営業中</span>
-      <span class="tag tag-crowd">🟡 やや混雑</span>
-      <span class="tag tag-updated">🕐 2分前更新</span>
+      <span class="tag tag-open"><span data-ja="🟢 営業中" data-en="🟢 Open" data-th="🟢 เปิดแล้ว">🟢 営業中</span></span>
+      <span class="tag tag-crowd"><span data-ja="🟡 やや混雑" data-en="🟡 Slightly Crowded" data-th="🟡 ค่อนข้างแออัด">🟡 やや混雑</span></span>
+      <span class="tag tag-updated"><span data-ja="🕐 2分前更新" data-en="🕐 Updated 2 min ago" data-th="🕐 อัปเดต 2 นาทีที่แล้ว">🕐 2分前更新</span></span>
     </div>
 
     <!-- Crowd chart -->
@@ -324,7 +393,7 @@
 
     <!-- Multi-score -->
     <div class="score-section">
-      <div class="score-title">マルチソース評価</div>
+      <div class="score-title" data-ja="マルチソース評価" data-en="Multi-Source Ratings" data-th="การจัดอันดับจากแหล่งต่าง ๆ">マルチソース評価</div>
       <div class="score-grid">
         <div class="score-row">
           <div class="score-source">🌐 Google</div>
@@ -353,7 +422,7 @@
       </div>
       <div class="score-avg">
         <div>
-          <div class="avg-label">総合平均</div>
+          <div class="avg-label" data-ja="総合平均" data-en="Average" data-th="เฉลี่ยรวม">総合平均</div>
           <div class="avg-stars">★★★★★</div>
         </div>
         <div class="avg-val">4.5</div>
@@ -365,8 +434,8 @@
   <div class="info-block">
     <div class="daily-section">
       <div class="daily-header">
-        <div class="title">🍱 本日のメニュー</div>
-        <div class="updated">🕐 1時間前に更新</div>
+        <div class="title" data-ja="🍱 本日のメニュー" data-en="🍱 Today's Menu" data-th="🍱 เมนูของวันนี้">🍱 本日のメニュー</div>
+        <div class="updated" data-ja="🕐 1時間前に更新" data-en="🕐 Updated 1h ago" data-th="🕐 อัปเดต 1 ชั่วโมงที่แล้ว">🕐 1時間前に更新</div>
       </div>
       <div class="menu-item">
         <span class="menu-name">大トロ入り特上にぎり</span>
@@ -379,6 +448,9 @@
       <div class="menu-item">
         <span class="menu-name">本日の一品：サーモン刺身</span>
         <span class="menu-price">450฿</span>
+      </div>
+      <div style="text-align: center; padding: 12px 0; border-top: 1px solid #fde8d0;">
+        <a href="menu.html" style="color: #e8451a; font-weight: 700; text-decoration: none; font-size: 13px;">→ 全メニュー詳細を見る</a>
       </div>
     </div>
   </div>
@@ -420,16 +492,16 @@
 
   <!-- User report -->
   <div class="report-section">
-    <div class="report-title">📣 今日の営業状況を報告する</div>
+    <div class="report-title" data-ja="📣 今日の営業状況を報告する" data-en="📣 Report Today's Status" data-th="📣 รายงานสถานะของวันนี้">📣 今日の営業状況を報告する</div>
     <div class="report-row">
-      <button class="report-btn report-open">✅ 営業してた</button>
-      <button class="report-btn report-closed">❌ 閉まってた</button>
+      <button class="report-btn report-open" data-ja="✅ 営業してた" data-en="✅ Was Open" data-th="✅ เปิดแล้ว">✅ 営業してた</button>
+      <button class="report-btn report-closed" data-ja="❌ 閉まってた" data-en="❌ Was Closed" data-th="❌ ปิด">❌ 閉まってた</button>
     </div>
   </div>
 
   <!-- Pointing card -->
   <div class="point-section">
-    <div class="point-title">👆 指差し注文カード</div>
+    <div class="point-title" data-ja="👆 指差し注文カード" data-en="👆 Pointing Card" data-th="👆 การ์ดชี้">👆 指差し注文カード</div>
     <div class="point-options">
       <div class="point-tag selected">辛さ控えめ</div>
       <div class="point-tag">パクチー抜き</div>
@@ -444,7 +516,7 @@
 
   <!-- Review filter -->
   <div class="review-section">
-    <div class="review-title">💬 みんなの声</div>
+    <div class="review-title" data-ja="💬 みんなの声" data-en="💬 Reviews" data-th="💬 ความเห็นของทุกคน">💬 みんなの声</div>
     <div class="review-filters">
       <button class="rf-btn active">すべて</button>
       <button class="rf-btn">🇯🇵 日本人</button>
@@ -479,7 +551,10 @@
 <!-- Bottom CTA -->
 <div class="bottom-cta">
   <div class="cta-map">🗺</div>
-  <button class="cta-point">👆 指差し注文カードを開く</button>
+  <div class="cta-buttons">
+    <button class="cta-point" data-ja="👆 指差し注文" data-en="👆 Point & Order" data-th="👆 ชี้เพื่อสั่ง">👆 指差し注文</button>
+    <button class="cta-reserve" data-ja="🔔 予約" data-en="🔔 Reserve" data-th="🔔 จองโต๊ะ">🔔 予約</button>
+  </div>
   <div class="cta-fav">❤️</div>
 </div>
 
