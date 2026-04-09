@@ -3,460 +3,575 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JEEB - バンコク飲食ポータル</title>
+<title>JEEB — Bangkok Dining</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Sans:wght@300;400;500;700&family=Noto+Sans+Thai:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
+  :root {
+    --bg: #F8F8F6;
+    --white: #FFFFFF;
+    --black: #0A0A0A;
+    --gray-100: #F0F0EE;
+    --gray-200: #E0E0DC;
+    --gray-400: #9A9A96;
+    --gray-600: #5A5A56;
+    --live: #00D084;
+    --live-dim: rgba(0, 208, 132, 0.12);
+    --ai: #0066FF;
+    --ai-dim: rgba(0, 102, 255, 0.08);
+    --accent: #0A0A0A;
+  }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, 'Helvetica Neue', sans-serif; background: #f7f5f0; color: #1a1a1a; }
 
-  /* Header */
+  body {
+    font-family: 'Noto Sans JP', 'Noto Sans', 'Noto Sans Thai', sans-serif;
+    background: var(--bg);
+    color: var(--black);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─── Header ─── */
   header {
-    background: #fff;
-    padding: 14px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #eee;
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(248, 248, 246, 0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--gray-200);
+    padding: 0 24px;
+    height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
   }
-  .logo { font-size: 22px; font-weight: 800; color: #e8451a; letter-spacing: -0.5px; }
-  .logo span { color: #1a1a1a; }
-  .lang-switch {
-    display: flex; gap: 6px;
+
+  .logo {
+    font-size: 18px; font-weight: 700;
+    letter-spacing: 0.08em; color: var(--black);
+    text-decoration: none;
   }
+
+  .header-right { display: flex; align-items: center; gap: 16px; }
+
+  .lang-group { display: flex; gap: 2px; }
   .lang-btn {
-    padding: 4px 10px; border-radius: 20px; font-size: 12px; border: 1px solid #ddd;
-    cursor: pointer; background: #fff; color: #555;
+    padding: 5px 10px;
+    border: none; background: none;
+    font-size: 11px; font-weight: 500;
+    color: var(--gray-400); cursor: pointer;
+    border-radius: 4px; letter-spacing: 0.06em;
+    transition: all 0.15s;
   }
-  .lang-btn.active { background: #e8451a; color: #fff; border-color: #e8451a; }
+  .lang-btn.active {
+    background: var(--black); color: var(--white);
+  }
 
-  /* Hero */
+  /* ─── Hero / AI Concierge ─── */
   .hero {
-    background: linear-gradient(135deg, #e8451a 0%, #ff7a45 100%);
-    padding: 36px 20px 48px;
-    text-align: center;
-    color: white;
+    padding: 48px 24px 40px;
+    max-width: 720px; margin: 0 auto;
   }
-  .hero h1 { font-size: 24px; font-weight: 800; margin-bottom: 6px; line-height: 1.3; }
-  .hero p { font-size: 13px; opacity: 0.9; margin-bottom: 20px; }
-  .search-box {
-    background: white;
-    border-radius: 14px;
-    padding: 14px 16px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-  }
-  .search-box input {
-    border: none; outline: none; flex: 1;
-    font-size: 15px; color: #333;
-  }
-  .search-box .search-icon { color: #e8451a; font-size: 18px; }
 
-  /* Live badge */
+  .hero-eyebrow {
+    font-size: 11px; font-weight: 500;
+    letter-spacing: 0.14em; color: var(--gray-400);
+    text-transform: uppercase; margin-bottom: 12px;
+  }
+
+  .hero-title {
+    font-size: clamp(26px, 6vw, 40px);
+    font-weight: 300; line-height: 1.25;
+    color: var(--black); margin-bottom: 32px;
+    letter-spacing: -0.02em;
+  }
+  .hero-title strong { font-weight: 700; }
+
+  /* AI Concierge Bar */
+  .concierge-wrap {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.06);
+  }
+
+  .concierge-label {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 0.12em; color: var(--ai);
+    text-transform: uppercase; margin-bottom: 10px;
+  }
+  .ai-dot {
+    width: 6px; height: 6px;
+    background: var(--ai); border-radius: 50%;
+    animation: pulse-ai 2s infinite;
+  }
+  @keyframes pulse-ai {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  .concierge-input {
+    width: 100%; border: none; outline: none;
+    font-size: 16px; font-weight: 300;
+    color: var(--black); background: none;
+    font-family: inherit; line-height: 1.5;
+  }
+  .concierge-input::placeholder { color: var(--gray-400); }
+
+  .concierge-divider {
+    height: 1px; background: var(--gray-100); margin: 14px 0;
+  }
+
+  .concierge-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip {
+    padding: 5px 12px;
+    background: var(--gray-100);
+    border: none; border-radius: 100px;
+    font-size: 12px; color: var(--gray-600);
+    cursor: pointer; font-family: inherit;
+    transition: all 0.15s;
+  }
+  .chip:hover { background: var(--gray-200); color: var(--black); }
+
+  /* ─── Live Bar ─── */
   .live-bar {
-    background: #1a1a1a;
-    color: white;
-    padding: 10px 20px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    overflow-x: auto;
-    white-space: nowrap;
+    padding: 0 24px;
+    max-width: 720px; margin: 0 auto 32px;
   }
-  .live-dot {
-    width: 8px; height: 8px; background: #4ade80;
-    border-radius: 50%; animation: pulse 1.5s infinite;
+  .live-bar-inner {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 16px;
+    background: var(--live-dim);
+    border-radius: 100px;
+    border: 1px solid rgba(0, 208, 132, 0.2);
   }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
+  .live-indicator {
+    display: flex; align-items: center; gap: 6px;
   }
-  .live-bar span { opacity: 0.6; margin: 0 6px; }
+  .live-pulse {
+    width: 8px; height: 8px;
+    background: var(--live); border-radius: 50%;
+    animation: live-pulse 2s infinite;
+  }
+  @keyframes live-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(0,208,132,0.6); }
+    70% { box-shadow: 0 0 0 8px rgba(0,208,132,0); }
+    100% { box-shadow: 0 0 0 0 rgba(0,208,132,0); }
+  }
+  .live-text {
+    font-size: 12px; font-weight: 500; color: #009660;
+    letter-spacing: 0.02em;
+  }
+  .live-meta {
+    font-size: 11px; color: var(--gray-400); margin-left: auto;
+  }
 
-  /* Area tabs */
+  /* ─── Section ─── */
+  .section { padding: 0 24px; max-width: 720px; margin: 0 auto 40px; }
+
+  .section-header {
+    display: flex; align-items: baseline;
+    justify-content: space-between; margin-bottom: 20px;
+  }
+  .section-title {
+    font-size: 13px; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--gray-600);
+  }
+  .section-link {
+    font-size: 12px; color: var(--gray-400);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .section-link:hover { color: var(--black); }
+
+  /* ─── Category Filter ─── */
+  .cat-scroll {
+    display: flex; gap: 8px;
+    overflow-x: auto; padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+  .cat-scroll::-webkit-scrollbar { display: none; }
+  .cat-pill {
+    flex-shrink: 0; padding: 8px 16px;
+    border: 1px solid var(--gray-200);
+    border-radius: 100px; background: var(--white);
+    font-size: 13px; color: var(--gray-600);
+    cursor: pointer; transition: all 0.15s;
+    white-space: nowrap; font-family: inherit;
+  }
+  .cat-pill:hover, .cat-pill.active {
+    background: var(--black); color: var(--white);
+    border-color: var(--black);
+  }
+
+  /* ─── Area Tabs ─── */
   .area-tabs {
-    padding: 16px 20px 0;
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    background: #fff;
-    border-bottom: 1px solid #eee;
+    display: flex; gap: 0;
+    border-bottom: 1px solid var(--gray-200);
+    margin-bottom: 24px;
   }
   .area-tab {
-    padding: 10px 18px;
-    border-radius: 0;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    color: #888;
-    border-bottom: 3px solid transparent;
-    white-space: nowrap;
-    flex-shrink: 0;
+    padding: 10px 16px;
+    font-size: 13px; font-weight: 400;
+    color: var(--gray-400); cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.15s; white-space: nowrap;
   }
-  .area-tab.active { color: #e8451a; border-bottom-color: #e8451a; }
-
-  /* Category */
-  .section { padding: 20px; }
-  .section-title {
-    font-size: 16px; font-weight: 700; margin-bottom: 14px;
-    display: flex; justify-content: space-between; align-items: center;
+  .area-tab.active {
+    color: var(--black); font-weight: 600;
+    border-bottom-color: var(--black);
   }
-  .section-title a { font-size: 13px; color: #e8451a; font-weight: 400; }
 
-  .cat-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; }
-  .cat-item {
-    flex-shrink: 0;
-    background: white;
-    border-radius: 12px;
-    padding: 14px 16px;
-    text-align: center;
-    min-width: 80px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    cursor: pointer;
-    border: 2px solid transparent;
-  }
-  .cat-item.active { border-color: #e8451a; background: #fff5f2; }
-  .cat-item .emoji { font-size: 26px; display: block; margin-bottom: 4px; }
-  .cat-item span { font-size: 11px; color: #555; }
-
-  /* Restaurant cards */
-  .cards { display: flex; flex-direction: column; gap: 14px; }
-  .card {
-    background: white;
+  /* ─── Restaurant Cards ─── */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px;
+    background: var(--gray-200);
+    border: 1px solid var(--gray-200);
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
-    cursor: pointer;
-    transition: transform 0.15s;
   }
-  .card:active { transform: scale(0.98); }
-  .card-img {
-    width: 100%; height: 180px;
+
+  .card {
+    background: var(--white);
+    cursor: pointer;
+    transition: background 0.15s;
+    text-decoration: none; color: inherit;
+    display: block;
+  }
+  .card:hover { background: #FAFAF8; }
+
+  .card-inner {
+    display: flex; gap: 16px;
+    padding: 20px;
+    align-items: flex-start;
+  }
+
+  .card-img-wrap {
     position: relative;
-    overflow: hidden;
+    width: 88px; height: 88px;
+    border-radius: 12px; overflow: hidden;
+    flex-shrink: 0;
+    background: var(--gray-100);
   }
-  .card-img img {
-    width: 100%; height: 100%; object-fit: cover;
-  }
-  .card-img .img-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.05), rgba(0,0,0,0.35));
-  }
-  .status-badge {
-    position: absolute;
-    top: 10px; left: 10px;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.3px;
-  }
-  .status-open { background: #4ade80; color: #fff; }
-  .status-busy { background: #f59e0b; color: #fff; }
-  .status-closed { background: #ef4444; color: #fff; }
-  .status-last { background: #8b5cf6; color: #fff; }
-
-  .crowd-bar-wrap {
-    position: absolute;
-    bottom: 10px; left: 10px; right: 10px;
-    background: rgba(0,0,0,0.6);
-    border-radius: 8px;
-    padding: 6px 10px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .crowd-label { font-size: 10px; color: rgba(255,255,255,0.8); white-space: nowrap; }
-  .crowd-bar {
-    flex: 1; height: 6px; background: rgba(255,255,255,0.2);
-    border-radius: 3px; overflow: hidden;
-  }
-  .crowd-fill { height: 100%; border-radius: 3px; }
-  .crowd-low { background: #4ade80; width: 25%; }
-  .crowd-mid { background: #f59e0b; width: 60%; }
-  .crowd-high { background: #ef4444; width: 85%; }
-
-  .card-body { padding: 14px 16px; }
-  .card-name { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
-  .card-sub { font-size: 12px; color: #888; margin-bottom: 10px; }
-
-  .scores {
-    display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;
-  }
-  .score-chip {
-    display: flex; align-items: center; gap: 4px;
-    background: #f5f5f5; border-radius: 8px;
-    padding: 4px 8px; font-size: 11px;
-  }
-  .score-chip .src { color: #888; }
-  .score-chip .val { font-weight: 700; }
-  .score-chip .val.high { color: #16a34a; }
-  .score-chip .val.mid { color: #d97706; }
-
-  .daily-menu {
-    background: #fff8f0;
-    border: 1px solid #fde8d0;
-    border-radius: 10px;
-    padding: 8px 12px;
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .daily-menu .dm-label { color: #e8451a; font-weight: 700; white-space: nowrap; }
-  .daily-menu .dm-text { color: #555; }
-  .daily-menu .dm-time { color: #aaa; font-size: 10px; margin-left: auto; white-space: nowrap; }
-
-  .card-footer {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-top: 10px;
-  }
-  .distance { font-size: 12px; color: #888; }
-  .point-btn {
-    background: #e8451a;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 6px 12px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
+  .card-img-wrap .img-bg {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px;
   }
 
-  /* Bottom nav */
+  .live-badge {
+    position: absolute; bottom: 4px; left: 4px;
+    display: flex; align-items: center; gap: 3px;
+    background: rgba(0,0,0,0.72); backdrop-filter: blur(4px);
+    padding: 3px 6px; border-radius: 6px;
+  }
+  .live-badge-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    animation: live-pulse 2s infinite;
+  }
+  .live-badge-dot.green { background: var(--live); }
+  .live-badge-dot.amber { background: #FFC300; }
+  .live-badge-dot.red { background: #FF3B30; }
+  .live-badge-label {
+    font-size: 9px; font-weight: 600;
+    letter-spacing: 0.06em; color: var(--white);
+    text-transform: uppercase;
+  }
+
+  .card-body { flex: 1; min-width: 0; }
+
+  .card-name {
+    font-size: 15px; font-weight: 600;
+    color: var(--black); margin-bottom: 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .card-sub {
+    font-size: 12px; color: var(--gray-400);
+    margin-bottom: 10px;
+  }
+
+  /* AI Badge */
+  .ai-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 8px;
+    background: var(--ai-dim);
+    border-radius: 6px; margin-bottom: 10px;
+  }
+  .ai-badge-icon { font-size: 10px; }
+  .ai-badge-text {
+    font-size: 11px; color: var(--ai);
+    font-weight: 500; letter-spacing: 0.02em;
+  }
+
+  /* Score row */
+  .score-row {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .score-avg {
+    font-size: 15px; font-weight: 700; color: var(--black);
+  }
+  .score-stars { font-size: 11px; color: #FFB800; letter-spacing: 1px; }
+  .score-divider {
+    width: 1px; height: 12px; background: var(--gray-200);
+  }
+  .score-sources {
+    display: flex; gap: 4px; align-items: center;
+  }
+  .score-src {
+    font-size: 10px; color: var(--gray-400);
+    font-weight: 500; letter-spacing: 0.04em;
+  }
+  .score-sep { color: var(--gray-200); font-size: 10px; }
+
+  .card-meta {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 8px;
+  }
+  .card-distance {
+    font-size: 11px; color: var(--gray-400);
+  }
+
+  /* ─── Bottom Nav ─── */
   .bottom-nav {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    background: white;
-    border-top: 1px solid #eee;
-    display: flex;
-    padding: 10px 0 20px;
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: rgba(248,248,246,0.95);
+    backdrop-filter: blur(16px);
+    border-top: 1px solid var(--gray-200);
+    display: flex; padding: 10px 0 20px;
   }
   .nav-item {
     flex: 1; text-align: center; cursor: pointer;
   }
-  .nav-item .nav-icon { font-size: 22px; }
-  .nav-item .nav-label { font-size: 10px; color: #aaa; display: block; margin-top: 2px; }
-  .nav-item.active .nav-label { color: #e8451a; }
-  .nav-item.active .nav-icon { filter: none; }
+  .nav-icon { font-size: 20px; line-height: 1; }
+  .nav-label {
+    display: block; font-size: 10px;
+    color: var(--gray-400); margin-top: 3px;
+    letter-spacing: 0.04em;
+  }
+  .nav-item.active .nav-label { color: var(--black); font-weight: 600; }
 
-  .pb-nav { padding-bottom: 80px; }
+  .pb { padding-bottom: 80px; }
 </style>
 </head>
 <body>
 
-<!-- Header -->
 <header>
-  <div class="logo">JEEB<span>.</span></div>
-  <div class="lang-switch">
-    <button class="lang-btn active">JP</button>
-    <button class="lang-btn">EN</button>
-    <button class="lang-btn">TH</button>
+  <a class="logo" href="#">JEEB</a>
+  <div class="header-right">
+    <div class="lang-group">
+      <button class="lang-btn active" onclick="setLang(this)">JP</button>
+      <button class="lang-btn" onclick="setLang(this)">EN</button>
+      <button class="lang-btn" onclick="setLang(this)">TH</button>
+    </div>
   </div>
 </header>
 
-<!-- Hero -->
-<div class="hero">
-  <h1>バンコクの「今」がわかる<br>飲食ポータル</h1>
-  <p>プロンポン・トンロー・エカマイ エリア</p>
-  <div class="search-box">
-    <span class="search-icon">🔍</span>
-    <input type="text" placeholder="店名・料理・エリアで検索">
+<div class="pb">
+
+  <!-- Hero -->
+  <div class="hero">
+    <p class="hero-eyebrow">Bangkok · Phrom Phong · Thonglor · Ekkamai</p>
+    <h1 class="hero-title">今夜、<strong>どこへ行く？</strong></h1>
+    <div class="concierge-wrap">
+      <div class="concierge-label">
+        <span class="ai-dot"></span>
+        AI Concierge
+      </div>
+      <input class="concierge-input" type="text"
+        placeholder="「3人で予算1,500B、和食でゆっくりしたい」">
+      <div class="concierge-divider"></div>
+      <div class="concierge-chips">
+        <button class="chip">🍣 今すぐ空席あり</button>
+        <button class="chip">🌙 22時以降も営業</button>
+        <button class="chip">👥 接待・記念日</button>
+        <button class="chip">🌿 ヴィーガン対応</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Bar -->
+  <div class="live-bar">
+    <div class="live-bar-inner">
+      <div class="live-indicator">
+        <div class="live-pulse"></div>
+        <span class="live-text">現在 243店が営業中</span>
+      </div>
+      <span class="live-meta">2分前更新</span>
+    </div>
+  </div>
+
+  <!-- Category -->
+  <div class="section">
+    <div class="cat-scroll">
+      <button class="cat-pill active">すべて</button>
+      <button class="cat-pill">和食</button>
+      <button class="cat-pill">タイ料理</button>
+      <button class="cat-pill">洋食</button>
+      <button class="cat-pill">焼肉</button>
+      <button class="cat-pill">カフェ</button>
+      <button class="cat-pill">居酒屋</button>
+    </div>
+  </div>
+
+  <!-- Area Tabs + Cards -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-title">おすすめ</span>
+      <a class="section-link" href="#">すべて表示 →</a>
+    </div>
+
+    <div class="area-tabs">
+      <div class="area-tab active">すべて</div>
+      <div class="area-tab">Phrom Phong</div>
+      <div class="area-tab">Thonglor</div>
+      <div class="area-tab">Ekkamai</div>
+    </div>
+
+    <div class="cards-grid">
+
+      <!-- Card 1 -->
+      <a class="card" href="restaurant.html">
+        <div class="card-inner">
+          <div class="card-img-wrap">
+            <div class="img-bg" style="background: linear-gradient(135deg,#1a0d00,#5c3010);">🍣</div>
+            <div class="live-badge">
+              <div class="live-badge-dot green"></div>
+              <span class="live-badge-label">Open</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="card-name">鮨 さいとう トンロー</div>
+            <div class="card-sub">和食 · Sushi · Thonglor</div>
+            <div class="ai-badge">
+              <span class="ai-badge-icon">✦</span>
+              <span class="ai-badge-text">日本人：本場の味　タイ人：映える</span>
+            </div>
+            <div class="score-row">
+              <span class="score-avg">4.5</span>
+              <span class="score-stars">★★★★★</span>
+              <div class="score-divider"></div>
+              <div class="score-sources">
+                <span class="score-src">G 4.6</span>
+                <span class="score-sep">·</span>
+                <span class="score-src">TA 4.3</span>
+                <span class="score-sep">·</span>
+                <span class="score-src">WN 4.5</span>
+              </div>
+            </div>
+            <div class="card-meta">
+              <span class="card-distance">📍 Thonglor BTS · 3 min</span>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <!-- Card 2 -->
+      <a class="card" href="#">
+        <div class="card-inner">
+          <div class="card-img-wrap">
+            <div class="img-bg" style="background: linear-gradient(135deg,#0d2200,#2a6010);">🍜</div>
+            <div class="live-badge">
+              <div class="live-badge-dot amber"></div>
+              <span class="live-badge-label">Busy</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="card-name">ソムタムダー エカマイ</div>
+            <div class="card-sub">タイ料理 · Thai · Ekkamai</div>
+            <div class="ai-badge">
+              <span class="ai-badge-icon">✦</span>
+              <span class="ai-badge-text">地元民絶賛・観光客には辛め</span>
+            </div>
+            <div class="score-row">
+              <span class="score-avg">4.3</span>
+              <span class="score-stars">★★★★☆</span>
+              <div class="score-divider"></div>
+              <div class="score-sources">
+                <span class="score-src">G 4.5</span>
+                <span class="score-sep">·</span>
+                <span class="score-src">TA 4.0</span>
+                <span class="score-sep">·</span>
+                <span class="score-src">WN 4.3</span>
+              </div>
+            </div>
+            <div class="card-meta">
+              <span class="card-distance">📍 Ekkamai BTS · 5 min</span>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <!-- Card 3 -->
+      <a class="card" href="#">
+        <div class="card-inner">
+          <div class="card-img-wrap">
+            <div class="img-bg" style="background: linear-gradient(135deg,#100300,#3a1000);">🥩</div>
+            <div class="live-badge">
+              <div class="live-badge-dot red"></div>
+              <span class="live-badge-label">L.O. 45min</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="card-name">和牛焼肉 黒毛 プロンポン</div>
+            <div class="card-sub">焼肉 · Wagyu BBQ · Phrom Phong</div>
+            <div class="ai-badge">
+              <span class="ai-badge-icon">✦</span>
+              <span class="ai-badge-text">接待・記念日に最適</span>
+            </div>
+            <div class="score-row">
+              <span class="score-avg">4.2</span>
+              <span class="score-stars">★★★★☆</span>
+              <div class="score-divider"></div>
+              <div class="score-sources">
+                <span class="score-src">G 4.4</span>
+                <span class="score-sep">·</span>
+                <span class="score-src">TA 4.2</span>
+                <span class="score-sep">·</span>
+                <span class="score-src">WN 3.9</span>
+              </div>
+            </div>
+            <div class="card-meta">
+              <span class="card-distance">📍 Phrom Phong BTS · 7 min</span>
+            </div>
+          </div>
+        </div>
+      </a>
+
+    </div>
   </div>
 </div>
 
-<!-- Live bar -->
-<div class="live-bar">
-  <div class="live-dot"></div>
-  <strong>リアルタイム更新中</strong>
-  <span>|</span>
-  🟢 現在 247店が営業中
-  <span>|</span>
-  🟡 混雑: トンロー周辺 高め
-  <span>|</span>
-  🕐 最終更新 2分前
-</div>
-
-<!-- Area tabs -->
-<div class="area-tabs">
-  <div class="area-tab active">すべて</div>
-  <div class="area-tab">プロンポン</div>
-  <div class="area-tab">トンロー</div>
-  <div class="area-tab">エカマイ</div>
-</div>
-
-<div class="pb-nav">
-
-<!-- Category -->
-<div class="section">
-  <div class="section-title">カテゴリ</div>
-  <div class="cat-scroll">
-    <div class="cat-item active">
-      <span class="emoji">🍱</span>
-      <span>和食</span>
-    </div>
-    <div class="cat-item">
-      <span class="emoji">🍜</span>
-      <span>タイ料理</span>
-    </div>
-    <div class="cat-item">
-      <span class="emoji">🍕</span>
-      <span>洋食</span>
-    </div>
-    <div class="cat-item">
-      <span class="emoji">🥩</span>
-      <span>焼肉</span>
-    </div>
-    <div class="cat-item">
-      <span class="emoji">☕</span>
-      <span>カフェ</span>
-    </div>
-    <div class="cat-item">
-      <span class="emoji">🍺</span>
-      <span>居酒屋</span>
-    </div>
-  </div>
-</div>
-
-<!-- Restaurant cards -->
-<div class="section">
-  <div class="section-title">
-    今すぐ行ける店 <a href="#">すべて見る</a>
-  </div>
-  <div class="cards">
-
-    <!-- Card 1 -->
-    <div class="card" onclick="location.href='restaurant.html'">
-      <div class="card-img" style="background:#5c2a00;">
-        <div style="width:100%;height:100%;background:linear-gradient(135deg,#2d1000 0%,#7a3810 50%,#c47a40 100%);display:flex;align-items:center;justify-content:center;">
-          <span style="font-size:80px;filter:drop-shadow(0 6px 16px rgba(0,0,0,0.7));">🍣</span>
-        </div>
-        <div class="img-overlay" style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.1),rgba(0,0,0,0.5));"></div>
-        <span class="status-badge status-open">● 営業中</span>
-        <div class="crowd-bar-wrap">
-          <span class="crowd-label">混雑</span>
-          <div class="crowd-bar"><div class="crowd-fill crowd-low"></div></div>
-          <span style="font-size:10px;color:#4ade80;font-weight:700;">空いてる</span>
-        </div>
-      </div>
-      <div class="card-body">
-        <div class="card-name">鮨 さいとう トンロー店</div>
-        <div class="card-sub">和食・寿司 · トンロー · 11:30〜22:00</div>
-        <div class="scores">
-          <div class="score-chip"><span class="src">G</span><span class="val high">4.6</span></div>
-          <div class="score-chip"><span class="src">TA</span><span class="val high">4.3</span></div>
-          <div class="score-chip"><span class="src">WN</span><span class="val high">4.5</span></div>
-          <div class="score-chip"><span class="src">平均</span><span class="val high">★4.5</span></div>
-        </div>
-        <div class="daily-menu">
-          <span class="dm-label">本日</span>
-          <span class="dm-text">大トロ入り特上にぎり 1,800฿</span>
-          <span class="dm-time">1時間前更新</span>
-        </div>
-        <div class="card-footer">
-          <span class="distance">📍 トンロー駅 徒歩3分</span>
-          <button class="point-btn">指差し注文</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Card 2 -->
-    <div class="card">
-      <div class="card-img" style="background:#1a4a00;">
-        <div style="width:100%;height:100%;background:linear-gradient(135deg,#0d2900 0%,#2d6b10 50%,#c49820 100%);display:flex;align-items:center;justify-content:center;">
-          <span style="font-size:80px;filter:drop-shadow(0 6px 16px rgba(0,0,0,0.7));">🍜</span>
-        </div>
-        <div class="img-overlay" style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.1),rgba(0,0,0,0.5));"></div>
-        <span class="status-badge status-busy">● 混雑中</span>
-        <div class="crowd-bar-wrap">
-          <span class="crowd-label">混雑</span>
-          <div class="crowd-bar"><div class="crowd-fill crowd-high"></div></div>
-          <span style="font-size:10px;color:#ef4444;font-weight:700;">かなり混む</span>
-        </div>
-      </div>
-      <div class="card-body">
-        <div class="card-name">ソムタムダー エカマイ</div>
-        <div class="card-sub">タイ料理 · エカマイ · 10:00〜21:00</div>
-        <div class="scores">
-          <div class="score-chip"><span class="src">G</span><span class="val high">4.5</span></div>
-          <div class="score-chip"><span class="src">TA</span><span class="val mid">4.0</span></div>
-          <div class="score-chip"><span class="src">WN</span><span class="val high">4.3</span></div>
-          <div class="score-chip"><span class="src">平均</span><span class="val high">★4.3</span></div>
-        </div>
-        <div class="daily-menu">
-          <span class="dm-label">本日</span>
-          <span class="dm-text">ランチセット パパイヤサラダ+カオマンガイ 220฿</span>
-          <span class="dm-time">30分前更新</span>
-        </div>
-        <div class="card-footer">
-          <span class="distance">📍 エカマイ駅 徒歩5分</span>
-          <button class="point-btn">指差し注文</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Card 3 -->
-    <div class="card">
-      <div class="card-img" style="background:#1a0800;">
-        <div style="width:100%;height:100%;background:linear-gradient(135deg,#0d0400 0%,#4a1200 50%,#8b3a0a 100%);display:flex;align-items:center;justify-content:center;">
-          <span style="font-size:80px;filter:drop-shadow(0 6px 16px rgba(0,0,0,0.7));">🥩</span>
-        </div>
-        <div class="img-overlay" style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.1),rgba(0,0,0,0.5));"></div>
-        <span class="status-badge status-last">● L.O.まで45分</span>
-        <div class="crowd-bar-wrap">
-          <span class="crowd-label">混雑</span>
-          <div class="crowd-bar"><div class="crowd-fill crowd-mid"></div></div>
-          <span style="font-size:10px;color:#f59e0b;font-weight:700;">やや混む</span>
-        </div>
-      </div>
-      <div class="card-body">
-        <div class="card-name">和牛焼肉 黒毛 プロンポン</div>
-        <div class="card-sub">焼肉 · プロンポン · 17:00〜23:00</div>
-        <div class="scores">
-          <div class="score-chip"><span class="src">G</span><span class="val high">4.4</span></div>
-          <div class="score-chip"><span class="src">TA</span><span class="val high">4.2</span></div>
-          <div class="score-chip"><span class="src">WN</span><span class="val mid">3.9</span></div>
-          <div class="score-chip"><span class="src">平均</span><span class="val mid">★4.2</span></div>
-        </div>
-        <div class="card-footer">
-          <span class="distance">📍 プロンポン駅 徒歩7分</span>
-          <button class="point-btn">指差し注文</button>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-</div><!-- pb-nav -->
-
-<!-- Bottom nav -->
+<!-- Bottom Nav -->
 <div class="bottom-nav">
   <div class="nav-item active">
-    <div class="nav-icon">🏠</div>
-    <span class="nav-label">ホーム</span>
+    <div class="nav-icon">⌂</div>
+    <span class="nav-label">Home</span>
   </div>
   <div class="nav-item">
-    <div class="nav-icon">🔍</div>
-    <span class="nav-label">検索</span>
+    <div class="nav-icon">⌕</div>
+    <span class="nav-label">Search</span>
   </div>
   <div class="nav-item">
-    <div class="nav-icon">🗺️</div>
-    <span class="nav-label">地図</span>
+    <div class="nav-icon">◫</div>
+    <span class="nav-label">Map</span>
   </div>
   <div class="nav-item">
-    <div class="nav-icon">❤️</div>
-    <span class="nav-label">お気に入り</span>
+    <div class="nav-icon">♡</div>
+    <span class="nav-label">Saved</span>
   </div>
   <div class="nav-item">
-    <div class="nav-icon">👤</div>
-    <span class="nav-label">マイページ</span>
+    <div class="nav-icon">◯</div>
+    <span class="nav-label">Profile</span>
   </div>
 </div>
 
+<script>
+  function setLang(btn) {
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+</script>
 </body>
 </html>

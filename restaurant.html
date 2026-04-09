@@ -3,546 +3,665 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>鮨 さいとう トンロー店 - JEEB</title>
+<title>鮨 さいとう トンロー — JEEB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Sans:wght@300;400;500;700&family=Noto+Sans+Thai:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, 'Helvetica Neue', sans-serif; background: #f7f5f0; color: #1a1a1a; }
+  :root {
+    --bg: #F8F8F6;
+    --white: #FFFFFF;
+    --black: #0A0A0A;
+    --gray-100: #F0F0EE;
+    --gray-200: #E0E0DC;
+    --gray-400: #9A9A96;
+    --gray-600: #5A5A56;
+    --live: #00D084;
+    --live-dim: rgba(0, 208, 132, 0.10);
+    --ai: #0066FF;
+    --ai-dim: rgba(0, 102, 255, 0.07);
+  }
 
-  /* Header */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans JP', 'Noto Sans', 'Noto Sans Thai', sans-serif;
+    background: var(--bg);
+    color: var(--black);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─── Top Bar ─── */
   .top-bar {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    padding: 14px 16px;
-    display: flex; justify-content: space-between; align-items: center;
-    background: rgba(255,255,255,0.95);
-    backdrop-filter: blur(8px);
-    border-bottom: 1px solid #eee;
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(248,248,246,0.95);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--gray-200);
+    height: 56px; padding: 0 16px;
+    display: flex; align-items: center; justify-content: space-between;
   }
   .back-btn {
-    width: 36px; height: 36px; border-radius: 50%;
-    background: #f0f0f0; display: flex; align-items: center; justify-content: center;
-    cursor: pointer; font-size: 18px; text-decoration: none; color: #333;
-  }
-  .top-title { font-size: 15px; font-weight: 700; }
-  .lang-buttons {
-    display: flex; gap: 4px;
-  }
-  .lang-btn {
-    width: 36px; height: 36px; border-radius: 50%;
-    background: #f0f0f0; border: none;
+    width: 36px; height: 36px;
     display: flex; align-items: center; justify-content: center;
-    cursor: pointer; font-size: 12px; font-weight: 600;
-    color: #888;
+    text-decoration: none; color: var(--black);
+    font-size: 20px; border-radius: 50%;
+    transition: background 0.15s;
   }
-  .lang-btn.active {
-    background: #e8451a; color: white;
-  }
-  .share-btn {
-    width: 36px; height: 36px; border-radius: 50%;
-    background: #f0f0f0; display: flex; align-items: center; justify-content: center;
-    cursor: pointer; font-size: 16px; margin-left: 8px;
-  }
+  .back-btn:hover { background: var(--gray-100); }
 
-  /* Hero image */
+  .lang-group { display: flex; gap: 2px; }
+  .lang-btn {
+    padding: 5px 10px; border: none; background: none;
+    font-size: 11px; font-weight: 500; color: var(--gray-400);
+    cursor: pointer; border-radius: 4px; letter-spacing: 0.06em;
+    transition: all 0.15s; font-family: inherit;
+  }
+  .lang-btn.active { background: var(--black); color: var(--white); }
+
+  /* ─── Hero Image ─── */
   .hero-img {
-    margin-top: 65px;
-    height: 240px;
-    position: relative;
-    overflow: hidden;
+    height: 260px; position: relative; overflow: hidden;
+    background: linear-gradient(135deg, #0d0500 0%, #3d1a08 50%, #8b4020 100%);
+    display: flex; align-items: center; justify-content: center;
+    gap: 20px;
   }
-  .hero-img img {
-    width: 100%; height: 100%; object-fit: cover;
-  }
-  .hero-img .img-overlay {
+  .hero-img .emoji-group { font-size: 60px; filter: drop-shadow(0 8px 24px rgba(0,0,0,0.6)); }
+  .hero-overlay {
     position: absolute; inset: 0;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.5));
+    background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.6) 100%);
+  }
+  .hero-status {
+    position: absolute; bottom: 16px; left: 16px;
+    display: flex; align-items: center; gap: 8px;
   }
   .status-pill {
-    position: absolute; bottom: 14px; left: 14px;
     display: flex; align-items: center; gap: 6px;
-    background: rgba(0,0,0,0.75); backdrop-filter: blur(4px);
-    padding: 6px 12px; border-radius: 20px;
-    color: white; font-size: 13px; font-weight: 600;
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+    padding: 6px 12px; border-radius: 100px;
+    color: var(--white); font-size: 12px; font-weight: 500;
   }
-  .dot-green { width: 8px; height: 8px; background: #4ade80; border-radius: 50%; animation: pulse 1.5s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-
+  .status-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    animation: live-pulse 2s infinite;
+  }
+  .status-dot.green { background: var(--live); }
+  @keyframes live-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(0,208,132,0.7); }
+    70% { box-shadow: 0 0 0 8px rgba(0,208,132,0); }
+    100% { box-shadow: 0 0 0 0 rgba(0,208,132,0); }
+  }
   .last-check {
-    position: absolute; bottom: 14px; right: 14px;
-    background: rgba(0,0,0,0.6); padding: 4px 10px;
-    border-radius: 20px; color: rgba(255,255,255,0.8); font-size: 11px;
+    background: rgba(0,0,0,0.5); backdrop-filter: blur(6px);
+    padding: 5px 10px; border-radius: 100px;
+    font-size: 10px; color: rgba(255,255,255,0.7);
+    letter-spacing: 0.04em;
+  }
+  .hero-verified {
+    position: absolute; bottom: 16px; right: 16px;
+    display: flex; align-items: center; gap: 4px;
+    background: rgba(0,208,132,0.15);
+    border: 1px solid rgba(0,208,132,0.4);
+    padding: 4px 10px; border-radius: 100px;
+    font-size: 10px; font-weight: 600;
+    color: var(--live); letter-spacing: 0.06em;
+    text-transform: uppercase;
   }
 
-  /* Main content */
-  .content { padding: 0 0 100px; }
+  /* ─── Content ─── */
+  .content { padding-bottom: 100px; }
 
-  .info-block {
-    background: white; padding: 18px 16px;
-    border-bottom: 8px solid #f7f5f0;
+  .block {
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-100);
+    padding: 24px;
   }
 
-  .restaurant-name { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
-  .restaurant-sub { font-size: 13px; color: #888; margin-bottom: 14px; }
+  .block-label {
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--gray-400); margin-bottom: 16px;
+  }
 
-  /* Status row */
-  .status-row {
-    display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px;
+  /* ─── Name Block ─── */
+  .rest-name {
+    font-size: 24px; font-weight: 700;
+    letter-spacing: -0.02em; margin-bottom: 4px;
   }
-  .tag {
-    padding: 5px 12px; border-radius: 20px;
-    font-size: 12px; font-weight: 600;
+  .rest-sub {
+    font-size: 13px; color: var(--gray-400); margin-bottom: 20px;
   }
-  .tag-open { background: #dcfce7; color: #16a34a; }
-  .tag-crowd { background: #fef9c3; color: #b45309; }
-  .tag-lo { background: #ede9fe; color: #7c3aed; }
-  .tag-updated { background: #f0f9ff; color: #0369a1; }
 
-  /* Crowd visualizer */
-  .crowd-section {
-    background: #f8f8f8; border-radius: 12px; padding: 12px 14px; margin-bottom: 14px;
+  /* Live Status Tags */
+  .status-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  .status-tag {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 5px 12px; border-radius: 100px;
+    font-size: 12px; font-weight: 500;
   }
-  .crowd-title { font-size: 12px; color: #888; margin-bottom: 8px; display: flex; justify-content: space-between; }
-  .crowd-title span { font-weight: 700; color: #1a1a1a; }
-  .crowd-hours { display: flex; gap: 3px; align-items: flex-end; height: 36px; }
-  .hour-bar {
+  .tag-open { background: var(--live-dim); color: #009660; }
+  .tag-busy { background: rgba(255,195,0,0.1); color: #B38600; }
+  .tag-updated { background: var(--gray-100); color: var(--gray-600); }
+
+  /* Crowd Chart */
+  .crowd-chart {
+    background: var(--gray-100); border-radius: 12px;
+    padding: 16px;
+  }
+  .crowd-chart-header {
+    display: flex; justify-content: space-between;
+    align-items: baseline; margin-bottom: 12px;
+  }
+  .crowd-chart-title {
+    font-size: 12px; font-weight: 500; color: var(--gray-600);
+  }
+  .crowd-chart-now {
+    font-size: 11px; font-weight: 600; color: var(--black);
+    letter-spacing: 0.04em;
+  }
+  .bars { display: flex; align-items: flex-end; gap: 3px; height: 40px; }
+  .bar {
     flex: 1; border-radius: 3px 3px 0 0; min-width: 0;
     transition: height 0.3s;
   }
-  .hour-labels {
-    display: flex; gap: 3px; margin-top: 4px;
+  .bar.now { outline: 2px solid var(--black); outline-offset: 1px; }
+  .bar-labels {
+    display: flex; gap: 3px; margin-top: 6px;
   }
-  .hour-label { flex: 1; font-size: 8px; color: #bbb; text-align: center; }
-  .hour-now { color: #e8451a !important; font-weight: 700; }
+  .bar-label {
+    flex: 1; font-size: 8px; color: var(--gray-400);
+    text-align: center; letter-spacing: 0.02em;
+  }
+  .bar-label.now { color: var(--black); font-weight: 700; }
 
-  /* Multi-score */
-  .score-section { margin-bottom: 4px; }
-  .score-title { font-size: 13px; font-weight: 700; margin-bottom: 10px; color: #555; }
-  .score-grid { display: flex; flex-direction: column; gap: 8px; }
+  /* ─── Multi-Score ─── */
+  .scores-table { display: flex; flex-direction: column; gap: 10px; }
   .score-row {
-    display: flex; align-items: center; gap: 10px;
+    display: flex; align-items: center; gap: 12px;
   }
-  .score-source { font-size: 12px; color: #888; width: 80px; flex-shrink: 0; }
-  .score-bar-wrap { flex: 1; background: #f0f0f0; border-radius: 4px; height: 8px; overflow: hidden; }
-  .score-bar { height: 100%; border-radius: 4px; }
-  .score-val { font-size: 13px; font-weight: 700; width: 32px; text-align: right; }
-  .score-count { font-size: 10px; color: #bbb; width: 48px; }
+  .score-src {
+    font-size: 12px; color: var(--gray-400); width: 90px; flex-shrink: 0;
+    font-weight: 400;
+  }
+  .score-track {
+    flex: 1; height: 4px; background: var(--gray-200); border-radius: 2px;
+    overflow: hidden;
+  }
+  .score-fill { height: 100%; border-radius: 2px; }
+  .score-val {
+    font-size: 13px; font-weight: 700;
+    min-width: 28px; text-align: right;
+  }
+  .score-count { font-size: 10px; color: var(--gray-400); min-width: 44px; }
 
-  .score-avg {
-    margin-top: 12px;
-    background: #fff8f2;
-    border: 1.5px solid #fcd5b8;
-    border-radius: 12px;
-    padding: 10px 14px;
+  .score-avg-card {
+    margin-top: 16px; padding: 16px;
+    border: 1px solid var(--gray-200); border-radius: 12px;
     display: flex; align-items: center; justify-content: space-between;
   }
-  .avg-label { font-size: 12px; color: #888; }
-  .avg-val { font-size: 24px; font-weight: 800; color: #e8451a; }
-  .avg-stars { font-size: 14px; color: #f59e0b; }
+  .avg-left {}
+  .avg-label { font-size: 11px; color: var(--gray-400); margin-bottom: 4px; }
+  .avg-stars { font-size: 16px; color: #FFB800; letter-spacing: 2px; }
+  .avg-val { font-size: 36px; font-weight: 300; letter-spacing: -0.04em; }
 
-  .score-alert {
-    margin-top: 8px;
-    background: #fffbeb;
-    border: 1px solid #fde68a;
-    border-radius: 8px;
-    padding: 8px 12px;
-    font-size: 11px;
-    color: #92400e;
-    display: flex; gap: 6px; align-items: flex-start;
-  }
-
-  /* Daily menu */
-  .daily-section {
-    background: #fff8f0;
+  /* AI Summary */
+  .ai-summary {
+    margin-top: 16px; padding: 14px 16px;
+    background: var(--ai-dim);
     border-radius: 12px;
-    padding: 14px;
-    margin-bottom: 4px;
+    border: 1px solid rgba(0,102,255,0.1);
   }
-  .daily-header {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 10px;
+  .ai-summary-header {
+    display: flex; align-items: center; gap: 6px; margin-bottom: 10px;
   }
-  .daily-header .title { font-size: 14px; font-weight: 700; }
-  .daily-header .updated { font-size: 10px; color: #e8451a; }
+  .ai-icon {
+    font-size: 10px; font-weight: 700;
+    background: var(--ai); color: var(--white);
+    padding: 2px 6px; border-radius: 4px;
+    letter-spacing: 0.06em;
+  }
+  .ai-summary-title {
+    font-size: 11px; font-weight: 600; color: var(--ai);
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .ai-summary-items { display: flex; flex-direction: column; gap: 6px; }
+  .ai-summary-item {
+    display: flex; gap: 8px; font-size: 12px; color: var(--gray-600);
+  }
+  .ai-summary-flag { flex-shrink: 0; }
+
+  /* ─── Menu Block ─── */
+  .menu-tabs {
+    display: flex; gap: 0; margin-bottom: 20px;
+    border-bottom: 1px solid var(--gray-200);
+  }
+  .menu-tab {
+    padding: 8px 16px; font-size: 13px; font-weight: 400;
+    color: var(--gray-400); cursor: pointer;
+    border-bottom: 2px solid transparent; margin-bottom: -1px;
+    transition: all 0.15s; font-family: inherit; background: none; border-top: none; border-left: none; border-right: none;
+  }
+  .menu-tab.active { color: var(--black); font-weight: 600; border-bottom-color: var(--black); }
+
+  .menu-items { display: flex; flex-direction: column; }
   .menu-item {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 8px 0;
-    border-bottom: 1px dashed #fde8d0;
+    display: flex; justify-content: space-between;
+    align-items: flex-start; padding: 12px 0;
+    border-bottom: 1px solid var(--gray-100);
   }
   .menu-item:last-child { border-bottom: none; }
-  .menu-name { font-size: 13px; color: #333; }
-  .menu-price { font-size: 14px; font-weight: 700; color: #e8451a; }
+  .menu-name { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+  .menu-desc { font-size: 12px; color: var(--gray-400); }
+  .menu-price { font-size: 14px; font-weight: 600; flex-shrink: 0; margin-left: 12px; }
 
-  /* Info details */
-  .detail-list { }
-  .detail-row {
-    display: flex; gap: 12px; padding: 10px 0;
-    border-bottom: 1px solid #f0f0f0; align-items: flex-start;
-  }
-  .detail-row:last-child { border-bottom: none; }
-  .detail-icon { font-size: 16px; width: 24px; flex-shrink: 0; }
-  .detail-text { font-size: 13px; color: #333; line-height: 1.5; }
-  .detail-text .label { font-size: 11px; color: #aaa; display: block; margin-bottom: 1px; }
-
-  /* Report */
-  .report-section {
-    background: white;
-    padding: 18px 16px;
-    border-bottom: 8px solid #f7f5f0;
-  }
-  .report-title { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
-  .report-row { display: flex; gap: 10px; }
-  .report-btn {
-    flex: 1; padding: 12px; border-radius: 12px; border: none;
-    font-size: 13px; font-weight: 600; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-  }
-  .report-open { background: #dcfce7; color: #16a34a; }
-  .report-closed { background: #fee2e2; color: #dc2626; }
-
-  /* Pointing card */
-  .point-section {
-    background: white;
-    padding: 18px 16px;
-    border-bottom: 8px solid #f7f5f0;
-  }
-  .point-title { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
-  .point-options { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
-  .point-tag {
-    padding: 6px 14px; border-radius: 20px;
-    background: #f5f5f5; font-size: 12px; cursor: pointer;
-    border: 2px solid transparent;
-  }
-  .point-tag.selected { background: #fff0eb; border-color: #e8451a; color: #e8451a; }
-  .point-preview {
-    background: #1a1a2e; color: white;
-    border-radius: 12px; padding: 16px;
+  .menu-cta {
+    margin-top: 16px; padding-top: 16px;
+    border-top: 1px solid var(--gray-100);
     text-align: center;
   }
-  .point-jp { font-size: 13px; color: rgba(255,255,255,0.6); margin-bottom: 8px; }
-  .point-th { font-size: 20px; font-weight: 700; line-height: 1.5; }
-
-  /* Review filter */
-  .review-section {
-    background: white;
-    padding: 18px 16px;
+  .menu-cta a {
+    font-size: 13px; color: var(--ai);
+    text-decoration: none; font-weight: 500;
+    letter-spacing: 0.02em;
   }
-  .review-title { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
-  .review-filters { display: flex; gap: 8px; margin-bottom: 14px; overflow-x: auto; }
+
+  /* ─── Info Block ─── */
+  .info-list { display: flex; flex-direction: column; }
+  .info-row {
+    display: flex; gap: 16px; padding: 12px 0;
+    border-bottom: 1px solid var(--gray-100);
+    align-items: flex-start;
+  }
+  .info-row:last-child { border-bottom: none; }
+  .info-key {
+    font-size: 11px; font-weight: 600; color: var(--gray-400);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    min-width: 72px; flex-shrink: 0; padding-top: 1px;
+  }
+  .info-val { font-size: 13px; color: var(--black); line-height: 1.6; }
+  .verified-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    color: #009660; font-weight: 600;
+  }
+
+  /* ─── Report Block ─── */
+  .report-title { font-size: 13px; font-weight: 500; margin-bottom: 12px; }
+  .report-btns { display: flex; gap: 10px; }
+  .report-btn {
+    flex: 1; padding: 11px;
+    border-radius: 10px; border: 1px solid var(--gray-200);
+    font-size: 13px; font-weight: 500; font-family: inherit;
+    cursor: pointer; transition: all 0.15s; background: var(--white);
+  }
+  .report-btn:hover { background: var(--gray-100); }
+  .report-btn.open:hover { border-color: var(--live); color: #009660; }
+  .report-btn.closed:hover { border-color: #FF3B30; color: #FF3B30; }
+
+  /* ─── Pointing Card ─── */
+  .point-options { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .point-opt {
+    padding: 7px 14px; border-radius: 100px;
+    border: 1px solid var(--gray-200);
+    font-size: 12px; color: var(--gray-600);
+    cursor: pointer; font-family: inherit; background: none;
+    transition: all 0.15s;
+  }
+  .point-opt.active {
+    border-color: var(--black); color: var(--black);
+    background: var(--black); color: var(--white);
+  }
+  .point-display {
+    background: var(--black); color: var(--white);
+    border-radius: 12px; padding: 20px;
+    text-align: center;
+  }
+  .point-ja { font-size: 12px; color: rgba(255,255,255,0.5); margin-bottom: 10px; }
+  .point-th { font-size: 22px; font-weight: 600; line-height: 1.5; }
+
+  /* ─── Reviews ─── */
+  .review-filters {
+    display: flex; gap: 8px; overflow-x: auto;
+    padding-bottom: 2px; margin-bottom: 16px;
+    scrollbar-width: none;
+  }
+  .review-filters::-webkit-scrollbar { display: none; }
   .rf-btn {
-    padding: 6px 14px; border-radius: 20px; border: 1.5px solid #eee;
-    font-size: 12px; background: white; cursor: pointer; white-space: nowrap; flex-shrink: 0;
+    flex-shrink: 0; padding: 6px 14px;
+    border: 1px solid var(--gray-200); border-radius: 100px;
+    font-size: 12px; color: var(--gray-600);
+    background: var(--white); cursor: pointer;
+    font-family: inherit; transition: all 0.15s;
+    white-space: nowrap;
   }
-  .rf-btn.active { background: #1a1a2e; color: white; border-color: #1a1a2e; }
-  .review-card {
-    background: #f8f8f8; border-radius: 12px; padding: 12px 14px; margin-bottom: 8px;
-  }
-  .review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-  .reviewer { font-size: 12px; font-weight: 700; }
-  .review-meta { font-size: 10px; color: #aaa; }
-  .review-text { font-size: 12px; color: #555; line-height: 1.6; }
-  .review-stars { color: #f59e0b; font-size: 12px; }
+  .rf-btn.active { background: var(--black); color: var(--white); border-color: var(--black); }
 
-  /* Bottom CTA */
+  .review-card {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .review-card:last-child { border-bottom: none; }
+  .review-header {
+    display: flex; justify-content: space-between;
+    align-items: flex-start; margin-bottom: 8px;
+  }
+  .reviewer { font-size: 13px; font-weight: 600; }
+  .review-meta { font-size: 11px; color: var(--gray-400); }
+  .review-stars { font-size: 12px; color: #FFB800; margin-top: 2px; }
+  .review-text { font-size: 13px; color: var(--gray-600); line-height: 1.7; }
+  .review-source {
+    display: inline-block; margin-top: 8px;
+    font-size: 10px; color: var(--gray-400); font-weight: 500;
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+
+  /* ─── Bottom CTA ─── */
   .bottom-cta {
     position: fixed; bottom: 0; left: 0; right: 0;
-    background: white;
+    background: rgba(248,248,246,0.97);
+    backdrop-filter: blur(16px);
+    border-top: 1px solid var(--gray-200);
     padding: 12px 16px 28px;
-    border-top: 1px solid #eee;
-    display: flex; gap: 10px;
   }
-  .cta-map {
-    flex: 0 0 48px; height: 48px; border-radius: 12px;
-    background: #f0f0f0; display: flex; align-items: center; justify-content: center;
-    font-size: 20px; cursor: pointer;
+  .cta-main { display: flex; gap: 10px; }
+  .cta-icon-btn {
+    width: 48px; height: 48px; border-radius: 12px;
+    background: var(--gray-100); border: 1px solid var(--gray-200);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; cursor: pointer; flex-shrink: 0;
+    transition: background 0.15s;
   }
-  .cta-buttons { display: flex; gap: 10px; flex: 1; }
-  .cta-point {
-    flex: 1; height: 48px; border-radius: 12px;
-    background: #e8451a; color: white;
-    border: none; font-size: 15px; font-weight: 700;
-    cursor: pointer;
-  }
+  .cta-icon-btn:hover { background: var(--gray-200); }
   .cta-reserve {
     flex: 1; height: 48px; border-radius: 12px;
-    background: #1a1a2e; color: white;
-    border: none; font-size: 15px; font-weight: 700;
-    cursor: pointer;
+    background: var(--black); color: var(--white);
+    border: none; font-size: 15px; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+    letter-spacing: 0.02em; transition: opacity 0.15s;
   }
-  .cta-fav {
-    flex: 0 0 48px; height: 48px; border-radius: 12px;
-    background: #f0f0f0; display: flex; align-items: center; justify-content: center;
-    font-size: 20px; cursor: pointer;
+  .cta-reserve:hover { opacity: 0.85; }
+  .cta-point {
+    flex: 1; height: 48px; border-radius: 12px;
+    background: var(--white); color: var(--black);
+    border: 1px solid var(--gray-200);
+    font-size: 14px; font-weight: 500;
+    cursor: pointer; font-family: inherit; transition: all 0.15s;
   }
+  .cta-point:hover { background: var(--gray-100); }
 </style>
 </head>
 <body>
 
-<script>
-  let currentLang = 'ja';
-
-  const translations = {
-    'restaurant-name': { ja: '鮨 さいとう トンロー店', en: 'Saitou Sushi Thonglor', th: 'ซูชิ ไซโต้ ทองหล่อ' },
-    'restaurant-sub': { ja: '和食・寿司 · トンロー · ¥¥¥', en: 'Japanese · Sushi · Thonglor · ¥¥¥', th: 'ญี่ปุ่น · ซูชิ · ทองหล่อ · ¥¥¥' },
-    'open': { ja: '営業中', en: 'Open', th: 'เปิดแล้ว' },
-    'slightly-crowded': { ja: 'やや混雑', en: 'Slightly Crowded', th: 'ค่อนข้างแออัด' },
-    'updated': { ja: '分前更新', en: 'min ago', th: 'นาทีที่แล้ว' },
-    'hours': { ja: '営業時間', en: 'Hours', th: 'เวลาเปิด' },
-    'address': { ja: '住所', en: 'Address', th: 'ที่อยู่' },
-    'access': { ja: 'アクセス', en: 'Access', th: 'การเดินทาง' },
-    'status': { ja: '確認状況', en: 'Verification', th: 'สถานะการยืนยัน' },
-    'verified': { ja: 'オーナー確認済み', en: 'Owner Verified', th: 'ยืนยันโดยเจ้าของ' },
-    'today-menu': { ja: '本日のメニュー', en: "Today's Menu", th: "เมนูของวันนี้" },
-    'peoples-voice': { ja: 'みんなの声', en: "People's Reviews", th: 'ความเห็นของทุกคน' },
-    'point-card': { ja: '指差し注文カード', en: 'Pointing Card', th: 'การ์ดชี้' },
-    'report': { ja: '今日の営業状況を報告する', en: 'Report Today Status', th: 'รายงานสถานะของวันนี้' },
-    'open-status': { ja: '営業してた', en: 'Was Open', th: 'เปิดแล้ว' },
-    'closed-status': { ja: '閉まってた', en: 'Was Closed', th: 'ปิด' },
-    'menu-link': { ja: 'メニュー詳細', en: 'View Menu', th: 'ดูเมนูเต็ม' },
-    'reserve': { ja: '予約', en: 'Reserve', th: 'จองโต๊ะ' },
-    'pointing': { ja: '指差し注文', en: 'Point & Order', th: 'ชี้เพื่อสั่ง' }
-  };
-
-  function switchLang(lang) {
-    currentLang = lang;
-    document.querySelectorAll('[data-ja]').forEach(el => {
-      el.textContent = el.dataset[lang] || el.dataset.ja;
-    });
-    document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelector(`button[onclick="switchLang('${lang}')"]`).classList.add('active');
-    localStorage.setItem('jeeb-lang', lang);
-  }
-
-  window.addEventListener('load', () => {
-    const saved = localStorage.getItem('jeeb-lang') || 'ja';
-    if(saved !== 'ja') switchLang(saved);
-  });
-</script>
-
-
-<!-- Top bar -->
 <div class="top-bar">
   <a href="index.html" class="back-btn">←</a>
-  <div class="top-title" data-ja="鮨 さいとう トンロー店" data-en="Saitou Sushi Thonglor" data-th="ซูชิ ไซโต้ ทองหล่อ">鮨 さいとう トンロー店</div>
-  <div style="display: flex; gap: 4px; align-items: center;">
-    <div class="lang-buttons">
-      <button class="lang-btn active" onclick="switchLang('ja')">JP</button>
-      <button class="lang-btn" onclick="switchLang('en')">EN</button>
-      <button class="lang-btn" onclick="switchLang('th')">TH</button>
-    </div>
-    <div class="share-btn">⬆</div>
+  <div class="lang-group">
+    <button class="lang-btn active" onclick="switchLang('ja', this)">JP</button>
+    <button class="lang-btn" onclick="switchLang('en', this)">EN</button>
+    <button class="lang-btn" onclick="switchLang('th', this)">TH</button>
   </div>
 </div>
 
 <!-- Hero -->
 <div class="hero-img">
-  <div style="width:100%;height:100%;background:linear-gradient(160deg,#0d0d0d 0%,#2c1810 30%,#8b4513 60%,#d4956a 85%,#f5e6d0 100%);display:flex;align-items:center;justify-content:center;gap:20px;">
-    <span style="font-size:64px;filter:drop-shadow(0 6px 12px rgba(0,0,0,0.6));">🍣</span>
-    <span style="font-size:48px;filter:drop-shadow(0 6px 12px rgba(0,0,0,0.5));">🍱</span>
-    <span style="font-size:56px;filter:drop-shadow(0 6px 12px rgba(0,0,0,0.5));">🫙</span>
+  <div class="emoji-group">🍣</div>
+  <div class="emoji-group" style="font-size:44px;opacity:0.7;">🍱</div>
+  <div class="hero-overlay"></div>
+  <div class="hero-status">
+    <div class="status-pill">
+      <div class="status-dot green"></div>
+      <span data-ja="営業中 · 22:00まで" data-en="Open · Until 22:00" data-th="เปิดแล้ว · ถึง 22:00">営業中 · 22:00まで</span>
+    </div>
+    <div class="last-check" data-ja="最終確認 本日 14:32" data-en="Verified Today 14:32" data-th="ยืนยันแล้ว 14:32">最終確認 本日 14:32</div>
   </div>
-  <div class="img-overlay"></div>
-  <div class="status-pill">
-    <div class="dot-green"></div>
-    営業中 · 22:00まで
-  </div>
-  <div class="last-check">最終確認 本日 14:32</div>
+  <div class="hero-verified">✓ <span data-ja="オーナー確認済み" data-en="Owner Verified" data-th="เจ้าของยืนยัน">オーナー確認済み</span></div>
 </div>
 
 <div class="content">
 
-  <!-- Basic info -->
-  <div class="info-block">
-    <div class="restaurant-name" data-ja="鮨 さいとう トンロー店" data-en="Saitou Sushi Thonglor" data-th="ซูชิ ไซโต้ ทองหล่อ">鮨 さいとう トンロー店</div>
-    <div class="restaurant-sub" data-ja="和食・寿司 · トンロー · ¥¥¥" data-en="Japanese · Sushi · Thonglor · ¥¥¥" data-th="ญี่ปุ่น · ซูชิ · ทองหล่อ · ¥¥¥">和食・寿司 · トンロー · ¥¥¥</div>
+  <!-- Name + Status -->
+  <div class="block">
+    <div class="rest-name" data-ja="鮨 さいとう トンロー店" data-en="Saitou Sushi Thonglor" data-th="ซูชิ ไซโต้ ทองหล่อ">鮨 さいとう トンロー店</div>
+    <div class="rest-sub" data-ja="和食・寿司 · Thonglor · ¥¥¥" data-en="Japanese · Sushi · Thonglor · ¥¥¥" data-th="ญี่ปุ่น · ซูชิ · ทองหล่อ · ¥¥¥">和食・寿司 · Thonglor · ¥¥¥</div>
 
-    <div class="status-row">
-      <span class="tag tag-open"><span data-ja="🟢 営業中" data-en="🟢 Open" data-th="🟢 เปิดแล้ว">🟢 営業中</span></span>
-      <span class="tag tag-crowd"><span data-ja="🟡 やや混雑" data-en="🟡 Slightly Crowded" data-th="🟡 ค่อนข้างแออัด">🟡 やや混雑</span></span>
-      <span class="tag tag-updated"><span data-ja="🕐 2分前更新" data-en="🕐 Updated 2 min ago" data-th="🕐 อัปเดต 2 นาทีที่แล้ว">🕐 2分前更新</span></span>
+    <div class="status-tags">
+      <span class="status-tag tag-open">
+        <span style="width:6px;height:6px;background:#00D084;border-radius:50%;"></span>
+        <span data-ja="営業中" data-en="Open Now" data-th="เปิดแล้ว">営業中</span>
+      </span>
+      <span class="status-tag tag-busy">
+        <span data-ja="やや混雑" data-en="Slightly Busy" data-th="ค่อนข้างแออัด">やや混雑</span>
+      </span>
+      <span class="status-tag tag-updated">
+        <span data-ja="🕐 2分前更新" data-en="🕐 Updated 2 min ago" data-th="🕐 อัปเดต 2 นาทีที่แล้ว">🕐 2分前更新</span>
+      </span>
     </div>
 
-    <!-- Crowd chart -->
-    <div class="crowd-section">
-      <div class="crowd-title">今日の混雑予測 <span>現在 19:00</span></div>
-      <div class="crowd-hours">
-        <div class="hour-bar" style="height:15%;background:#4ade80"></div>
-        <div class="hour-bar" style="height:20%;background:#4ade80"></div>
-        <div class="hour-bar" style="height:30%;background:#4ade80"></div>
-        <div class="hour-bar" style="height:55%;background:#f59e0b"></div>
-        <div class="hour-bar" style="height:80%;background:#f59e0b"></div>
-        <div class="hour-bar" style="height:95%;background:#ef4444"></div>
-        <div class="hour-bar" style="height:90%;background:#ef4444;border:2px solid #e8451a"></div>
-        <div class="hour-bar" style="height:70%;background:#f59e0b"></div>
-        <div class="hour-bar" style="height:45%;background:#4ade80"></div>
-        <div class="hour-bar" style="height:20%;background:#4ade80"></div>
-        <div class="hour-bar" style="height:10%;background:#4ade80"></div>
+    <!-- Crowd Chart -->
+    <div class="crowd-chart">
+      <div class="crowd-chart-header">
+        <span class="crowd-chart-title" data-ja="今日の混雑予測" data-en="Today's Crowd Forecast" data-th="การคาดการณ์ความแออัดวันนี้">今日の混雑予測</span>
+        <span class="crowd-chart-now">現在 19:00</span>
       </div>
-      <div class="hour-labels">
-        <div class="hour-label">11</div>
-        <div class="hour-label">12</div>
-        <div class="hour-label">13</div>
-        <div class="hour-label">14</div>
-        <div class="hour-label">16</div>
-        <div class="hour-label">18</div>
-        <div class="hour-label hour-now">19▲</div>
-        <div class="hour-label">20</div>
-        <div class="hour-label">21</div>
-        <div class="hour-label">22</div>
-        <div class="hour-label">23</div>
+      <div class="bars">
+        <div class="bar" style="height:15%;background:#C8E6C9;"></div>
+        <div class="bar" style="height:22%;background:#C8E6C9;"></div>
+        <div class="bar" style="height:35%;background:#C8E6C9;"></div>
+        <div class="bar" style="height:58%;background:#FFE0B2;"></div>
+        <div class="bar" style="height:80%;background:#FFE0B2;"></div>
+        <div class="bar" style="height:95%;background:#FFCDD2;"></div>
+        <div class="bar now" style="height:88%;background:#FFCDD2;"></div>
+        <div class="bar" style="height:68%;background:#FFE0B2;"></div>
+        <div class="bar" style="height:42%;background:#C8E6C9;"></div>
+        <div class="bar" style="height:20%;background:#C8E6C9;"></div>
+        <div class="bar" style="height:10%;background:#C8E6C9;"></div>
+      </div>
+      <div class="bar-labels">
+        <span class="bar-label">11</span>
+        <span class="bar-label">12</span>
+        <span class="bar-label">13</span>
+        <span class="bar-label">14</span>
+        <span class="bar-label">16</span>
+        <span class="bar-label">18</span>
+        <span class="bar-label now">19▲</span>
+        <span class="bar-label">20</span>
+        <span class="bar-label">21</span>
+        <span class="bar-label">22</span>
+        <span class="bar-label">23</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Multi-Score + AI -->
+  <div class="block">
+    <div class="block-label" data-ja="マルチソース評価" data-en="Multi-Source Ratings" data-th="การจัดอันดับจากหลายแหล่ง">マルチソース評価</div>
+
+    <div class="scores-table">
+      <div class="score-row">
+        <span class="score-src">Google</span>
+        <div class="score-track"><div class="score-fill" style="width:92%;background:#4285F4;"></div></div>
+        <span class="score-val" style="color:#4285F4;">4.6</span>
+        <span class="score-count">2,847</span>
+      </div>
+      <div class="score-row">
+        <span class="score-src">TripAdvisor</span>
+        <div class="score-track"><div class="score-fill" style="width:86%;background:#00AA6C;"></div></div>
+        <span class="score-val" style="color:#00AA6C;">4.3</span>
+        <span class="score-count">312</span>
+      </div>
+      <div class="score-row">
+        <span class="score-src">Wongnai</span>
+        <div class="score-track"><div class="score-fill" style="width:90%;background:#FF6B35;"></div></div>
+        <span class="score-val" style="color:#FF6B35;">4.5</span>
+        <span class="score-count">891</span>
+      </div>
+      <div class="score-row">
+        <span class="score-src">Grab</span>
+        <div class="score-track"><div class="score-fill" style="width:94%;background:#00B14F;"></div></div>
+        <span class="score-val" style="color:#00B14F;">4.7</span>
+        <span class="score-count">1,204</span>
       </div>
     </div>
 
-    <!-- Multi-score -->
-    <div class="score-section">
-      <div class="score-title" data-ja="マルチソース評価" data-en="Multi-Source Ratings" data-th="การจัดอันดับจากแหล่งต่าง ๆ">マルチソース評価</div>
-      <div class="score-grid">
-        <div class="score-row">
-          <div class="score-source">🌐 Google</div>
-          <div class="score-bar-wrap"><div class="score-bar" style="width:92%;background:#4285f4"></div></div>
-          <div class="score-val" style="color:#4285f4">4.6</div>
-          <div class="score-count">2,847件</div>
+    <div class="score-avg-card">
+      <div class="avg-left">
+        <div class="avg-label" data-ja="総合平均" data-en="Overall Average" data-th="เฉลี่ยรวม">総合平均</div>
+        <div class="avg-stars">★★★★★</div>
+      </div>
+      <div class="avg-val">4.5</div>
+    </div>
+
+    <!-- AI Summary -->
+    <div class="ai-summary">
+      <div class="ai-summary-header">
+        <span class="ai-icon">AI</span>
+        <span class="ai-summary-title" data-ja="レビュー分析サマリー" data-en="Review Analysis" data-th="สรุปการวิเคราะห์">レビュー分析サマリー</span>
+      </div>
+      <div class="ai-summary-items">
+        <div class="ai-summary-item">
+          <span class="ai-summary-flag">🇯🇵</span>
+          <span data-ja="日本人：「本場に近い味と技術。バンコクでここまでのクオリティは稀」" data-en="Japanese: 'Closest to authentic quality in Bangkok. Rare find.'" data-th="ชาวญี่ปุ่น: 'รสชาติใกล้เคียงของแท้มากที่สุดในกรุงเทพ'">日本人：「本場に近い味と技術。バンコクでここまでのクオリティは稀」</span>
         </div>
-        <div class="score-row">
-          <div class="score-source">✈ TripAdvisor</div>
-          <div class="score-bar-wrap"><div class="score-bar" style="width:86%;background:#00aa6c"></div></div>
-          <div class="score-val" style="color:#00aa6c">4.3</div>
-          <div class="score-count">312件</div>
+        <div class="ai-summary-item">
+          <span class="ai-summary-flag">🇹🇭</span>
+          <span data-ja="タイ人：「映える盛り付け。接待・記念日利用が多い」" data-en="Thais: 'Photogenic presentation. Popular for business dinners & anniversaries.'" data-th="ชาวไทย: 'จัดจานสวยงาม เหมาะสำหรับงานเลี้ยงและวันพิเศษ'">タイ人：「映える盛り付け。接待・記念日利用が多い」</span>
         </div>
-        <div class="score-row">
-          <div class="score-source">🇹🇭 Wongnai</div>
-          <div class="score-bar-wrap"><div class="score-bar" style="width:90%;background:#ff6b35"></div></div>
-          <div class="score-val" style="color:#ff6b35">4.5</div>
-          <div class="score-count">891件</div>
-        </div>
-        <div class="score-row">
-          <div class="score-source">🚗 Grab</div>
-          <div class="score-bar-wrap"><div class="score-bar" style="width:94%;background:#00b14f"></div></div>
-          <div class="score-val" style="color:#00b14f">4.7</div>
-          <div class="score-count">1,204件</div>
+        <div class="ai-summary-item">
+          <span class="ai-summary-flag">🌍</span>
+          <span data-ja="欧米人：「最高の日本食体験。サービスが丁寧」" data-en="Western: 'Top Japanese dining experience. Excellent service.'" data-th="ชาวตะวันตก: 'ประสบการณ์อาหารญี่ปุ่นยอดเยี่ยม บริการดีมาก'">欧米人：「最高の日本食体験。サービスが丁寧」</span>
         </div>
       </div>
-      <div class="score-avg">
+    </div>
+  </div>
+
+  <!-- Menu -->
+  <div class="block">
+    <div class="block-label" data-ja="本日のメニュー" data-en="Today's Menu" data-th="เมนูของวันนี้">本日のメニュー</div>
+
+    <div class="menu-tabs">
+      <button class="menu-tab active" data-ja="本日" data-en="Today" data-th="วันนี้">本日</button>
+      <button class="menu-tab" data-ja="にぎり" data-en="Nigiri" data-th="นิกิริ">にぎり</button>
+      <button class="menu-tab" data-ja="セット" data-en="Set" data-th="เซ็ต">セット</button>
+      <button class="menu-tab" data-ja="ドリンク" data-en="Drinks" data-th="เครื่องดื่ม">ドリンク</button>
+    </div>
+
+    <div class="menu-items">
+      <div class="menu-item">
         <div>
-          <div class="avg-label" data-ja="総合平均" data-en="Average" data-th="เฉลี่ยรวม">総合平均</div>
-          <div class="avg-stars">★★★★★</div>
+          <div class="menu-name" data-ja="大トロ入り特上にぎり" data-en="Premium Nigiri w/ Otoro" data-th="นิกิริพรีเมียมพร้อมโอโทโร่">大トロ入り特上にぎり</div>
+          <div class="menu-desc" data-ja="12貫 · 本日限定" data-en="12 pieces · Today only" data-th="12 ชิ้น · วันนี้เท่านั้น">12貫 · 本日限定</div>
         </div>
-        <div class="avg-val">4.5</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Daily menu -->
-  <div class="info-block">
-    <div class="daily-section">
-      <div class="daily-header">
-        <div class="title" data-ja="🍱 本日のメニュー" data-en="🍱 Today's Menu" data-th="🍱 เมนูของวันนี้">🍱 本日のメニュー</div>
-        <div class="updated" data-ja="🕐 1時間前に更新" data-en="🕐 Updated 1h ago" data-th="🕐 อัปเดต 1 ชั่วโมงที่แล้ว">🕐 1時間前に更新</div>
+        <div class="menu-price">1,800฿</div>
       </div>
       <div class="menu-item">
-        <span class="menu-name">大トロ入り特上にぎり</span>
-        <span class="menu-price">1,800฿</span>
+        <div>
+          <div class="menu-name" data-ja="ランチにぎりセット" data-en="Lunch Nigiri Set" data-th="ชุดนิกิริกลางวัน">ランチにぎりセット</div>
+          <div class="menu-desc" data-ja="11品 · 11:30〜14:00" data-en="11 pcs · 11:30–14:00" data-th="11 ชิ้น · 11:30–14:00">11品 · 11:30〜14:00</div>
+        </div>
+        <div class="menu-price">890฿</div>
       </div>
       <div class="menu-item">
-        <span class="menu-name">ランチにぎりセット（11品）</span>
-        <span class="menu-price">890฿</span>
+        <div>
+          <div class="menu-name" data-ja="本日の一品" data-en="Chef's Special" data-th="เมนูพิเศษวันนี้">本日の一品</div>
+          <div class="menu-desc" data-ja="サーモン刺身 · 数量限定" data-en="Salmon Sashimi · Limited" data-th="ซาชิมิแซลมอน · จำกัด">サーモン刺身 · 数量限定</div>
+        </div>
+        <div class="menu-price">450฿</div>
       </div>
-      <div class="menu-item">
-        <span class="menu-name">本日の一品：サーモン刺身</span>
-        <span class="menu-price">450฿</span>
+    </div>
+
+    <div class="menu-cta">
+      <a href="menu.html" data-ja="→ 全メニューを見る" data-en="→ Full Menu" data-th="→ ดูเมนูทั้งหมด">→ 全メニューを見る</a>
+    </div>
+  </div>
+
+  <!-- Store Info -->
+  <div class="block">
+    <div class="block-label" data-ja="店舗情報" data-en="Info" data-th="ข้อมูลร้าน">店舗情報</div>
+    <div class="info-list">
+      <div class="info-row">
+        <span class="info-key" data-ja="営業時間" data-en="Hours" data-th="เวลา">営業時間</span>
+        <span class="info-val" data-ja="月〜金 11:30〜14:00 / 17:30〜22:00&#10;土日祝 11:30〜22:00（通し）" data-en="Mon–Fri 11:30–14:00 / 17:30–22:00&#10;Sat–Sun 11:30–22:00" data-th="จ.–ศ. 11:30–14:00 / 17:30–22:00&#10;ส.–อา. 11:30–22:00">月〜金 11:30〜14:00 / 17:30〜22:00<br>土日祝 11:30〜22:00（通し）</span>
       </div>
-      <div style="text-align: center; padding: 12px 0; border-top: 1px solid #fde8d0;">
-        <a href="menu.html" style="color: #e8451a; font-weight: 700; text-decoration: none; font-size: 13px;">→ 全メニュー詳細を見る</a>
+      <div class="info-row">
+        <span class="info-key" data-ja="住所" data-en="Address" data-th="ที่อยู่">住所</span>
+        <span class="info-val">55/5 Sukhumvit Soi 55, Thonglor, Bangkok</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key" data-ja="アクセス" data-en="Access" data-th="การเดินทาง">アクセス</span>
+        <span class="info-val" data-ja="BTSトンロー駅 3番出口 徒歩3分" data-en="BTS Thonglor Exit 3 · 3 min walk" data-th="BTS ทองหล่อ ทางออก 3 · เดิน 3 นาที">BTSトンロー駅 3番出口 徒歩3分</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key" data-ja="認証" data-en="Status" data-th="สถานะ">認証</span>
+        <span class="info-val"><span class="verified-badge">✓ <span data-ja="オーナー確認済み · 2025年4月" data-en="Owner Verified · Apr 2025" data-th="เจ้าของยืนยัน · เม.ย. 2025">オーナー確認済み · 2025年4月</span></span></span>
       </div>
     </div>
   </div>
 
-  <!-- Store info -->
-  <div class="info-block">
-    <div class="detail-list">
-      <div class="detail-row">
-        <div class="detail-icon">🕐</div>
-        <div class="detail-text">
-          <span class="label">営業時間</span>
-          月〜金 11:30〜14:00 / 17:30〜22:00<br>
-          土日祝 11:30〜22:00（通し）
-        </div>
-      </div>
-      <div class="detail-row">
-        <div class="detail-icon">📍</div>
-        <div class="detail-text">
-          <span class="label">住所</span>
-          55/5 Sukhumvit Soi 55, Thonglor, Bangkok
-        </div>
-      </div>
-      <div class="detail-row">
-        <div class="detail-icon">🚇</div>
-        <div class="detail-text">
-          <span class="label">アクセス</span>
-          BTSトンロー駅 3番出口から徒歩3分
-        </div>
-      </div>
-      <div class="detail-row">
-        <div class="detail-icon">✅</div>
-        <div class="detail-text">
-          <span class="label">確認状況</span>
-          <span style="color:#16a34a;font-weight:700;">オーナー確認済み</span> · 2025年4月更新
-        </div>
-      </div>
+  <!-- Report -->
+  <div class="block">
+    <div class="report-title" data-ja="📣 今日の営業状況を報告" data-en="📣 Report Today's Status" data-th="📣 รายงานสถานะวันนี้">📣 今日の営業状況を報告</div>
+    <div class="report-btns">
+      <button class="report-btn open" data-ja="✓ 営業してた" data-en="✓ Was Open" data-th="✓ เปิดแล้ว">✓ 営業してた</button>
+      <button class="report-btn closed" data-ja="✕ 閉まってた" data-en="✕ Was Closed" data-th="✕ ปิด">✕ 閉まってた</button>
     </div>
   </div>
 
-  <!-- User report -->
-  <div class="report-section">
-    <div class="report-title" data-ja="📣 今日の営業状況を報告する" data-en="📣 Report Today's Status" data-th="📣 รายงานสถานะของวันนี้">📣 今日の営業状況を報告する</div>
-    <div class="report-row">
-      <button class="report-btn report-open" data-ja="✅ 営業してた" data-en="✅ Was Open" data-th="✅ เปิดแล้ว">✅ 営業してた</button>
-      <button class="report-btn report-closed" data-ja="❌ 閉まってた" data-en="❌ Was Closed" data-th="❌ ปิด">❌ 閉まってた</button>
-    </div>
-  </div>
-
-  <!-- Pointing card -->
-  <div class="point-section">
-    <div class="point-title" data-ja="👆 指差し注文カード" data-en="👆 Pointing Card" data-th="👆 การ์ดชี้">👆 指差し注文カード</div>
+  <!-- Pointing Card -->
+  <div class="block">
+    <div class="block-label" data-ja="指差し注文カード" data-en="Pointing Card" data-th="การ์ดชี้">指差し注文カード</div>
     <div class="point-options">
-      <div class="point-tag selected">辛さ控えめ</div>
-      <div class="point-tag">パクチー抜き</div>
-      <div class="point-tag">アレルギー：卵</div>
-      <div class="point-tag">テイクアウト</div>
+      <button class="point-opt active" data-ja="辛さ控えめ" data-en="Less Spicy" data-th="ไม่เผ็ด">辛さ控えめ</button>
+      <button class="point-opt" data-ja="パクチー抜き" data-en="No Coriander" data-th="ไม่ใส่ผักชี">パクチー抜き</button>
+      <button class="point-opt" data-ja="アレルギー：卵" data-en="Egg Allergy" data-th="แพ้ไข่">アレルギー：卵</button>
+      <button class="point-opt" data-ja="テイクアウト" data-en="Takeaway" data-th="กลับบ้าน">テイクアウト</button>
     </div>
-    <div class="point-preview">
-      <div class="point-jp">辛さ控えめでお願いします</div>
+    <div class="point-display">
+      <div class="point-ja">辛さ控えめでお願いします</div>
       <div class="point-th">ขอให้เผ็ดน้อยหน่อยนะครับ</div>
     </div>
   </div>
 
-  <!-- Review filter -->
-  <div class="review-section">
-    <div class="review-title" data-ja="💬 みんなの声" data-en="💬 Reviews" data-th="💬 ความเห็นของทุกคน">💬 みんなの声</div>
+  <!-- Reviews -->
+  <div class="block">
+    <div class="block-label" data-ja="みんなの声" data-en="Reviews" data-th="ความเห็น">みんなの声</div>
     <div class="review-filters">
-      <button class="rf-btn active">すべて</button>
-      <button class="rf-btn">🇯🇵 日本人</button>
-      <button class="rf-btn">🇹🇭 タイ人</button>
-      <button class="rf-btn">🌍 英語圏</button>
-      <button class="rf-btn">🇨🇳 中国語圏</button>
+      <button class="rf-btn active" data-ja="すべて" data-en="All" data-th="ทั้งหมด">すべて</button>
+      <button class="rf-btn" data-ja="🇯🇵 日本人" data-en="🇯🇵 Japanese" data-th="🇯🇵 ชาวญี่ปุ่น">🇯🇵 日本人</button>
+      <button class="rf-btn" data-ja="🇹🇭 タイ人" data-en="🇹🇭 Thai" data-th="🇹🇭 ชาวไทย">🇹🇭 タイ人</button>
+      <button class="rf-btn" data-ja="🌍 英語圏" data-en="🌍 English" data-th="🌍 ภาษาอังกฤษ">🌍 英語圏</button>
+      <button class="rf-btn" data-ja="🇨🇳 中国語圏" data-en="🇨🇳 Chinese" data-th="🇨🇳 ภาษาจีน">🇨🇳 中国語圏</button>
     </div>
+
     <div class="review-card">
       <div class="review-header">
         <div>
           <div class="reviewer">🇯🇵 Taro M.</div>
           <div class="review-stars">★★★★★</div>
         </div>
-        <div class="review-meta">Google · 3日前</div>
+        <div class="review-meta">3日前</div>
       </div>
       <div class="review-text">バンコクでここまで本格的な江戸前寿司が食べられるとは。シャリの温度とネタの鮮度が抜群です。</div>
+      <span class="review-source">via Google</span>
     </div>
+
     <div class="review-card">
       <div class="review-header">
         <div>
           <div class="reviewer">🇹🇭 Nong K.</div>
           <div class="review-stars">★★★★☆</div>
         </div>
-        <div class="review-meta">Wongnai · 1週間前</div>
+        <div class="review-meta">1週間前</div>
       </div>
       <div class="review-text">ปลาแซลมอนสดมากๆ บรรยากาศเหมือนอยู่ญี่ปุ่นเลย ราคาสูงนิดนึงแต่คุ้มค่า</div>
+      <span class="review-source">via Wongnai</span>
+    </div>
+
+    <div class="review-card">
+      <div class="review-header">
+        <div>
+          <div class="reviewer">🌍 James R.</div>
+          <div class="review-stars">★★★★★</div>
+        </div>
+        <div class="review-meta">2週間前</div>
+      </div>
+      <div class="review-text">Best omakase experience outside Japan. Impeccable service and the freshest fish I've had in Bangkok.</div>
+      <span class="review-source">via TripAdvisor</span>
     </div>
   </div>
 
@@ -550,13 +669,54 @@
 
 <!-- Bottom CTA -->
 <div class="bottom-cta">
-  <div class="cta-map">🗺</div>
-  <div class="cta-buttons">
+  <div class="cta-main">
+    <div class="cta-icon-btn">🗺</div>
     <button class="cta-point" data-ja="👆 指差し注文" data-en="👆 Point & Order" data-th="👆 ชี้เพื่อสั่ง">👆 指差し注文</button>
-    <button class="cta-reserve" data-ja="🔔 予約" data-en="🔔 Reserve" data-th="🔔 จองโต๊ะ">🔔 予約</button>
+    <button class="cta-reserve" data-ja="🔔 予約する" data-en="🔔 Reserve" data-th="🔔 จองโต๊ะ">🔔 予約する</button>
+    <div class="cta-icon-btn">♡</div>
   </div>
-  <div class="cta-fav">❤️</div>
 </div>
 
+<script>
+  function switchLang(lang, btn) {
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+      const val = el.getAttribute('data-' + lang);
+      if (val) el.textContent = val;
+    });
+    localStorage.setItem('jeeb-lang', lang);
+  }
+
+  window.addEventListener('load', () => {
+    const saved = localStorage.getItem('jeeb-lang') || 'ja';
+    const btn = document.querySelector(`button[onclick="switchLang('${saved}', this)"]`);
+    if (btn && saved !== 'ja') switchLang(saved, btn);
+  });
+
+  // Menu tabs
+  document.querySelectorAll('.menu-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.menu-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+
+  // Review filters
+  document.querySelectorAll('.rf-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.rf-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  // Pointing card options
+  document.querySelectorAll('.point-opt').forEach(opt => {
+    opt.addEventListener('click', () => {
+      document.querySelectorAll('.point-opt').forEach(o => o.classList.remove('active'));
+      opt.classList.add('active');
+    });
+  });
+</script>
 </body>
 </html>
