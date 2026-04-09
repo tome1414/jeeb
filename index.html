@@ -10,261 +10,241 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
   :root {
-    --bg: #F8F8F6;
-    --white: #FFFFFF;
-    --black: #0A0A0A;
-    --gray-100: #F0F0EE;
-    --gray-200: #E0E0DC;
-    --gray-400: #9A9A96;
-    --gray-600: #5A5A56;
-    --live: #00D084;
-    --live-dim: rgba(0, 208, 132, 0.12);
-    --ai: #0066FF;
-    --ai-dim: rgba(0, 102, 255, 0.08);
+    --bg: #F8F8F6; --white: #FFFFFF; --black: #0A0A0A;
+    --gray-100: #F0F0EE; --gray-200: #E0E0DC;
+    --gray-400: #9A9A96; --gray-600: #5A5A56;
+    --live: #00D084; --live-dim: rgba(0,208,132,0.12);
+    --ai: #0066FF; --ai-dim: rgba(0,102,255,0.08);
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: 'Noto Sans JP', 'Noto Sans', 'Noto Sans Thai', sans-serif;
-    background: var(--bg); color: var(--black);
-    -webkit-font-smoothing: antialiased;
-  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Noto Sans JP','Noto Sans','Noto Sans Thai',sans-serif; background:var(--bg); color:var(--black); -webkit-font-smoothing:antialiased; }
 
-  /* ─── Header ─── */
+  /* ── Header ── */
   header {
-    position: sticky; top: 0; z-index: 200;
-    background: rgba(248,248,246,0.95);
-    backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--gray-200);
-    padding: 0 24px; height: 56px;
-    display: flex; align-items: center; justify-content: space-between;
+    position:sticky; top:0; z-index:200;
+    background:rgba(248,248,246,0.95); backdrop-filter:blur(16px);
+    border-bottom:1px solid var(--gray-200);
+    padding:0 20px; height:52px;
+    display:flex; align-items:center; justify-content:space-between;
   }
-  .logo { font-size: 18px; font-weight: 700; letter-spacing: 0.08em; color: var(--black); text-decoration: none; }
-  .lang-group { display: flex; gap: 2px; }
-  .lang-btn {
-    padding: 5px 10px; border: none; background: none;
-    font-size: 11px; font-weight: 500; color: var(--gray-400);
-    cursor: pointer; border-radius: 4px; letter-spacing: 0.06em; transition: all 0.15s;
+  .logo { font-size:17px; font-weight:700; letter-spacing:0.08em; color:var(--black); text-decoration:none; }
+  .header-right { display:flex; align-items:center; gap:12px; }
+  .lang-group { display:flex; gap:2px; }
+  .lang-btn { padding:4px 9px; border:none; background:none; font-size:11px; font-weight:500; color:var(--gray-400); cursor:pointer; border-radius:4px; letter-spacing:0.06em; transition:all 0.15s; }
+  .lang-btn.active { background:var(--black); color:var(--white); }
+  .login-btn {
+    padding:6px 14px; border:1px solid var(--gray-200); border-radius:100px;
+    font-size:12px; font-weight:500; color:var(--gray-600); background:var(--white);
+    cursor:pointer; transition:all 0.15s; font-family:inherit;
   }
-  .lang-btn.active { background: var(--black); color: var(--white); }
+  .login-btn:hover { border-color:var(--black); color:var(--black); }
 
-  /* ─── Hero ─── */
-  .hero { padding: 40px 24px 32px; max-width: 720px; margin: 0 auto; }
-  .hero-eyebrow {
-    font-size: 11px; font-weight: 500; letter-spacing: 0.14em;
-    color: var(--gray-400); text-transform: uppercase; margin-bottom: 12px;
-  }
-  .hero-title {
-    font-size: clamp(26px, 6vw, 40px); font-weight: 300;
-    line-height: 1.25; color: var(--black); margin-bottom: 28px;
-    letter-spacing: -0.02em;
-  }
-  .hero-title strong { font-weight: 700; }
+  /* ── Hero ── */
+  .hero { padding:32px 20px 24px; max-width:720px; margin:0 auto; }
+  .hero-eyebrow { font-size:10px; font-weight:500; letter-spacing:0.14em; color:var(--gray-400); text-transform:uppercase; margin-bottom:10px; }
+  .hero-title { font-size:clamp(24px,6vw,38px); font-weight:300; line-height:1.25; color:var(--black); margin-bottom:24px; letter-spacing:-0.02em; }
+  .hero-title strong { font-weight:700; }
 
-  /* AI Concierge */
-  .concierge-wrap {
-    background: var(--white); border: 1px solid var(--gray-200);
-    border-radius: 16px; padding: 20px;
-    box-shadow: 0 4px 32px rgba(0,0,0,0.06);
-  }
-  .concierge-label {
-    display: flex; align-items: center; gap: 6px;
-    font-size: 10px; font-weight: 600; letter-spacing: 0.12em;
-    color: var(--ai); text-transform: uppercase; margin-bottom: 10px;
-  }
-  .ai-dot {
-    width: 6px; height: 6px; background: var(--ai); border-radius: 50%;
-    animation: pulse-ai 2s infinite;
-  }
+  .concierge-wrap { background:var(--white); border:1px solid var(--gray-200); border-radius:14px; padding:18px; box-shadow:0 4px 24px rgba(0,0,0,0.06); }
+  .concierge-label { display:flex; align-items:center; gap:5px; font-size:10px; font-weight:600; letter-spacing:0.12em; color:var(--ai); text-transform:uppercase; margin-bottom:8px; }
+  .ai-dot { width:6px; height:6px; background:var(--ai); border-radius:50%; animation:pulse-ai 2s infinite; }
   @keyframes pulse-ai { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
-  .concierge-input {
-    width: 100%; border: none; outline: none;
-    font-size: 16px; font-weight: 300; color: var(--black);
-    background: none; font-family: inherit; line-height: 1.5;
-  }
-  .concierge-input::placeholder { color: var(--gray-400); }
-  .concierge-divider { height: 1px; background: var(--gray-100); margin: 14px 0; }
-  .concierge-chips { display: flex; gap: 8px; flex-wrap: wrap; }
-  .chip {
-    padding: 5px 12px; background: var(--gray-100); border: none;
-    border-radius: 100px; font-size: 12px; color: var(--gray-600);
-    cursor: pointer; font-family: inherit; transition: all 0.15s;
-  }
-  .chip:hover { background: var(--gray-200); color: var(--black); }
+  .concierge-input { width:100%; border:none; outline:none; font-size:15px; font-weight:300; color:var(--black); background:none; font-family:inherit; }
+  .concierge-input::placeholder { color:var(--gray-400); }
+  .concierge-divider { height:1px; background:var(--gray-100); margin:12px 0; }
+  .concierge-chips { display:flex; gap:6px; flex-wrap:wrap; }
+  .chip { padding:5px 11px; background:var(--gray-100); border:none; border-radius:100px; font-size:12px; color:var(--gray-600); cursor:pointer; font-family:inherit; transition:all 0.15s; }
+  .chip:hover { background:var(--gray-200); }
 
-  /* ─── Live Bar ─── */
-  .live-bar { padding: 0 24px; max-width: 720px; margin: 0 auto 28px; }
-  .live-bar-inner {
-    display: flex; align-items: center; gap: 10px;
-    padding: 10px 16px; background: var(--live-dim);
-    border-radius: 100px; border: 1px solid rgba(0,208,132,0.2);
-  }
-  .live-pulse {
-    width: 8px; height: 8px; background: var(--live); border-radius: 50%;
-    animation: live-pulse 2s infinite;
-  }
-  @keyframes live-pulse {
-    0%{box-shadow:0 0 0 0 rgba(0,208,132,0.6)}
-    70%{box-shadow:0 0 0 8px rgba(0,208,132,0)}
-    100%{box-shadow:0 0 0 0 rgba(0,208,132,0)}
-  }
-  .live-text { font-size: 12px; font-weight: 500; color: #009660; }
-  .live-meta { font-size: 11px; color: var(--gray-400); margin-left: auto; }
+  /* ── Live Bar ── */
+  .live-bar { padding:0 20px; max-width:720px; margin:0 auto 24px; }
+  .live-bar-inner { display:flex; align-items:center; gap:8px; padding:9px 14px; background:var(--live-dim); border-radius:100px; border:1px solid rgba(0,208,132,0.2); }
+  .live-pulse { width:8px; height:8px; background:var(--live); border-radius:50%; flex-shrink:0; animation:live-pulse 2s infinite; }
+  @keyframes live-pulse { 0%{box-shadow:0 0 0 0 rgba(0,208,132,0.6)} 70%{box-shadow:0 0 0 8px rgba(0,208,132,0)} 100%{box-shadow:0 0 0 0 rgba(0,208,132,0)} }
+  .live-text { font-size:12px; font-weight:500; color:#009660; }
+  .live-meta { font-size:11px; color:var(--gray-400); margin-left:auto; }
+  .gps-btn { display:flex; align-items:center; gap:4px; font-size:11px; color:var(--ai); font-weight:500; cursor:pointer; border:none; background:none; font-family:inherit; flex-shrink:0; }
 
-  /* ─── Section ─── */
-  .section { padding: 0 24px; max-width: 720px; margin: 0 auto 32px; }
-  .section-header {
-    display: flex; align-items: baseline;
-    justify-content: space-between; margin-bottom: 16px;
-  }
-  .section-title {
-    font-size: 13px; font-weight: 600; letter-spacing: 0.08em;
-    text-transform: uppercase; color: var(--gray-600);
-  }
-  .section-link { font-size: 12px; color: var(--gray-400); text-decoration: none; transition: color 0.15s; }
-  .section-link:hover { color: var(--black); }
+  /* ── Section ── */
+  .section { padding:0 20px; max-width:720px; margin:0 auto 24px; }
+  .section-header { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:14px; }
+  .section-title { font-size:12px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--gray-600); }
+  .section-link { font-size:12px; color:var(--gray-400); text-decoration:none; }
 
-  /* ─── Category Pills ─── */
-  .cat-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
-  .cat-scroll::-webkit-scrollbar { display: none; }
-  .cat-pill {
-    flex-shrink: 0; padding: 8px 16px;
-    border: 1px solid var(--gray-200); border-radius: 100px;
-    background: var(--white); font-size: 13px; color: var(--gray-600);
-    cursor: pointer; transition: all 0.15s; white-space: nowrap; font-family: inherit;
-  }
-  .cat-pill:hover, .cat-pill.active { background: var(--black); color: var(--white); border-color: var(--black); }
+  /* ── Category ── */
+  .cat-scroll { display:flex; gap:6px; overflow-x:auto; padding-bottom:2px; scrollbar-width:none; }
+  .cat-scroll::-webkit-scrollbar { display:none; }
+  .cat-pill { flex-shrink:0; padding:7px 14px; border:1px solid var(--gray-200); border-radius:100px; background:var(--white); font-size:13px; color:var(--gray-600); cursor:pointer; transition:all 0.15s; white-space:nowrap; font-family:inherit; }
+  .cat-pill:hover,.cat-pill.active { background:var(--black); color:var(--white); border-color:var(--black); }
 
-  /* ─── View Toggle ─── */
-  .view-toggle {
-    display: flex; gap: 0; margin-bottom: 20px;
-    background: var(--gray-100); border-radius: 10px; padding: 3px;
-  }
-  .view-btn {
-    flex: 1; padding: 8px 12px; border: none; background: none;
-    font-size: 13px; font-weight: 500; color: var(--gray-400);
-    cursor: pointer; font-family: inherit; border-radius: 8px;
-    transition: all 0.15s; display: flex; align-items: center;
-    justify-content: center; gap: 6px;
-  }
-  .view-btn.active { background: var(--white); color: var(--black); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+  /* ── View Toggle ── */
+  .view-toggle { display:flex; background:var(--gray-100); border-radius:10px; padding:3px; margin-bottom:18px; }
+  .view-btn { flex:1; padding:7px 10px; border:none; background:none; font-size:13px; font-weight:500; color:var(--gray-400); cursor:pointer; font-family:inherit; border-radius:8px; transition:all 0.15s; display:flex; align-items:center; justify-content:center; gap:5px; }
+  .view-btn.active { background:var(--white); color:var(--black); box-shadow:0 1px 4px rgba(0,0,0,0.1); }
 
-  /* ─── Map ─── */
-  .map-wrap {
-    border-radius: 16px; overflow: hidden;
-    border: 1px solid var(--gray-200);
-    display: none;
-  }
-  .map-wrap.show { display: block; }
-  #map { height: 420px; width: 100%; }
+  /* ── Map ── */
+  .map-wrap { border-radius:14px; overflow:hidden; border:1px solid var(--gray-200); display:none; }
+  .map-wrap.show { display:block; }
+  #map { height:440px; width:100%; }
+  .leaflet-popup-content-wrapper { border-radius:12px; padding:0; overflow:hidden; box-shadow:0 8px 32px rgba(0,0,0,0.15); border:none; }
+  .leaflet-popup-tip-container { display:none; }
+  .map-popup { padding:12px 14px; min-width:160px; font-family:'Noto Sans JP',sans-serif; }
+  .map-popup-name { font-size:13px; font-weight:600; margin-bottom:2px; }
+  .map-popup-sub { font-size:11px; color:var(--gray-400); margin-bottom:6px; }
+  .map-popup-row { display:flex; align-items:center; gap:6px; }
+  .map-popup-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+  .map-popup-status { font-size:11px; font-weight:500; }
+  .map-popup-link { display:block; margin-top:8px; font-size:12px; color:var(--ai); font-weight:500; text-decoration:none; }
 
-  /* Map popup style override */
-  .leaflet-popup-content-wrapper {
-    border-radius: 12px; padding: 0; overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-  }
-  .map-popup { padding: 12px 14px; min-width: 160px; }
-  .map-popup-name { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
-  .map-popup-sub { font-size: 11px; color: var(--gray-400); margin-bottom: 6px; }
-  .map-popup-status {
-    display: inline-flex; align-items: center; gap: 4px;
-    font-size: 11px; font-weight: 500;
-  }
-  .map-popup-dot { width: 6px; height: 6px; border-radius: 50%; }
+  /* ── Area Tabs ── */
+  .area-tabs { display:flex; border-bottom:1px solid var(--gray-200); margin-bottom:18px; }
+  .area-tab { padding:9px 14px; font-size:13px; font-weight:400; color:var(--gray-400); cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px; transition:all 0.15s; white-space:nowrap; }
+  .area-tab.active { color:var(--black); font-weight:600; border-bottom-color:var(--black); }
 
-  /* ─── Area Tabs ─── */
-  .area-tabs {
-    display: flex; border-bottom: 1px solid var(--gray-200); margin-bottom: 20px;
-  }
-  .area-tab {
-    padding: 10px 16px; font-size: 13px; font-weight: 400;
-    color: var(--gray-400); cursor: pointer;
-    border-bottom: 2px solid transparent; margin-bottom: -1px;
-    transition: all 0.15s; white-space: nowrap;
-  }
-  .area-tab.active { color: var(--black); font-weight: 600; border-bottom-color: var(--black); }
+  /* ── Cards ── */
+  .cards-grid { display:grid; grid-template-columns:1fr; gap:1px; background:var(--gray-200); border:1px solid var(--gray-200); border-radius:14px; overflow:hidden; }
+  .card { background:var(--white); cursor:pointer; transition:background 0.15s; text-decoration:none; color:inherit; display:block; position:relative; }
+  .card:hover { background:#FAFAF8; }
+  .card-inner { display:flex; gap:0; align-items:stretch; }
 
-  /* ─── Cards ─── */
-  .cards-grid {
-    display: grid; grid-template-columns: 1fr; gap: 1px;
-    background: var(--gray-200); border: 1px solid var(--gray-200);
-    border-radius: 16px; overflow: hidden;
-  }
-  .card {
-    background: var(--white); cursor: pointer; transition: background 0.15s;
-    text-decoration: none; color: inherit; display: block;
-  }
-  .card:hover { background: #FAFAF8; }
-  .card-inner { display: flex; gap: 0; align-items: stretch; }
+  /* Photo */
+  .card-img-wrap { position:relative; width:100px; flex-shrink:0; overflow:hidden; }
+  .card-img-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
 
-  /* Card photo — full left column */
-  .card-img-wrap {
-    position: relative; width: 110px; flex-shrink: 0; overflow: hidden;
-  }
-  .card-img-wrap img {
-    width: 100%; height: 100%; object-fit: cover; display: block;
-  }
-  .live-badge {
-    position: absolute; bottom: 6px; left: 6px;
-    display: flex; align-items: center; gap: 3px;
-    background: rgba(0,0,0,0.72); backdrop-filter: blur(4px);
-    padding: 3px 7px; border-radius: 6px;
-  }
-  .live-badge-dot {
-    width: 5px; height: 5px; border-radius: 50%;
-    animation: live-pulse 2s infinite;
-  }
-  .live-badge-dot.green { background: var(--live); }
-  .live-badge-dot.amber { background: #FFC300; }
-  .live-badge-dot.red { background: #FF3B30; }
-  .live-badge-label {
-    font-size: 9px; font-weight: 600; letter-spacing: 0.06em;
-    color: var(--white); text-transform: uppercase;
-  }
+  .live-badge { position:absolute; bottom:5px; left:5px; display:flex; align-items:center; gap:3px; background:rgba(0,0,0,0.72); backdrop-filter:blur(4px); padding:3px 6px; border-radius:5px; }
+  .live-badge-dot { width:5px; height:5px; border-radius:50%; animation:live-pulse 2s infinite; }
+  .live-badge-dot.green { background:var(--live); }
+  .live-badge-dot.amber { background:#FFC300; }
+  .live-badge-dot.red { background:#FF3B30; }
+  .live-badge-label { font-size:9px; font-weight:600; letter-spacing:0.06em; color:var(--white); text-transform:uppercase; }
 
-  .card-body { flex: 1; padding: 16px; min-width: 0; }
-  .card-name {
-    font-size: 15px; font-weight: 600; color: var(--black); margin-bottom: 2px;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  /* Compare checkbox on card */
+  .compare-check {
+    position:absolute; top:6px; left:6px;
+    width:22px; height:22px; border-radius:6px;
+    background:rgba(255,255,255,0.9); border:1.5px solid var(--gray-400);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; z-index:10; transition:all 0.15s;
+    font-size:12px; font-weight:700;
   }
-  .card-sub { font-size: 12px; color: var(--gray-400); margin-bottom: 8px; }
-  .ai-badge {
-    display: inline-flex; align-items: center; gap: 4px;
-    padding: 3px 8px; background: var(--ai-dim); border-radius: 6px; margin-bottom: 8px;
-  }
-  .ai-badge-text { font-size: 11px; color: var(--ai); font-weight: 500; }
-  .score-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-  .score-avg { font-size: 15px; font-weight: 700; color: var(--black); }
-  .score-stars { font-size: 11px; color: #FFB800; }
-  .score-divider { width: 1px; height: 12px; background: var(--gray-200); }
-  .score-sources { display: flex; gap: 3px; align-items: center; }
-  .score-src { font-size: 10px; color: var(--gray-400); font-weight: 500; }
-  .score-sep { color: var(--gray-200); font-size: 10px; }
-  .card-meta { margin-top: 6px; }
-  .card-distance { font-size: 11px; color: var(--gray-400); }
+  .compare-check.checked { background:var(--black); border-color:var(--black); color:var(--white); }
 
-  /* ─── Bottom Nav ─── */
-  .bottom-nav {
-    position: fixed; bottom: 0; left: 0; right: 0;
-    background: rgba(248,248,246,0.95); backdrop-filter: blur(16px);
-    border-top: 1px solid var(--gray-200);
-    display: flex; padding: 10px 0 20px;
+  .card-body { flex:1; padding:14px 14px 14px 12px; min-width:0; }
+  .card-top-row { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:2px; }
+  .card-name { font-size:14px; font-weight:600; color:var(--black); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:1; }
+  .card-actions { display:flex; gap:6px; flex-shrink:0; margin-left:8px; }
+  .card-fav-btn {
+    width:28px; height:28px; border-radius:50%;
+    background:none; border:none; cursor:pointer;
+    font-size:16px; display:flex; align-items:center; justify-content:center;
+    transition:transform 0.15s; color:var(--gray-400);
   }
-  .nav-item { flex: 1; text-align: center; cursor: pointer; }
-  .nav-icon { font-size: 20px; line-height: 1; }
-  .nav-label { display: block; font-size: 10px; color: var(--gray-400); margin-top: 3px; letter-spacing: 0.04em; }
-  .nav-item.active .nav-label { color: var(--black); font-weight: 600; }
+  .card-fav-btn.active { color:#FF3B6B; }
+  .card-fav-btn:active { transform:scale(1.3); }
 
-  .pb { padding-bottom: 80px; }
+  .card-sub { font-size:11px; color:var(--gray-400); margin-bottom:7px; }
+  .ai-badge { display:inline-flex; align-items:center; gap:3px; padding:3px 7px; background:var(--ai-dim); border-radius:5px; margin-bottom:7px; }
+  .ai-badge-text { font-size:10px; color:var(--ai); font-weight:500; }
+  .score-row { display:flex; align-items:center; gap:5px; flex-wrap:wrap; }
+  .score-avg { font-size:14px; font-weight:700; color:var(--black); }
+  .score-stars { font-size:10px; color:#FFB800; }
+  .score-divider { width:1px; height:10px; background:var(--gray-200); }
+  .score-sources { display:flex; gap:3px; align-items:center; }
+  .score-src { font-size:10px; color:var(--gray-400); font-weight:500; }
+  .score-sep { color:var(--gray-300); font-size:10px; }
+  .card-meta { margin-top:5px; display:flex; align-items:center; gap:8px; }
+  .card-distance { font-size:11px; color:var(--gray-400); }
+  .card-share-btn { font-size:11px; color:var(--ai); cursor:pointer; background:none; border:none; font-family:inherit; padding:0; }
+
+  /* ── Compare Tray (floating) ── */
+  .compare-tray {
+    position:fixed; bottom:72px; left:16px; right:16px; z-index:300;
+    background:var(--black); color:var(--white);
+    border-radius:16px; padding:14px 16px;
+    display:none; align-items:center; justify-content:space-between;
+    box-shadow:0 8px 32px rgba(0,0,0,0.3);
+    animation:slide-up 0.2s ease;
+  }
+  @keyframes slide-up { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
+  .compare-tray.show { display:flex; }
+  .compare-tray-slots { display:flex; gap:8px; }
+  .compare-slot { width:40px; height:40px; border-radius:8px; overflow:hidden; border:1.5px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:center; font-size:18px; }
+  .compare-slot img { width:100%; height:100%; object-fit:cover; }
+  .compare-tray-info { flex:1; margin-left:12px; }
+  .compare-tray-label { font-size:11px; color:rgba(255,255,255,0.6); margin-bottom:2px; }
+  .compare-tray-count { font-size:14px; font-weight:600; }
+  .compare-go-btn { padding:8px 16px; background:var(--white); color:var(--black); border:none; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; white-space:nowrap; }
+  .compare-clear { background:none; border:none; color:rgba(255,255,255,0.5); font-size:13px; cursor:pointer; margin-left:8px; }
+
+  /* ── Compare Modal ── */
+  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:500; display:none; align-items:flex-end; }
+  .modal-overlay.show { display:flex; }
+  .compare-modal { background:var(--white); border-radius:20px 20px 0 0; width:100%; padding:20px 20px 40px; max-height:90vh; overflow-y:auto; }
+  .modal-handle { width:36px; height:4px; background:var(--gray-200); border-radius:2px; margin:0 auto 16px; }
+  .modal-title { font-size:16px; font-weight:700; margin-bottom:20px; }
+  .compare-table { width:100%; border-collapse:collapse; font-size:12px; }
+  .compare-table th { padding:10px 8px; background:var(--gray-100); font-weight:600; font-size:11px; text-align:center; border-bottom:1px solid var(--gray-200); }
+  .compare-table th:first-child { text-align:left; width:80px; }
+  .compare-table td { padding:10px 8px; border-bottom:1px solid var(--gray-100); text-align:center; vertical-align:middle; }
+  .compare-table td:first-child { text-align:left; font-size:11px; color:var(--gray-400); font-weight:500; }
+  .compare-table tr:last-child td { border-bottom:none; }
+  .compare-img { width:52px; height:52px; border-radius:8px; object-fit:cover; margin-bottom:4px; }
+  .compare-name { font-size:12px; font-weight:600; line-height:1.3; }
+  .compare-score-big { font-size:18px; font-weight:700; }
+  .compare-best { color:#009660; font-size:10px; font-weight:600; }
+  .modal-close { position:absolute; top:16px; right:16px; width:32px; height:32px; border-radius:50%; background:var(--gray-100); border:none; cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; }
+
+  /* ── Saved Modal ── */
+  .saved-modal { background:var(--white); border-radius:20px 20px 0 0; width:100%; padding:20px 20px 40px; }
+  .saved-modal-title { font-size:15px; font-weight:700; margin-bottom:16px; }
+  .saved-list-item { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--gray-100); }
+  .saved-list-item:last-child { border-bottom:none; }
+  .saved-item-icon { font-size:24px; }
+  .saved-item-text { flex:1; }
+  .saved-item-name { font-size:14px; font-weight:600; }
+  .saved-item-sub { font-size:12px; color:var(--gray-400); }
+  .saved-item-count { font-size:12px; color:var(--gray-400); }
+  .login-prompt { text-align:center; padding:24px 0; }
+  .login-prompt-icon { font-size:40px; margin-bottom:12px; }
+  .login-prompt-title { font-size:16px; font-weight:700; margin-bottom:6px; }
+  .login-prompt-sub { font-size:13px; color:var(--gray-400); margin-bottom:20px; }
+  .login-prompt-btn { width:100%; padding:14px; background:var(--black); color:var(--white); border:none; border-radius:12px; font-size:15px; font-weight:600; cursor:pointer; font-family:inherit; }
+  .login-prompt-link { display:block; margin-top:10px; font-size:13px; color:var(--ai); cursor:pointer; }
+
+  /* ── Share Modal ── */
+  .share-modal { background:var(--white); border-radius:20px 20px 0 0; width:100%; padding:20px 20px 40px; }
+  .share-modal-title { font-size:15px; font-weight:700; margin-bottom:4px; }
+  .share-modal-sub { font-size:12px; color:var(--gray-400); margin-bottom:20px; }
+  .share-options { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:20px; }
+  .share-opt { text-align:center; cursor:pointer; }
+  .share-opt-icon { width:52px; height:52px; border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:24px; margin:0 auto 6px; }
+  .share-opt-label { font-size:11px; color:var(--gray-600); }
+  .share-url-row { display:flex; gap:8px; }
+  .share-url-input { flex:1; padding:10px 12px; background:var(--gray-100); border:none; border-radius:10px; font-size:12px; color:var(--gray-600); font-family:inherit; outline:none; }
+  .share-copy-btn { padding:10px 16px; background:var(--black); color:var(--white); border:none; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; white-space:nowrap; }
+
+  /* ── Bottom Nav ── */
+  .bottom-nav { position:fixed; bottom:0; left:0; right:0; background:rgba(248,248,246,0.96); backdrop-filter:blur(16px); border-top:1px solid var(--gray-200); display:flex; padding:8px 0 20px; z-index:200; }
+  .nav-item { flex:1; text-align:center; cursor:pointer; }
+  .nav-icon { font-size:20px; line-height:1; }
+  .nav-label { display:block; font-size:10px; color:var(--gray-400); margin-top:2px; letter-spacing:0.04em; }
+  .nav-item.active .nav-label { color:var(--black); font-weight:600; }
+  .nav-badge { display:inline-block; background:#FF3B6B; color:white; font-size:8px; font-weight:700; border-radius:100px; padding:1px 5px; margin-left:2px; vertical-align:top; }
+
+  .pb { padding-bottom:80px; }
 </style>
 </head>
 <body>
 
 <header>
   <a class="logo" href="#">JEEB</a>
-  <div class="lang-group">
-    <button class="lang-btn active" onclick="setLang(this)">JP</button>
-    <button class="lang-btn" onclick="setLang(this)">EN</button>
-    <button class="lang-btn" onclick="setLang(this)">TH</button>
+  <div class="header-right">
+    <div class="lang-group">
+      <button class="lang-btn active" onclick="setLang(this)">JP</button>
+      <button class="lang-btn" onclick="setLang(this)">EN</button>
+      <button class="lang-btn" onclick="setLang(this)">TH</button>
+    </div>
+    <button class="login-btn" onclick="openSaved()">ログイン</button>
   </div>
 </header>
 
@@ -275,12 +255,8 @@
     <p class="hero-eyebrow">Bangkok · Phrom Phong · Thonglor · Ekkamai</p>
     <h1 class="hero-title">今夜、<strong>どこへ行く？</strong></h1>
     <div class="concierge-wrap">
-      <div class="concierge-label">
-        <span class="ai-dot"></span>
-        AI Concierge
-      </div>
-      <input class="concierge-input" type="text"
-        placeholder="「3人で予算1,500B、和食でゆっくりしたい」">
+      <div class="concierge-label"><span class="ai-dot"></span>AI Concierge</div>
+      <input class="concierge-input" type="text" placeholder="「3人で予算1,500B、和食でゆっくりしたい」">
       <div class="concierge-divider"></div>
       <div class="concierge-chips">
         <button class="chip">🍣 今すぐ空席あり</button>
@@ -294,11 +270,10 @@
   <!-- Live Bar -->
   <div class="live-bar">
     <div class="live-bar-inner">
-      <div style="display:flex;align-items:center;gap:6px;">
-        <div class="live-pulse"></div>
-        <span class="live-text">現在 243店が営業中</span>
-      </div>
-      <span class="live-meta">2分前更新</span>
+      <div class="live-pulse"></div>
+      <span class="live-text">現在 243店が営業中</span>
+      <button class="gps-btn" onclick="requestLocation()">📍 現在地から探す</button>
+      <span class="live-meta" id="live-meta">2分前更新</span>
     </div>
   </div>
 
@@ -315,29 +290,22 @@
     </div>
   </div>
 
-  <!-- List / Map Toggle -->
+  <!-- List / Map Toggle + Content -->
   <div class="section">
     <div class="view-toggle">
-      <button class="view-btn active" id="btn-list" onclick="showView('list')">
-        <span>☰</span> リスト
-      </button>
-      <button class="view-btn" id="btn-map" onclick="showView('map')">
-        <span>◎</span> マップ
-      </button>
+      <button class="view-btn active" id="btn-list" onclick="showView('list')">☰ リスト</button>
+      <button class="view-btn" id="btn-map" onclick="showView('map')">◎ マップ</button>
     </div>
 
-    <!-- MAP VIEW -->
-    <div class="map-wrap" id="map-view">
-      <div id="map"></div>
-    </div>
+    <!-- MAP -->
+    <div class="map-wrap" id="map-view"><div id="map"></div></div>
 
-    <!-- LIST VIEW -->
+    <!-- LIST -->
     <div id="list-view">
       <div class="section-header">
         <span class="section-title">おすすめ</span>
         <a class="section-link" href="#">すべて表示 →</a>
       </div>
-
       <div class="area-tabs">
         <div class="area-tab active">すべて</div>
         <div class="area-tab">Phrom Phong</div>
@@ -345,147 +313,136 @@
         <div class="area-tab">Ekkamai</div>
       </div>
 
-      <div class="cards-grid">
+      <div class="cards-grid" id="cards-grid">
 
         <!-- Card 1 -->
-        <a class="card" href="restaurant.html">
+        <a class="card" href="restaurant.html" id="card-1">
           <div class="card-inner">
             <div class="card-img-wrap">
-              <img src="https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=220&q=80" alt="Sushi">
-              <div class="live-badge">
-                <div class="live-badge-dot green"></div>
-                <span class="live-badge-label">Open</span>
+              <div class="compare-check" onclick="toggleCompare(event,'card-1','鮨 さいとう トンロー','https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=80')">
               </div>
+              <img src="https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=220&q=80" alt="Sushi">
+              <div class="live-badge"><div class="live-badge-dot green"></div><span class="live-badge-label">Open</span></div>
             </div>
             <div class="card-body">
-              <div class="card-name">鮨 さいとう トンロー</div>
-              <div class="card-sub">和食 · Sushi · Thonglor</div>
-              <div class="ai-badge">
-                <span style="font-size:10px;">✦</span>
-                <span class="ai-badge-text">日本人：本場の味　タイ人：映える</span>
+              <div class="card-top-row">
+                <div class="card-name">鮨 さいとう トンロー</div>
+                <div class="card-actions">
+                  <button class="card-fav-btn" onclick="toggleFav(event,this,'鮨 さいとう トンロー')">♡</button>
+                </div>
               </div>
+              <div class="card-sub">和食 · Sushi · Thonglor</div>
+              <div class="ai-badge"><span style="font-size:9px;">✦</span><span class="ai-badge-text">日本人：本場の味　タイ人：映える</span></div>
               <div class="score-row">
                 <span class="score-avg">4.5</span>
                 <span class="score-stars">★★★★★</span>
                 <div class="score-divider"></div>
-                <div class="score-sources">
-                  <span class="score-src">G 4.6</span>
-                  <span class="score-sep">·</span>
-                  <span class="score-src">TA 4.3</span>
-                  <span class="score-sep">·</span>
-                  <span class="score-src">WN 4.5</span>
-                </div>
+                <span class="score-src">G 4.6</span><span class="score-sep">·</span>
+                <span class="score-src">TA 4.3</span><span class="score-sep">·</span>
+                <span class="score-src">WN 4.5</span>
               </div>
               <div class="card-meta">
-                <span class="card-distance">📍 Thonglor BTS · 3 min</span>
+                <span class="card-distance" id="dist-1">📍 Thonglor BTS · 3 min</span>
+                <button class="card-share-btn" onclick="openShare(event,'鮨 さいとう トンロー')">⬆ 共有</button>
               </div>
             </div>
           </div>
         </a>
 
         <!-- Card 2 -->
-        <a class="card" href="#">
+        <a class="card" href="#" id="card-2">
           <div class="card-inner">
             <div class="card-img-wrap">
+              <div class="compare-check" onclick="toggleCompare(event,'card-2','ソムタムダー エカマイ','https://images.unsplash.com/photo-1559314809-0d155014e29e?w=80')"></div>
               <img src="https://images.unsplash.com/photo-1559314809-0d155014e29e?w=220&q=80" alt="Thai Food">
-              <div class="live-badge">
-                <div class="live-badge-dot amber"></div>
-                <span class="live-badge-label">Busy</span>
-              </div>
+              <div class="live-badge"><div class="live-badge-dot amber"></div><span class="live-badge-label">Busy</span></div>
             </div>
             <div class="card-body">
-              <div class="card-name">ソムタムダー エカマイ</div>
-              <div class="card-sub">タイ料理 · Thai · Ekkamai</div>
-              <div class="ai-badge">
-                <span style="font-size:10px;">✦</span>
-                <span class="ai-badge-text">地元民絶賛・観光客には辛め</span>
+              <div class="card-top-row">
+                <div class="card-name">ソムタムダー エカマイ</div>
+                <div class="card-actions">
+                  <button class="card-fav-btn" onclick="toggleFav(event,this,'ソムタムダー エカマイ')">♡</button>
+                </div>
               </div>
+              <div class="card-sub">タイ料理 · Thai · Ekkamai</div>
+              <div class="ai-badge"><span style="font-size:9px;">✦</span><span class="ai-badge-text">地元民絶賛・観光客には辛め</span></div>
               <div class="score-row">
                 <span class="score-avg">4.3</span>
                 <span class="score-stars">★★★★☆</span>
                 <div class="score-divider"></div>
-                <div class="score-sources">
-                  <span class="score-src">G 4.5</span>
-                  <span class="score-sep">·</span>
-                  <span class="score-src">TA 4.0</span>
-                  <span class="score-sep">·</span>
-                  <span class="score-src">WN 4.3</span>
-                </div>
+                <span class="score-src">G 4.5</span><span class="score-sep">·</span>
+                <span class="score-src">TA 4.0</span><span class="score-sep">·</span>
+                <span class="score-src">WN 4.3</span>
               </div>
               <div class="card-meta">
-                <span class="card-distance">📍 Ekkamai BTS · 5 min</span>
+                <span class="card-distance" id="dist-2">📍 Ekkamai BTS · 5 min</span>
+                <button class="card-share-btn" onclick="openShare(event,'ソムタムダー エカマイ')">⬆ 共有</button>
               </div>
             </div>
           </div>
         </a>
 
         <!-- Card 3 -->
-        <a class="card" href="#">
+        <a class="card" href="#" id="card-3">
           <div class="card-inner">
             <div class="card-img-wrap">
+              <div class="compare-check" onclick="toggleCompare(event,'card-3','和牛焼肉 黒毛','https://images.unsplash.com/photo-1544025162-d76694265947?w=80')"></div>
               <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=220&q=80" alt="Wagyu">
-              <div class="live-badge">
-                <div class="live-badge-dot red"></div>
-                <span class="live-badge-label">L.O. 45m</span>
-              </div>
+              <div class="live-badge"><div class="live-badge-dot red"></div><span class="live-badge-label">L.O.45m</span></div>
             </div>
             <div class="card-body">
-              <div class="card-name">和牛焼肉 黒毛 プロンポン</div>
-              <div class="card-sub">焼肉 · Wagyu · Phrom Phong</div>
-              <div class="ai-badge">
-                <span style="font-size:10px;">✦</span>
-                <span class="ai-badge-text">接待・記念日に最適</span>
+              <div class="card-top-row">
+                <div class="card-name">和牛焼肉 黒毛 プロンポン</div>
+                <div class="card-actions">
+                  <button class="card-fav-btn" onclick="toggleFav(event,this,'和牛焼肉 黒毛')">♡</button>
+                </div>
               </div>
+              <div class="card-sub">焼肉 · Wagyu · Phrom Phong</div>
+              <div class="ai-badge"><span style="font-size:9px;">✦</span><span class="ai-badge-text">接待・記念日に最適</span></div>
               <div class="score-row">
                 <span class="score-avg">4.2</span>
                 <span class="score-stars">★★★★☆</span>
                 <div class="score-divider"></div>
-                <div class="score-sources">
-                  <span class="score-src">G 4.4</span>
-                  <span class="score-sep">·</span>
-                  <span class="score-src">TA 4.2</span>
-                  <span class="score-sep">·</span>
-                  <span class="score-src">WN 3.9</span>
-                </div>
+                <span class="score-src">G 4.4</span><span class="score-sep">·</span>
+                <span class="score-src">TA 4.2</span><span class="score-sep">·</span>
+                <span class="score-src">WN 3.9</span>
               </div>
               <div class="card-meta">
-                <span class="card-distance">📍 Phrom Phong BTS · 7 min</span>
+                <span class="card-distance" id="dist-3">📍 Phrom Phong BTS · 7 min</span>
+                <button class="card-share-btn" onclick="openShare(event,'和牛焼肉 黒毛')">⬆ 共有</button>
               </div>
             </div>
           </div>
         </a>
 
         <!-- Card 4 -->
-        <a class="card" href="#">
+        <a class="card" href="#" id="card-4">
           <div class="card-inner">
             <div class="card-img-wrap">
+              <div class="compare-check" onclick="toggleCompare(event,'card-4','麺屋 一燈 トンロー','https://images.unsplash.com/photo-1514190051997-0f6f39ca5cde?w=80')"></div>
               <img src="https://images.unsplash.com/photo-1514190051997-0f6f39ca5cde?w=220&q=80" alt="Ramen">
-              <div class="live-badge">
-                <div class="live-badge-dot green"></div>
-                <span class="live-badge-label">Open</span>
-              </div>
+              <div class="live-badge"><div class="live-badge-dot green"></div><span class="live-badge-label">Open</span></div>
             </div>
             <div class="card-body">
-              <div class="card-name">麺屋 一燈 トンロー</div>
-              <div class="card-sub">ラーメン · Ramen · Thonglor</div>
-              <div class="ai-badge">
-                <span style="font-size:10px;">✦</span>
-                <span class="ai-badge-text">深夜でも行列・濃厚魚介系</span>
+              <div class="card-top-row">
+                <div class="card-name">麺屋 一燈 トンロー</div>
+                <div class="card-actions">
+                  <button class="card-fav-btn" onclick="toggleFav(event,this,'麺屋 一燈 トンロー')">♡</button>
+                </div>
               </div>
+              <div class="card-sub">ラーメン · Ramen · Thonglor</div>
+              <div class="ai-badge"><span style="font-size:9px;">✦</span><span class="ai-badge-text">深夜でも行列・濃厚魚介系</span></div>
               <div class="score-row">
                 <span class="score-avg">4.4</span>
                 <span class="score-stars">★★★★★</span>
                 <div class="score-divider"></div>
-                <div class="score-sources">
-                  <span class="score-src">G 4.5</span>
-                  <span class="score-sep">·</span>
-                  <span class="score-src">TA 4.3</span>
-                  <span class="score-sep">·</span>
-                  <span class="score-src">WN 4.4</span>
-                </div>
+                <span class="score-src">G 4.5</span><span class="score-sep">·</span>
+                <span class="score-src">TA 4.3</span><span class="score-sep">·</span>
+                <span class="score-src">WN 4.4</span>
               </div>
               <div class="card-meta">
-                <span class="card-distance">📍 Thonglor BTS · 6 min</span>
+                <span class="card-distance" id="dist-4">📍 Thonglor BTS · 6 min</span>
+                <button class="card-share-btn" onclick="openShare(event,'麺屋 一燈 トンロー')">⬆ 共有</button>
               </div>
             </div>
           </div>
@@ -494,10 +451,69 @@
       </div>
     </div><!-- /list-view -->
   </div>
-
 </div>
 
-<!-- Bottom Nav -->
+<!-- ── Compare Tray ── -->
+<div class="compare-tray" id="compare-tray">
+  <div class="compare-tray-slots" id="compare-slots"></div>
+  <div class="compare-tray-info">
+    <div class="compare-tray-label">比較中</div>
+    <div class="compare-tray-count" id="compare-count">0店舗</div>
+  </div>
+  <button class="compare-go-btn" onclick="openCompare()">比較する</button>
+  <button class="compare-clear" onclick="clearCompare()">✕</button>
+</div>
+
+<!-- ── Compare Modal ── -->
+<div class="modal-overlay" id="compare-modal" onclick="closeModal('compare-modal')">
+  <div class="compare-modal" onclick="event.stopPropagation()" style="position:relative;">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeModal('compare-modal')">✕</button>
+    <div class="modal-title">店舗比較</div>
+    <div id="compare-content"></div>
+  </div>
+</div>
+
+<!-- ── Saved Modal ── -->
+<div class="modal-overlay" id="saved-modal" onclick="closeModal('saved-modal')">
+  <div class="saved-modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div id="saved-content"></div>
+  </div>
+</div>
+
+<!-- ── Share Modal ── -->
+<div class="modal-overlay" id="share-modal" onclick="closeModal('share-modal')">
+  <div class="share-modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="share-modal-title" id="share-title">店舗を共有</div>
+    <div class="share-modal-sub">友人やSNSにシェアする</div>
+    <div class="share-options">
+      <div class="share-opt" onclick="shareToService('line')">
+        <div class="share-opt-icon" style="background:#06C755;">💬</div>
+        <div class="share-opt-label">LINE</div>
+      </div>
+      <div class="share-opt" onclick="shareToService('twitter')">
+        <div class="share-opt-icon" style="background:#000;">✕</div>
+        <div class="share-opt-label">X (Twitter)</div>
+      </div>
+      <div class="share-opt" onclick="shareToService('instagram')">
+        <div class="share-opt-icon" style="background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);">📷</div>
+        <div class="share-opt-label">Instagram</div>
+      </div>
+      <div class="share-opt" onclick="shareToService('native')">
+        <div class="share-opt-icon" style="background:var(--gray-100);">⬆</div>
+        <div class="share-opt-label">その他</div>
+      </div>
+    </div>
+    <div class="share-url-row">
+      <input class="share-url-input" id="share-url-input" value="https://jeeb.app/r/saitou-thonglor" readonly>
+      <button class="share-copy-btn" onclick="copyUrl()">コピー</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Bottom Nav ── -->
 <div class="bottom-nav">
   <div class="nav-item active">
     <div class="nav-icon">⌂</div>
@@ -511,9 +527,9 @@
     <div class="nav-icon">◎</div>
     <span class="nav-label">Map</span>
   </div>
-  <div class="nav-item">
+  <div class="nav-item" onclick="openSaved()">
     <div class="nav-icon">♡</div>
-    <span class="nav-label">Saved</span>
+    <span class="nav-label">Saved<span class="nav-badge" id="saved-badge" style="display:none;">0</span></span>
   </div>
   <div class="nav-item">
     <div class="nav-icon">◯</div>
@@ -522,136 +538,277 @@
 </div>
 
 <script>
-  // ── Language ──
-  function setLang(btn) {
-    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-  }
+// ── State ──
+let compareList = [];   // [{id, name, img}]
+let savedList = [];     // [name]
+let userLat = null, userLng = null;
 
-  // ── Category pills ──
-  document.querySelectorAll('.cat-pill').forEach(p => {
-    p.addEventListener('click', () => {
-      document.querySelectorAll('.cat-pill').forEach(x => x.classList.remove('active'));
-      p.classList.add('active');
-    });
+// Store coords for distance calc
+const storeCoords = {
+  'dist-1': { lat:13.7285, lng:100.5830, name:'鮨 さいとう トンロー' },
+  'dist-2': { lat:13.7198, lng:100.5878, name:'ソムタムダー エカマイ' },
+  'dist-3': { lat:13.7310, lng:100.5698, name:'和牛焼肉 黒毛' },
+  'dist-4': { lat:13.7260, lng:100.5855, name:'麺屋 一燈 トンロー' },
+};
+
+// ── Language ──
+function setLang(btn) {
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ── Category ──
+document.querySelectorAll('.cat-pill').forEach(p => {
+  p.addEventListener('click', () => {
+    document.querySelectorAll('.cat-pill').forEach(x => x.classList.remove('active'));
+    p.classList.add('active');
   });
+});
 
-  // ── Area tabs ──
-  document.querySelectorAll('.area-tab').forEach(t => {
-    t.addEventListener('click', () => {
-      document.querySelectorAll('.area-tab').forEach(x => x.classList.remove('active'));
-      t.classList.add('active');
-    });
+// ── Area Tabs ──
+document.querySelectorAll('.area-tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.area-tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
   });
+});
 
-  // ── View toggle ──
-  let mapInitialized = false;
+// ── GPS / Location ──
+function requestLocation() {
+  if (!navigator.geolocation) return;
+  navigator.geolocation.getCurrentPosition(pos => {
+    userLat = pos.coords.latitude;
+    userLng = pos.coords.longitude;
+    updateDistances();
+    document.getElementById('live-meta').textContent = '📍 位置情報取得済み';
+  });
+}
 
-  function showView(view) {
-    const listEl = document.getElementById('list-view');
-    const mapEl  = document.getElementById('map-view');
-    const btnList = document.getElementById('btn-list');
-    const btnMap  = document.getElementById('btn-map');
+function haversine(lat1, lng1, lat2, lng2) {
+  const R = 6371000;
+  const dLat = (lat2-lat1)*Math.PI/180;
+  const dLng = (lng2-lng1)*Math.PI/180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+  return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+}
 
-    if (view === 'map') {
-      listEl.style.display = 'none';
-      mapEl.classList.add('show');
-      btnList.classList.remove('active');
-      btnMap.classList.add('active');
-      if (!mapInitialized) initMap();
-    } else {
-      listEl.style.display = 'block';
-      mapEl.classList.remove('show');
-      btnList.classList.add('active');
-      btnMap.classList.remove('active');
-    }
+function updateDistances() {
+  if (!userLat) return;
+  Object.entries(storeCoords).forEach(([id, store]) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const m = haversine(userLat, userLng, store.lat, store.lng);
+    const label = m < 1000 ? `📍 現在地から ${m}m` : `📍 現在地から ${(m/1000).toFixed(1)}km`;
+    el.textContent = label;
+  });
+}
+
+// ── Favorites ──
+function toggleFav(e, btn, name) {
+  e.preventDefault(); e.stopPropagation();
+  const isActive = btn.classList.toggle('active');
+  btn.textContent = isActive ? '♥' : '♡';
+  if (isActive) {
+    if (!savedList.includes(name)) savedList.push(name);
+  } else {
+    savedList = savedList.filter(n => n !== name);
   }
+  const badge = document.getElementById('saved-badge');
+  if (savedList.length > 0) {
+    badge.style.display = 'inline-block';
+    badge.textContent = savedList.length;
+  } else {
+    badge.style.display = 'none';
+  }
+}
 
-  function initMap() {
-    mapInitialized = true;
-
-    // Center: Thonglor / Ekkamai area, Bangkok
-    const map = L.map('map', { zoomControl: true }).setView([13.7270, 100.5843], 14);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors',
-      maxZoom: 19
-    }).addTo(map);
-
-    // Custom pin icon
-    function makeIcon(color) {
-      return L.divIcon({
-        className: '',
-        html: `<div style="
-          width:32px;height:32px;border-radius:50% 50% 50% 0;
-          background:${color};transform:rotate(-45deg);
-          border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);
-        "></div>`,
-        iconSize: [32, 32],
-        iconAnchor: [16, 32],
-        popupAnchor: [0, -32]
-      });
-    }
-
-    const restaurants = [
-      {
-        lat: 13.7285, lng: 100.5830,
-        name: '鮨 さいとう トンロー',
-        sub: '和食 · Thonglor',
-        status: 'Open', color: '#00D084',
-        url: 'restaurant.html'
-      },
-      {
-        lat: 13.7198, lng: 100.5878,
-        name: 'ソムタムダー エカマイ',
-        sub: 'タイ料理 · Ekkamai',
-        status: 'Busy', color: '#FFC300',
-        url: '#'
-      },
-      {
-        lat: 13.7310, lng: 100.5698,
-        name: '和牛焼肉 黒毛',
-        sub: '焼肉 · Phrom Phong',
-        status: 'L.O.45min', color: '#FF3B30',
-        url: '#'
-      },
-      {
-        lat: 13.7260, lng: 100.5855,
-        name: '麺屋 一燈 トンロー',
-        sub: 'ラーメン · Thonglor',
-        status: 'Open', color: '#00D084',
-        url: '#'
-      },
-      {
-        lat: 13.7340, lng: 100.5760,
-        name: 'Roast Coffee Phrom Phong',
-        sub: 'カフェ · Phrom Phong',
-        status: 'Open', color: '#00D084',
-        url: '#'
-      },
-      {
-        lat: 13.7220, lng: 100.5900,
-        name: '串焼き 炭火 エカマイ',
-        sub: '居酒屋 · Ekkamai',
-        status: 'Open', color: '#00D084',
-        url: '#'
-      },
-    ];
-
-    restaurants.forEach(r => {
-      const marker = L.marker([r.lat, r.lng], { icon: makeIcon(r.color) }).addTo(map);
-      marker.bindPopup(`
-        <div class="map-popup">
-          <div class="map-popup-name">${r.name}</div>
-          <div class="map-popup-sub">${r.sub}</div>
-          <div class="map-popup-status">
-            <div class="map-popup-dot" style="background:${r.color};width:6px;height:6px;border-radius:50%;"></div>
-            ${r.status}
-          </div>
+function openSaved() {
+  const content = document.getElementById('saved-content');
+  if (savedList.length === 0) {
+    content.innerHTML = `
+      <div class="login-prompt">
+        <div class="login-prompt-icon">🔖</div>
+        <div class="login-prompt-title">お気に入りを保存しよう</div>
+        <div class="login-prompt-sub">アカウントを作ると「行きたい」リストや<br>訪問履歴が保存されます</div>
+        <button class="login-prompt-btn">アカウント作成（無料）</button>
+        <a class="login-prompt-link">ログインはこちら</a>
+      </div>`;
+  } else {
+    const items = savedList.map(name => `
+      <div class="saved-list-item">
+        <div class="saved-item-icon">♥</div>
+        <div class="saved-item-text">
+          <div class="saved-item-name">${name}</div>
+          <div class="saved-item-sub">お気に入り</div>
         </div>
-      `);
+      </div>`).join('');
+    content.innerHTML = `
+      <div class="saved-modal-title">❤️ お気に入り (${savedList.length})</div>
+      ${items}
+      <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--gray-100);">
+        <div style="font-size:12px;color:var(--gray-400);margin-bottom:10px;">リストに追加する</div>
+        <div class="saved-list-item" style="opacity:0.5;cursor:pointer;">
+          <div class="saved-item-icon">📋</div>
+          <div class="saved-item-text"><div class="saved-item-name">行きたいリスト</div></div>
+        </div>
+        <div class="saved-list-item" style="opacity:0.5;cursor:pointer;">
+          <div class="saved-item-icon">✅</div>
+          <div class="saved-item-text"><div class="saved-item-name">行ったリスト</div></div>
+        </div>
+      </div>`;
+  }
+  document.getElementById('saved-modal').classList.add('show');
+}
+
+// ── Compare ──
+function toggleCompare(e, cardId, name, img) {
+  e.preventDefault(); e.stopPropagation();
+  const btn = e.currentTarget;
+  const exists = compareList.find(c => c.id === cardId);
+  if (exists) {
+    compareList = compareList.filter(c => c.id !== cardId);
+    btn.classList.remove('checked');
+    btn.textContent = '';
+  } else {
+    if (compareList.length >= 3) { alert('最大3店舗まで比較できます'); return; }
+    compareList.push({ id: cardId, name, img });
+    btn.classList.add('checked');
+    btn.textContent = '✓';
+  }
+  updateCompareTray();
+}
+
+function updateCompareTray() {
+  const tray = document.getElementById('compare-tray');
+  const slots = document.getElementById('compare-slots');
+  const count = document.getElementById('compare-count');
+  if (compareList.length === 0) {
+    tray.classList.remove('show');
+    return;
+  }
+  tray.classList.add('show');
+  count.textContent = `${compareList.length}店舗選択中`;
+  slots.innerHTML = compareList.map(c =>
+    `<div class="compare-slot"><img src="${c.img}&q=60" alt="${c.name}"></div>`
+  ).join('') + (compareList.length < 3 ? `<div class="compare-slot" style="border-style:dashed;font-size:14px;color:rgba(255,255,255,0.4);">+</div>` : '');
+}
+
+function clearCompare() {
+  compareList = [];
+  document.querySelectorAll('.compare-check').forEach(c => { c.classList.remove('checked'); c.textContent = ''; });
+  updateCompareTray();
+}
+
+function openCompare() {
+  if (compareList.length < 2) { alert('2店舗以上選択してください'); return; }
+  const data = [
+    { name:'鮨 さいとう', img:'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=80', avg:4.5, g:4.6, ta:4.3, wn:4.5, area:'Thonglor', status:'Open', price:'¥¥¥' },
+    { name:'ソムタムダー', img:'https://images.unsplash.com/photo-1559314809-0d155014e29e?w=80', avg:4.3, g:4.5, ta:4.0, wn:4.3, area:'Ekkamai', status:'Busy', price:'¥¥' },
+    { name:'黒毛 焼肉', img:'https://images.unsplash.com/photo-1544025162-d76694265947?w=80', avg:4.2, g:4.4, ta:4.2, wn:3.9, area:'Phrom Phong', status:'L.O.', price:'¥¥¥¥' },
+  ];
+  const selected = compareList.map((c,i) => data[i] || data[0]);
+  const maxAvg = Math.max(...selected.map(s => s.avg));
+  const headers = selected.map(s => `
+    <th>
+      <img class="compare-img" src="${s.img}&q=70" alt="${s.name}">
+      <div class="compare-name">${s.name}</div>
+    </th>`).join('');
+  const rows = [
+    ['エリア', ...selected.map(s => s.area)],
+    ['総合評価', ...selected.map(s => `<span class="compare-score-big" style="color:${s.avg===maxAvg?'#009660':'var(--black)'}">${s.avg}</span>${s.avg===maxAvg?' <span class="compare-best">✓ Best</span>':''}`)],
+    ['Google', ...selected.map(s => s.g)],
+    ['TripAdvisor', ...selected.map(s => s.ta)],
+    ['Wongnai', ...selected.map(s => s.wn)],
+    ['状況', ...selected.map(s => s.status)],
+    ['価格帯', ...selected.map(s => s.price)],
+  ].map(([label, ...vals]) => `<tr><td>${label}</td>${vals.map(v => `<td>${v}</td>`).join('')}</tr>`).join('');
+
+  document.getElementById('compare-content').innerHTML = `
+    <div style="overflow-x:auto;">
+      <table class="compare-table">
+        <tr><th></th>${headers}</tr>
+        ${rows}
+      </table>
+    </div>`;
+  document.getElementById('compare-modal').classList.add('show');
+}
+
+// ── Share ──
+function openShare(e, name) {
+  e.preventDefault(); e.stopPropagation();
+  document.getElementById('share-title').textContent = name + ' を共有';
+  document.getElementById('share-modal').classList.add('show');
+}
+
+function shareToService(service) {
+  const url = 'https://jeeb.app/r/saitou-thonglor';
+  const text = '【JEEB】おすすめのお店を見つけました！';
+  if (service === 'line') window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}`);
+  else if (service === 'twitter') window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`);
+  else if (service === 'native' && navigator.share) navigator.share({ title: text, url });
+  closeModal('share-modal');
+}
+
+function copyUrl() {
+  const input = document.getElementById('share-url-input');
+  input.select();
+  document.execCommand('copy');
+  const btn = input.nextElementSibling;
+  btn.textContent = '✓ コピー済み';
+  setTimeout(() => btn.textContent = 'コピー', 2000);
+}
+
+// ── Modals ──
+function closeModal(id) {
+  document.getElementById(id).classList.remove('show');
+}
+
+// ── View Toggle ──
+let mapInitialized = false;
+function showView(view) {
+  const listEl = document.getElementById('list-view');
+  const mapEl  = document.getElementById('map-view');
+  const btnList = document.getElementById('btn-list');
+  const btnMap  = document.getElementById('btn-map');
+  if (view === 'map') {
+    listEl.style.display = 'none';
+    mapEl.classList.add('show');
+    btnList.classList.remove('active');
+    btnMap.classList.add('active');
+    if (!mapInitialized) initMap();
+  } else {
+    listEl.style.display = 'block';
+    mapEl.classList.remove('show');
+    btnList.classList.add('active');
+    btnMap.classList.remove('active');
+  }
+}
+
+function initMap() {
+  mapInitialized = true;
+  const map = L.map('map').setView([13.7250, 100.5800], 14);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:'© OpenStreetMap', maxZoom:19 }).addTo(map);
+  function makeIcon(color) {
+    return L.divIcon({
+      className:'',
+      html:`<div style="width:28px;height:28px;border-radius:50% 50% 50% 0;background:${color};transform:rotate(-45deg);border:2.5px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);"></div>`,
+      iconSize:[28,28], iconAnchor:[14,28], popupAnchor:[0,-28]
     });
   }
+  const spots = [
+    { lat:13.7285, lng:100.5830, name:'鮨 さいとう トンロー', sub:'和食 · Thonglor', status:'Open', color:'#00D084', url:'restaurant.html' },
+    { lat:13.7198, lng:100.5878, name:'ソムタムダー エカマイ', sub:'タイ料理 · Ekkamai', status:'Busy', color:'#FFC300', url:'#' },
+    { lat:13.7310, lng:100.5698, name:'和牛焼肉 黒毛', sub:'焼肉 · Phrom Phong', status:'L.O.45min', color:'#FF3B30', url:'#' },
+    { lat:13.7260, lng:100.5855, name:'麺屋 一燈 トンロー', sub:'ラーメン · Thonglor', status:'Open', color:'#00D084', url:'#' },
+    { lat:13.7340, lng:100.5760, name:'Roast Coffee', sub:'カフェ · Phrom Phong', status:'Open', color:'#00D084', url:'#' },
+    { lat:13.7220, lng:100.5900, name:'串焼き 炭火 エカマイ', sub:'居酒屋 · Ekkamai', status:'Open', color:'#00D084', url:'#' },
+  ];
+  spots.forEach(r => {
+    L.marker([r.lat, r.lng], { icon: makeIcon(r.color) }).addTo(map)
+     .bindPopup(`<div class="map-popup"><div class="map-popup-name">${r.name}</div><div class="map-popup-sub">${r.sub}</div><div class="map-popup-row"><div class="map-popup-dot" style="background:${r.color};"></div><span class="map-popup-status">${r.status}</span></div><a class="map-popup-link" href="${r.url}">詳細を見る →</a></div>`);
+  });
+  if (userLat) L.circleMarker([userLat, userLng], { color:'#0066FF', fillColor:'#0066FF', fillOpacity:0.8, radius:8 }).addTo(map).bindPopup('現在地');
+}
 </script>
 </body>
 </html>
