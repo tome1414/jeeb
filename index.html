@@ -6,6 +6,8 @@
 <title>JEEB — Bangkok Dining</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Sans:wght@300;400;500;700&family=Noto+Sans+Thai:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
   :root {
     --bg: #F8F8F6;
@@ -19,253 +21,193 @@
     --live-dim: rgba(0, 208, 132, 0.12);
     --ai: #0066FF;
     --ai-dim: rgba(0, 102, 255, 0.08);
-    --accent: #0A0A0A;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   body {
     font-family: 'Noto Sans JP', 'Noto Sans', 'Noto Sans Thai', sans-serif;
-    background: var(--bg);
-    color: var(--black);
+    background: var(--bg); color: var(--black);
     -webkit-font-smoothing: antialiased;
   }
 
   /* ─── Header ─── */
   header {
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(248, 248, 246, 0.92);
+    position: sticky; top: 0; z-index: 200;
+    background: rgba(248,248,246,0.95);
     backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--gray-200);
-    padding: 0 24px;
-    height: 56px;
+    padding: 0 24px; height: 56px;
     display: flex; align-items: center; justify-content: space-between;
   }
-
-  .logo {
-    font-size: 18px; font-weight: 700;
-    letter-spacing: 0.08em; color: var(--black);
-    text-decoration: none;
-  }
-
-  .header-right { display: flex; align-items: center; gap: 16px; }
-
+  .logo { font-size: 18px; font-weight: 700; letter-spacing: 0.08em; color: var(--black); text-decoration: none; }
   .lang-group { display: flex; gap: 2px; }
   .lang-btn {
-    padding: 5px 10px;
-    border: none; background: none;
-    font-size: 11px; font-weight: 500;
-    color: var(--gray-400); cursor: pointer;
-    border-radius: 4px; letter-spacing: 0.06em;
-    transition: all 0.15s;
+    padding: 5px 10px; border: none; background: none;
+    font-size: 11px; font-weight: 500; color: var(--gray-400);
+    cursor: pointer; border-radius: 4px; letter-spacing: 0.06em; transition: all 0.15s;
   }
-  .lang-btn.active {
-    background: var(--black); color: var(--white);
-  }
+  .lang-btn.active { background: var(--black); color: var(--white); }
 
-  /* ─── Hero / AI Concierge ─── */
-  .hero {
-    padding: 48px 24px 40px;
-    max-width: 720px; margin: 0 auto;
-  }
-
+  /* ─── Hero ─── */
+  .hero { padding: 40px 24px 32px; max-width: 720px; margin: 0 auto; }
   .hero-eyebrow {
-    font-size: 11px; font-weight: 500;
-    letter-spacing: 0.14em; color: var(--gray-400);
-    text-transform: uppercase; margin-bottom: 12px;
+    font-size: 11px; font-weight: 500; letter-spacing: 0.14em;
+    color: var(--gray-400); text-transform: uppercase; margin-bottom: 12px;
   }
-
   .hero-title {
-    font-size: clamp(26px, 6vw, 40px);
-    font-weight: 300; line-height: 1.25;
-    color: var(--black); margin-bottom: 32px;
+    font-size: clamp(26px, 6vw, 40px); font-weight: 300;
+    line-height: 1.25; color: var(--black); margin-bottom: 28px;
     letter-spacing: -0.02em;
   }
   .hero-title strong { font-weight: 700; }
 
-  /* AI Concierge Bar */
+  /* AI Concierge */
   .concierge-wrap {
-    background: var(--white);
-    border: 1px solid var(--gray-200);
-    border-radius: 16px;
-    padding: 20px;
+    background: var(--white); border: 1px solid var(--gray-200);
+    border-radius: 16px; padding: 20px;
     box-shadow: 0 4px 32px rgba(0,0,0,0.06);
   }
-
   .concierge-label {
     display: flex; align-items: center; gap: 6px;
-    font-size: 10px; font-weight: 600;
-    letter-spacing: 0.12em; color: var(--ai);
-    text-transform: uppercase; margin-bottom: 10px;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.12em;
+    color: var(--ai); text-transform: uppercase; margin-bottom: 10px;
   }
   .ai-dot {
-    width: 6px; height: 6px;
-    background: var(--ai); border-radius: 50%;
+    width: 6px; height: 6px; background: var(--ai); border-radius: 50%;
     animation: pulse-ai 2s infinite;
   }
-  @keyframes pulse-ai {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(0.8); }
-  }
-
+  @keyframes pulse-ai { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
   .concierge-input {
     width: 100%; border: none; outline: none;
-    font-size: 16px; font-weight: 300;
-    color: var(--black); background: none;
-    font-family: inherit; line-height: 1.5;
+    font-size: 16px; font-weight: 300; color: var(--black);
+    background: none; font-family: inherit; line-height: 1.5;
   }
   .concierge-input::placeholder { color: var(--gray-400); }
-
-  .concierge-divider {
-    height: 1px; background: var(--gray-100); margin: 14px 0;
-  }
-
+  .concierge-divider { height: 1px; background: var(--gray-100); margin: 14px 0; }
   .concierge-chips { display: flex; gap: 8px; flex-wrap: wrap; }
   .chip {
-    padding: 5px 12px;
-    background: var(--gray-100);
-    border: none; border-radius: 100px;
-    font-size: 12px; color: var(--gray-600);
-    cursor: pointer; font-family: inherit;
-    transition: all 0.15s;
+    padding: 5px 12px; background: var(--gray-100); border: none;
+    border-radius: 100px; font-size: 12px; color: var(--gray-600);
+    cursor: pointer; font-family: inherit; transition: all 0.15s;
   }
   .chip:hover { background: var(--gray-200); color: var(--black); }
 
   /* ─── Live Bar ─── */
-  .live-bar {
-    padding: 0 24px;
-    max-width: 720px; margin: 0 auto 32px;
-  }
+  .live-bar { padding: 0 24px; max-width: 720px; margin: 0 auto 28px; }
   .live-bar-inner {
     display: flex; align-items: center; gap: 10px;
-    padding: 10px 16px;
-    background: var(--live-dim);
-    border-radius: 100px;
-    border: 1px solid rgba(0, 208, 132, 0.2);
-  }
-  .live-indicator {
-    display: flex; align-items: center; gap: 6px;
+    padding: 10px 16px; background: var(--live-dim);
+    border-radius: 100px; border: 1px solid rgba(0,208,132,0.2);
   }
   .live-pulse {
-    width: 8px; height: 8px;
-    background: var(--live); border-radius: 50%;
+    width: 8px; height: 8px; background: var(--live); border-radius: 50%;
     animation: live-pulse 2s infinite;
   }
   @keyframes live-pulse {
-    0% { box-shadow: 0 0 0 0 rgba(0,208,132,0.6); }
-    70% { box-shadow: 0 0 0 8px rgba(0,208,132,0); }
-    100% { box-shadow: 0 0 0 0 rgba(0,208,132,0); }
+    0%{box-shadow:0 0 0 0 rgba(0,208,132,0.6)}
+    70%{box-shadow:0 0 0 8px rgba(0,208,132,0)}
+    100%{box-shadow:0 0 0 0 rgba(0,208,132,0)}
   }
-  .live-text {
-    font-size: 12px; font-weight: 500; color: #009660;
-    letter-spacing: 0.02em;
-  }
-  .live-meta {
-    font-size: 11px; color: var(--gray-400); margin-left: auto;
-  }
+  .live-text { font-size: 12px; font-weight: 500; color: #009660; }
+  .live-meta { font-size: 11px; color: var(--gray-400); margin-left: auto; }
 
   /* ─── Section ─── */
-  .section { padding: 0 24px; max-width: 720px; margin: 0 auto 40px; }
-
+  .section { padding: 0 24px; max-width: 720px; margin: 0 auto 32px; }
   .section-header {
     display: flex; align-items: baseline;
-    justify-content: space-between; margin-bottom: 20px;
+    justify-content: space-between; margin-bottom: 16px;
   }
   .section-title {
-    font-size: 13px; font-weight: 600;
-    letter-spacing: 0.08em; text-transform: uppercase;
-    color: var(--gray-600);
+    font-size: 13px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--gray-600);
   }
-  .section-link {
-    font-size: 12px; color: var(--gray-400);
-    text-decoration: none;
-    transition: color 0.15s;
-  }
+  .section-link { font-size: 12px; color: var(--gray-400); text-decoration: none; transition: color 0.15s; }
   .section-link:hover { color: var(--black); }
 
-  /* ─── Category Filter ─── */
-  .cat-scroll {
-    display: flex; gap: 8px;
-    overflow-x: auto; padding-bottom: 2px;
-    scrollbar-width: none;
-  }
+  /* ─── Category Pills ─── */
+  .cat-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
   .cat-scroll::-webkit-scrollbar { display: none; }
   .cat-pill {
     flex-shrink: 0; padding: 8px 16px;
+    border: 1px solid var(--gray-200); border-radius: 100px;
+    background: var(--white); font-size: 13px; color: var(--gray-600);
+    cursor: pointer; transition: all 0.15s; white-space: nowrap; font-family: inherit;
+  }
+  .cat-pill:hover, .cat-pill.active { background: var(--black); color: var(--white); border-color: var(--black); }
+
+  /* ─── View Toggle ─── */
+  .view-toggle {
+    display: flex; gap: 0; margin-bottom: 20px;
+    background: var(--gray-100); border-radius: 10px; padding: 3px;
+  }
+  .view-btn {
+    flex: 1; padding: 8px 12px; border: none; background: none;
+    font-size: 13px; font-weight: 500; color: var(--gray-400);
+    cursor: pointer; font-family: inherit; border-radius: 8px;
+    transition: all 0.15s; display: flex; align-items: center;
+    justify-content: center; gap: 6px;
+  }
+  .view-btn.active { background: var(--white); color: var(--black); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+
+  /* ─── Map ─── */
+  .map-wrap {
+    border-radius: 16px; overflow: hidden;
     border: 1px solid var(--gray-200);
-    border-radius: 100px; background: var(--white);
-    font-size: 13px; color: var(--gray-600);
-    cursor: pointer; transition: all 0.15s;
-    white-space: nowrap; font-family: inherit;
+    display: none;
   }
-  .cat-pill:hover, .cat-pill.active {
-    background: var(--black); color: var(--white);
-    border-color: var(--black);
+  .map-wrap.show { display: block; }
+  #map { height: 420px; width: 100%; }
+
+  /* Map popup style override */
+  .leaflet-popup-content-wrapper {
+    border-radius: 12px; padding: 0; overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
   }
+  .map-popup { padding: 12px 14px; min-width: 160px; }
+  .map-popup-name { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+  .map-popup-sub { font-size: 11px; color: var(--gray-400); margin-bottom: 6px; }
+  .map-popup-status {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11px; font-weight: 500;
+  }
+  .map-popup-dot { width: 6px; height: 6px; border-radius: 50%; }
 
   /* ─── Area Tabs ─── */
   .area-tabs {
-    display: flex; gap: 0;
-    border-bottom: 1px solid var(--gray-200);
-    margin-bottom: 24px;
+    display: flex; border-bottom: 1px solid var(--gray-200); margin-bottom: 20px;
   }
   .area-tab {
-    padding: 10px 16px;
-    font-size: 13px; font-weight: 400;
+    padding: 10px 16px; font-size: 13px; font-weight: 400;
     color: var(--gray-400); cursor: pointer;
-    border-bottom: 2px solid transparent;
-    margin-bottom: -1px;
+    border-bottom: 2px solid transparent; margin-bottom: -1px;
     transition: all 0.15s; white-space: nowrap;
   }
-  .area-tab.active {
-    color: var(--black); font-weight: 600;
-    border-bottom-color: var(--black);
-  }
+  .area-tab.active { color: var(--black); font-weight: 600; border-bottom-color: var(--black); }
 
-  /* ─── Restaurant Cards ─── */
+  /* ─── Cards ─── */
   .cards-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1px;
-    background: var(--gray-200);
-    border: 1px solid var(--gray-200);
-    border-radius: 16px;
-    overflow: hidden;
+    display: grid; grid-template-columns: 1fr; gap: 1px;
+    background: var(--gray-200); border: 1px solid var(--gray-200);
+    border-radius: 16px; overflow: hidden;
   }
-
   .card {
-    background: var(--white);
-    cursor: pointer;
-    transition: background 0.15s;
-    text-decoration: none; color: inherit;
-    display: block;
+    background: var(--white); cursor: pointer; transition: background 0.15s;
+    text-decoration: none; color: inherit; display: block;
   }
   .card:hover { background: #FAFAF8; }
+  .card-inner { display: flex; gap: 0; align-items: stretch; }
 
-  .card-inner {
-    display: flex; gap: 16px;
-    padding: 20px;
-    align-items: flex-start;
-  }
-
+  /* Card photo — full left column */
   .card-img-wrap {
-    position: relative;
-    width: 88px; height: 88px;
-    border-radius: 12px; overflow: hidden;
-    flex-shrink: 0;
-    background: var(--gray-100);
+    position: relative; width: 110px; flex-shrink: 0; overflow: hidden;
   }
-  .card-img-wrap .img-bg {
-    width: 100%; height: 100%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 36px;
+  .card-img-wrap img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
   }
-
   .live-badge {
-    position: absolute; bottom: 4px; left: 4px;
+    position: absolute; bottom: 6px; left: 6px;
     display: flex; align-items: center; gap: 3px;
     background: rgba(0,0,0,0.72); backdrop-filter: blur(4px);
-    padding: 3px 6px; border-radius: 6px;
+    padding: 3px 7px; border-radius: 6px;
   }
   .live-badge-dot {
     width: 5px; height: 5px; border-radius: 50%;
@@ -275,81 +217,41 @@
   .live-badge-dot.amber { background: #FFC300; }
   .live-badge-dot.red { background: #FF3B30; }
   .live-badge-label {
-    font-size: 9px; font-weight: 600;
-    letter-spacing: 0.06em; color: var(--white);
-    text-transform: uppercase;
+    font-size: 9px; font-weight: 600; letter-spacing: 0.06em;
+    color: var(--white); text-transform: uppercase;
   }
 
-  .card-body { flex: 1; min-width: 0; }
-
+  .card-body { flex: 1; padding: 16px; min-width: 0; }
   .card-name {
-    font-size: 15px; font-weight: 600;
-    color: var(--black); margin-bottom: 2px;
+    font-size: 15px; font-weight: 600; color: var(--black); margin-bottom: 2px;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
-  .card-sub {
-    font-size: 12px; color: var(--gray-400);
-    margin-bottom: 10px;
-  }
-
-  /* AI Badge */
+  .card-sub { font-size: 12px; color: var(--gray-400); margin-bottom: 8px; }
   .ai-badge {
     display: inline-flex; align-items: center; gap: 4px;
-    padding: 3px 8px;
-    background: var(--ai-dim);
-    border-radius: 6px; margin-bottom: 10px;
+    padding: 3px 8px; background: var(--ai-dim); border-radius: 6px; margin-bottom: 8px;
   }
-  .ai-badge-icon { font-size: 10px; }
-  .ai-badge-text {
-    font-size: 11px; color: var(--ai);
-    font-weight: 500; letter-spacing: 0.02em;
-  }
-
-  /* Score row */
-  .score-row {
-    display: flex; align-items: center; gap: 8px;
-  }
-  .score-avg {
-    font-size: 15px; font-weight: 700; color: var(--black);
-  }
-  .score-stars { font-size: 11px; color: #FFB800; letter-spacing: 1px; }
-  .score-divider {
-    width: 1px; height: 12px; background: var(--gray-200);
-  }
-  .score-sources {
-    display: flex; gap: 4px; align-items: center;
-  }
-  .score-src {
-    font-size: 10px; color: var(--gray-400);
-    font-weight: 500; letter-spacing: 0.04em;
-  }
+  .ai-badge-text { font-size: 11px; color: var(--ai); font-weight: 500; }
+  .score-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .score-avg { font-size: 15px; font-weight: 700; color: var(--black); }
+  .score-stars { font-size: 11px; color: #FFB800; }
+  .score-divider { width: 1px; height: 12px; background: var(--gray-200); }
+  .score-sources { display: flex; gap: 3px; align-items: center; }
+  .score-src { font-size: 10px; color: var(--gray-400); font-weight: 500; }
   .score-sep { color: var(--gray-200); font-size: 10px; }
-
-  .card-meta {
-    display: flex; align-items: center; gap: 8px;
-    margin-top: 8px;
-  }
-  .card-distance {
-    font-size: 11px; color: var(--gray-400);
-  }
+  .card-meta { margin-top: 6px; }
+  .card-distance { font-size: 11px; color: var(--gray-400); }
 
   /* ─── Bottom Nav ─── */
   .bottom-nav {
     position: fixed; bottom: 0; left: 0; right: 0;
-    background: rgba(248,248,246,0.95);
-    backdrop-filter: blur(16px);
+    background: rgba(248,248,246,0.95); backdrop-filter: blur(16px);
     border-top: 1px solid var(--gray-200);
     display: flex; padding: 10px 0 20px;
   }
-  .nav-item {
-    flex: 1; text-align: center; cursor: pointer;
-  }
+  .nav-item { flex: 1; text-align: center; cursor: pointer; }
   .nav-icon { font-size: 20px; line-height: 1; }
-  .nav-label {
-    display: block; font-size: 10px;
-    color: var(--gray-400); margin-top: 3px;
-    letter-spacing: 0.04em;
-  }
+  .nav-label { display: block; font-size: 10px; color: var(--gray-400); margin-top: 3px; letter-spacing: 0.04em; }
   .nav-item.active .nav-label { color: var(--black); font-weight: 600; }
 
   .pb { padding-bottom: 80px; }
@@ -359,12 +261,10 @@
 
 <header>
   <a class="logo" href="#">JEEB</a>
-  <div class="header-right">
-    <div class="lang-group">
-      <button class="lang-btn active" onclick="setLang(this)">JP</button>
-      <button class="lang-btn" onclick="setLang(this)">EN</button>
-      <button class="lang-btn" onclick="setLang(this)">TH</button>
-    </div>
+  <div class="lang-group">
+    <button class="lang-btn active" onclick="setLang(this)">JP</button>
+    <button class="lang-btn" onclick="setLang(this)">EN</button>
+    <button class="lang-btn" onclick="setLang(this)">TH</button>
   </div>
 </header>
 
@@ -394,7 +294,7 @@
   <!-- Live Bar -->
   <div class="live-bar">
     <div class="live-bar-inner">
-      <div class="live-indicator">
+      <div style="display:flex;align-items:center;gap:6px;">
         <div class="live-pulse"></div>
         <span class="live-text">現在 243店が営業中</span>
       </div>
@@ -415,132 +315,186 @@
     </div>
   </div>
 
-  <!-- Area Tabs + Cards -->
+  <!-- List / Map Toggle -->
   <div class="section">
-    <div class="section-header">
-      <span class="section-title">おすすめ</span>
-      <a class="section-link" href="#">すべて表示 →</a>
+    <div class="view-toggle">
+      <button class="view-btn active" id="btn-list" onclick="showView('list')">
+        <span>☰</span> リスト
+      </button>
+      <button class="view-btn" id="btn-map" onclick="showView('map')">
+        <span>◎</span> マップ
+      </button>
     </div>
 
-    <div class="area-tabs">
-      <div class="area-tab active">すべて</div>
-      <div class="area-tab">Phrom Phong</div>
-      <div class="area-tab">Thonglor</div>
-      <div class="area-tab">Ekkamai</div>
+    <!-- MAP VIEW -->
+    <div class="map-wrap" id="map-view">
+      <div id="map"></div>
     </div>
 
-    <div class="cards-grid">
+    <!-- LIST VIEW -->
+    <div id="list-view">
+      <div class="section-header">
+        <span class="section-title">おすすめ</span>
+        <a class="section-link" href="#">すべて表示 →</a>
+      </div>
 
-      <!-- Card 1 -->
-      <a class="card" href="restaurant.html">
-        <div class="card-inner">
-          <div class="card-img-wrap">
-            <div class="img-bg" style="background: linear-gradient(135deg,#1a0d00,#5c3010);">🍣</div>
-            <div class="live-badge">
-              <div class="live-badge-dot green"></div>
-              <span class="live-badge-label">Open</span>
-            </div>
-          </div>
-          <div class="card-body">
-            <div class="card-name">鮨 さいとう トンロー</div>
-            <div class="card-sub">和食 · Sushi · Thonglor</div>
-            <div class="ai-badge">
-              <span class="ai-badge-icon">✦</span>
-              <span class="ai-badge-text">日本人：本場の味　タイ人：映える</span>
-            </div>
-            <div class="score-row">
-              <span class="score-avg">4.5</span>
-              <span class="score-stars">★★★★★</span>
-              <div class="score-divider"></div>
-              <div class="score-sources">
-                <span class="score-src">G 4.6</span>
-                <span class="score-sep">·</span>
-                <span class="score-src">TA 4.3</span>
-                <span class="score-sep">·</span>
-                <span class="score-src">WN 4.5</span>
+      <div class="area-tabs">
+        <div class="area-tab active">すべて</div>
+        <div class="area-tab">Phrom Phong</div>
+        <div class="area-tab">Thonglor</div>
+        <div class="area-tab">Ekkamai</div>
+      </div>
+
+      <div class="cards-grid">
+
+        <!-- Card 1 -->
+        <a class="card" href="restaurant.html">
+          <div class="card-inner">
+            <div class="card-img-wrap">
+              <img src="https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=220&q=80" alt="Sushi">
+              <div class="live-badge">
+                <div class="live-badge-dot green"></div>
+                <span class="live-badge-label">Open</span>
               </div>
             </div>
-            <div class="card-meta">
-              <span class="card-distance">📍 Thonglor BTS · 3 min</span>
-            </div>
-          </div>
-        </div>
-      </a>
-
-      <!-- Card 2 -->
-      <a class="card" href="#">
-        <div class="card-inner">
-          <div class="card-img-wrap">
-            <div class="img-bg" style="background: linear-gradient(135deg,#0d2200,#2a6010);">🍜</div>
-            <div class="live-badge">
-              <div class="live-badge-dot amber"></div>
-              <span class="live-badge-label">Busy</span>
-            </div>
-          </div>
-          <div class="card-body">
-            <div class="card-name">ソムタムダー エカマイ</div>
-            <div class="card-sub">タイ料理 · Thai · Ekkamai</div>
-            <div class="ai-badge">
-              <span class="ai-badge-icon">✦</span>
-              <span class="ai-badge-text">地元民絶賛・観光客には辛め</span>
-            </div>
-            <div class="score-row">
-              <span class="score-avg">4.3</span>
-              <span class="score-stars">★★★★☆</span>
-              <div class="score-divider"></div>
-              <div class="score-sources">
-                <span class="score-src">G 4.5</span>
-                <span class="score-sep">·</span>
-                <span class="score-src">TA 4.0</span>
-                <span class="score-sep">·</span>
-                <span class="score-src">WN 4.3</span>
+            <div class="card-body">
+              <div class="card-name">鮨 さいとう トンロー</div>
+              <div class="card-sub">和食 · Sushi · Thonglor</div>
+              <div class="ai-badge">
+                <span style="font-size:10px;">✦</span>
+                <span class="ai-badge-text">日本人：本場の味　タイ人：映える</span>
+              </div>
+              <div class="score-row">
+                <span class="score-avg">4.5</span>
+                <span class="score-stars">★★★★★</span>
+                <div class="score-divider"></div>
+                <div class="score-sources">
+                  <span class="score-src">G 4.6</span>
+                  <span class="score-sep">·</span>
+                  <span class="score-src">TA 4.3</span>
+                  <span class="score-sep">·</span>
+                  <span class="score-src">WN 4.5</span>
+                </div>
+              </div>
+              <div class="card-meta">
+                <span class="card-distance">📍 Thonglor BTS · 3 min</span>
               </div>
             </div>
-            <div class="card-meta">
-              <span class="card-distance">📍 Ekkamai BTS · 5 min</span>
-            </div>
           </div>
-        </div>
-      </a>
+        </a>
 
-      <!-- Card 3 -->
-      <a class="card" href="#">
-        <div class="card-inner">
-          <div class="card-img-wrap">
-            <div class="img-bg" style="background: linear-gradient(135deg,#100300,#3a1000);">🥩</div>
-            <div class="live-badge">
-              <div class="live-badge-dot red"></div>
-              <span class="live-badge-label">L.O. 45min</span>
-            </div>
-          </div>
-          <div class="card-body">
-            <div class="card-name">和牛焼肉 黒毛 プロンポン</div>
-            <div class="card-sub">焼肉 · Wagyu BBQ · Phrom Phong</div>
-            <div class="ai-badge">
-              <span class="ai-badge-icon">✦</span>
-              <span class="ai-badge-text">接待・記念日に最適</span>
-            </div>
-            <div class="score-row">
-              <span class="score-avg">4.2</span>
-              <span class="score-stars">★★★★☆</span>
-              <div class="score-divider"></div>
-              <div class="score-sources">
-                <span class="score-src">G 4.4</span>
-                <span class="score-sep">·</span>
-                <span class="score-src">TA 4.2</span>
-                <span class="score-sep">·</span>
-                <span class="score-src">WN 3.9</span>
+        <!-- Card 2 -->
+        <a class="card" href="#">
+          <div class="card-inner">
+            <div class="card-img-wrap">
+              <img src="https://images.unsplash.com/photo-1559314809-0d155014e29e?w=220&q=80" alt="Thai Food">
+              <div class="live-badge">
+                <div class="live-badge-dot amber"></div>
+                <span class="live-badge-label">Busy</span>
               </div>
             </div>
-            <div class="card-meta">
-              <span class="card-distance">📍 Phrom Phong BTS · 7 min</span>
+            <div class="card-body">
+              <div class="card-name">ソムタムダー エカマイ</div>
+              <div class="card-sub">タイ料理 · Thai · Ekkamai</div>
+              <div class="ai-badge">
+                <span style="font-size:10px;">✦</span>
+                <span class="ai-badge-text">地元民絶賛・観光客には辛め</span>
+              </div>
+              <div class="score-row">
+                <span class="score-avg">4.3</span>
+                <span class="score-stars">★★★★☆</span>
+                <div class="score-divider"></div>
+                <div class="score-sources">
+                  <span class="score-src">G 4.5</span>
+                  <span class="score-sep">·</span>
+                  <span class="score-src">TA 4.0</span>
+                  <span class="score-sep">·</span>
+                  <span class="score-src">WN 4.3</span>
+                </div>
+              </div>
+              <div class="card-meta">
+                <span class="card-distance">📍 Ekkamai BTS · 5 min</span>
+              </div>
             </div>
           </div>
-        </div>
-      </a>
+        </a>
 
-    </div>
+        <!-- Card 3 -->
+        <a class="card" href="#">
+          <div class="card-inner">
+            <div class="card-img-wrap">
+              <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=220&q=80" alt="Wagyu">
+              <div class="live-badge">
+                <div class="live-badge-dot red"></div>
+                <span class="live-badge-label">L.O. 45m</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="card-name">和牛焼肉 黒毛 プロンポン</div>
+              <div class="card-sub">焼肉 · Wagyu · Phrom Phong</div>
+              <div class="ai-badge">
+                <span style="font-size:10px;">✦</span>
+                <span class="ai-badge-text">接待・記念日に最適</span>
+              </div>
+              <div class="score-row">
+                <span class="score-avg">4.2</span>
+                <span class="score-stars">★★★★☆</span>
+                <div class="score-divider"></div>
+                <div class="score-sources">
+                  <span class="score-src">G 4.4</span>
+                  <span class="score-sep">·</span>
+                  <span class="score-src">TA 4.2</span>
+                  <span class="score-sep">·</span>
+                  <span class="score-src">WN 3.9</span>
+                </div>
+              </div>
+              <div class="card-meta">
+                <span class="card-distance">📍 Phrom Phong BTS · 7 min</span>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Card 4 -->
+        <a class="card" href="#">
+          <div class="card-inner">
+            <div class="card-img-wrap">
+              <img src="https://images.unsplash.com/photo-1514190051997-0f6f39ca5cde?w=220&q=80" alt="Ramen">
+              <div class="live-badge">
+                <div class="live-badge-dot green"></div>
+                <span class="live-badge-label">Open</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="card-name">麺屋 一燈 トンロー</div>
+              <div class="card-sub">ラーメン · Ramen · Thonglor</div>
+              <div class="ai-badge">
+                <span style="font-size:10px;">✦</span>
+                <span class="ai-badge-text">深夜でも行列・濃厚魚介系</span>
+              </div>
+              <div class="score-row">
+                <span class="score-avg">4.4</span>
+                <span class="score-stars">★★★★★</span>
+                <div class="score-divider"></div>
+                <div class="score-sources">
+                  <span class="score-src">G 4.5</span>
+                  <span class="score-sep">·</span>
+                  <span class="score-src">TA 4.3</span>
+                  <span class="score-sep">·</span>
+                  <span class="score-src">WN 4.4</span>
+                </div>
+              </div>
+              <div class="card-meta">
+                <span class="card-distance">📍 Thonglor BTS · 6 min</span>
+              </div>
+            </div>
+          </div>
+        </a>
+
+      </div>
+    </div><!-- /list-view -->
   </div>
+
 </div>
 
 <!-- Bottom Nav -->
@@ -553,8 +507,8 @@
     <div class="nav-icon">⌕</div>
     <span class="nav-label">Search</span>
   </div>
-  <div class="nav-item">
-    <div class="nav-icon">◫</div>
+  <div class="nav-item" onclick="showView('map')">
+    <div class="nav-icon">◎</div>
     <span class="nav-label">Map</span>
   </div>
   <div class="nav-item">
@@ -568,9 +522,135 @@
 </div>
 
 <script>
+  // ── Language ──
   function setLang(btn) {
     document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
+  }
+
+  // ── Category pills ──
+  document.querySelectorAll('.cat-pill').forEach(p => {
+    p.addEventListener('click', () => {
+      document.querySelectorAll('.cat-pill').forEach(x => x.classList.remove('active'));
+      p.classList.add('active');
+    });
+  });
+
+  // ── Area tabs ──
+  document.querySelectorAll('.area-tab').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.area-tab').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+    });
+  });
+
+  // ── View toggle ──
+  let mapInitialized = false;
+
+  function showView(view) {
+    const listEl = document.getElementById('list-view');
+    const mapEl  = document.getElementById('map-view');
+    const btnList = document.getElementById('btn-list');
+    const btnMap  = document.getElementById('btn-map');
+
+    if (view === 'map') {
+      listEl.style.display = 'none';
+      mapEl.classList.add('show');
+      btnList.classList.remove('active');
+      btnMap.classList.add('active');
+      if (!mapInitialized) initMap();
+    } else {
+      listEl.style.display = 'block';
+      mapEl.classList.remove('show');
+      btnList.classList.add('active');
+      btnMap.classList.remove('active');
+    }
+  }
+
+  function initMap() {
+    mapInitialized = true;
+
+    // Center: Thonglor / Ekkamai area, Bangkok
+    const map = L.map('map', { zoomControl: true }).setView([13.7270, 100.5843], 14);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors',
+      maxZoom: 19
+    }).addTo(map);
+
+    // Custom pin icon
+    function makeIcon(color) {
+      return L.divIcon({
+        className: '',
+        html: `<div style="
+          width:32px;height:32px;border-radius:50% 50% 50% 0;
+          background:${color};transform:rotate(-45deg);
+          border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);
+        "></div>`,
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32]
+      });
+    }
+
+    const restaurants = [
+      {
+        lat: 13.7285, lng: 100.5830,
+        name: '鮨 さいとう トンロー',
+        sub: '和食 · Thonglor',
+        status: 'Open', color: '#00D084',
+        url: 'restaurant.html'
+      },
+      {
+        lat: 13.7198, lng: 100.5878,
+        name: 'ソムタムダー エカマイ',
+        sub: 'タイ料理 · Ekkamai',
+        status: 'Busy', color: '#FFC300',
+        url: '#'
+      },
+      {
+        lat: 13.7310, lng: 100.5698,
+        name: '和牛焼肉 黒毛',
+        sub: '焼肉 · Phrom Phong',
+        status: 'L.O.45min', color: '#FF3B30',
+        url: '#'
+      },
+      {
+        lat: 13.7260, lng: 100.5855,
+        name: '麺屋 一燈 トンロー',
+        sub: 'ラーメン · Thonglor',
+        status: 'Open', color: '#00D084',
+        url: '#'
+      },
+      {
+        lat: 13.7340, lng: 100.5760,
+        name: 'Roast Coffee Phrom Phong',
+        sub: 'カフェ · Phrom Phong',
+        status: 'Open', color: '#00D084',
+        url: '#'
+      },
+      {
+        lat: 13.7220, lng: 100.5900,
+        name: '串焼き 炭火 エカマイ',
+        sub: '居酒屋 · Ekkamai',
+        status: 'Open', color: '#00D084',
+        url: '#'
+      },
+    ];
+
+    restaurants.forEach(r => {
+      const marker = L.marker([r.lat, r.lng], { icon: makeIcon(r.color) }).addTo(map);
+      marker.bindPopup(`
+        <div class="map-popup">
+          <div class="map-popup-name">${r.name}</div>
+          <div class="map-popup-sub">${r.sub}</div>
+          <div class="map-popup-status">
+            <div class="map-popup-dot" style="background:${r.color};width:6px;height:6px;border-radius:50%;"></div>
+            ${r.status}
+          </div>
+        </div>
+      `);
+    });
   }
 </script>
 </body>
