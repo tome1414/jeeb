@@ -352,6 +352,76 @@
     letter-spacing: 0.06em; text-transform: uppercase;
   }
 
+  /* ─── Review Smoke Overlay ─── */
+  .reviews-section {
+    position: relative;
+  }
+  .reviews-section.smoke::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(248,248,246,0.3), rgba(248,248,246,0.6));
+    border-radius: 0;
+    z-index: 10;
+    pointer-events: none;
+  }
+  .reviews-section.smoke {
+    filter: grayscale(100%);
+  }
+
+  .review-locked-prompt {
+    position: absolute; inset: 0; z-index: 20;
+    display: flex; align-items: center; justify-content: center;
+    display: none;
+    border-radius: 0;
+  }
+  .reviews-section.smoke .review-locked-prompt {
+    display: flex;
+  }
+
+  /* ─── AI Summary Smoke Overlay ─── */
+  .ai-summary-section {
+    position: relative;
+  }
+  .ai-summary-section.smoke::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(248,248,246,0.3), rgba(248,248,246,0.6));
+    border-radius: 12px;
+    z-index: 10;
+    pointer-events: none;
+  }
+  .ai-summary-section.smoke {
+    filter: grayscale(100%);
+  }
+
+  .ai-summary-locked-prompt {
+    position: absolute; inset: 0; z-index: 20;
+    display: none; align-items: center; justify-content: center;
+    border-radius: 12px;
+  }
+  .ai-summary-section.smoke .ai-summary-locked-prompt {
+    display: flex;
+  }
+
+  .locked-prompt-content {
+    background: var(--white); border-radius: 14px;
+    padding: 24px; text-align: center;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    max-width: 280px;
+  }
+  .locked-prompt-icon { font-size: 40px; margin-bottom: 12px; }
+  .locked-prompt-title { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+  .locked-prompt-text { font-size: 12px; color: var(--gray-400); margin-bottom: 16px; line-height: 1.6; }
+  .locked-prompt-btn {
+    width: 100%; padding: 11px;
+    background: var(--ai); color: var(--white);
+    border: none; border-radius: 8px;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+    transition: opacity 0.15s;
+  }
+  .locked-prompt-btn:hover { opacity: 0.85; }
+
   /* ─── Bottom CTA ─── */
   .bottom-cta {
     position: fixed; bottom: 0; left: 0; right: 0;
@@ -536,6 +606,38 @@
   }
   .reserve-cancel-btn:hover { background: var(--gray-100); }
 
+  /* ─── Login Prompt Modal ─── */
+  .login-prompt-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center;
+  }
+  .login-prompt-overlay.open { display: flex; }
+  .login-prompt-content {
+    background: var(--white); border-radius: 16px;
+    padding: 24px; text-align: center;
+    box-shadow: 0 12px 48px rgba(0,0,0,0.15);
+    max-width: 300px;
+  }
+  .login-prompt-icon { font-size: 48px; margin-bottom: 12px; }
+  .login-prompt-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: var(--black); }
+  .login-prompt-text { font-size: 13px; color: var(--gray-600); margin-bottom: 20px; line-height: 1.6; }
+  .login-prompt-btn {
+    width: 100%; padding: 12px;
+    background: var(--ai); color: var(--white);
+    border: none; border-radius: 10px;
+    font-size: 14px; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+    transition: opacity 0.15s;
+  }
+  .login-prompt-btn:hover { opacity: 0.9; }
+  .login-prompt-close {
+    width: 100%; padding: 12px; margin-top: 8px;
+    background: none; color: var(--black);
+    border: 1px solid var(--gray-200); border-radius: 10px;
+    font-size: 14px; font-weight: 500;
+    cursor: pointer; font-family: inherit;
+  }
+
   /* ─── Compare Toast ─── */
   .compare-toast {
     position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%) translateY(20px);
@@ -670,23 +772,34 @@
     </div>
 
     <!-- AI Summary -->
-    <div class="ai-summary">
-      <div class="ai-summary-header">
-        <span class="ai-icon">AI</span>
-        <span class="ai-summary-title" data-ja="レビュー分析サマリー" data-en="Review Analysis" data-th="สรุปการวิเคราะห์">レビュー分析サマリー</span>
+    <div class="ai-summary-section" id="ai-summary-section">
+      <div class="ai-summary-locked-prompt">
+        <div class="locked-prompt-content">
+          <div class="locked-prompt-icon">🔒</div>
+          <div class="locked-prompt-title" id="ai-prompt-title">レビュー分析で分かる、隠れた本当の評価</div>
+          <div class="locked-prompt-text" id="ai-prompt-text">会員登録してすべてのレビューを読む</div>
+          <button class="locked-prompt-btn" id="ai-prompt-btn" onclick="window.location.href='login.html'">無料で会員登録</button>
+        </div>
       </div>
-      <div class="ai-summary-items">
-        <div class="ai-summary-item">
-          <span class="ai-summary-flag">🇯🇵</span>
-          <span data-ja="日本人：「本場に近い味と技術。バンコクでここまでのクオリティは稀」" data-en="Japanese: 'Closest to authentic quality in Bangkok. Rare find.'" data-th="ชาวญี่ปุ่น: 'รสชาติใกล้เคียงของแท้มากที่สุดในกรุงเทพ'">日本人：「本場に近い味と技術。バンコクでここまでのクオリティは稀」</span>
+
+      <div class="ai-summary">
+        <div class="ai-summary-header">
+          <span class="ai-icon">AI</span>
+          <span class="ai-summary-title" data-ja="レビュー分析サマリー" data-en="Review Analysis" data-th="สรุปการวิเคราะห์">レビュー分析サマリー</span>
         </div>
-        <div class="ai-summary-item">
-          <span class="ai-summary-flag">🇹🇭</span>
-          <span data-ja="タイ人：「映える盛り付け。接待・記念日利用が多い」" data-en="Thais: 'Photogenic presentation. Popular for business dinners & anniversaries.'" data-th="ชาวไทย: 'จัดจานสวยงาม เหมาะสำหรับงานเลี้ยงและวันพิเศษ'">タイ人：「映える盛り付け。接待・記念日利用が多い」</span>
-        </div>
-        <div class="ai-summary-item">
-          <span class="ai-summary-flag">🌍</span>
-          <span data-ja="欧米人：「最高の日本食体験。サービスが丁寧」" data-en="Western: 'Top Japanese dining experience. Excellent service.'" data-th="ชาวตะวันตก: 'ประสบการณ์อาหารญี่ปุ่นยอดเยี่ยม บริการดีมาก'">欧米人：「最高の日本食体験。サービスが丁寧」</span>
+        <div class="ai-summary-items">
+          <div class="ai-summary-item">
+            <span class="ai-summary-flag">🇯🇵</span>
+            <span data-ja="日本人：「本場に近い味と技術。バンコクでここまでのクオリティは稀」" data-en="Japanese: 'Closest to authentic quality in Bangkok. Rare find.'" data-th="ชาวญี่ปุ่น: 'รสชาติใกล้เคียงของแท้มากที่สุดในกรุงเทพ'">日本人：「本場に近い味と技術。バンコクでここまでのクオリティは稀」</span>
+          </div>
+          <div class="ai-summary-item">
+            <span class="ai-summary-flag">🇹🇭</span>
+            <span data-ja="タイ人：「映える盛り付け。接待・記念日利用が多い」" data-en="Thais: 'Photogenic presentation. Popular for business dinners & anniversaries.'" data-th="ชาวไทย: 'จัดจานสวยงาม เหมาะสำหรับงานเลี้ยงและวันพิเศษ'">タイ人：「映える盛り付け。接待・記念日利用が多い」</span>
+          </div>
+          <div class="ai-summary-item">
+            <span class="ai-summary-flag">🌍</span>
+            <span data-ja="欧米人：「最高の日本食体験。サービスが丁寧」" data-en="Western: 'Top Japanese dining experience. Excellent service.'" data-th="ชาวตะวันตก: 'ประสบการณ์อาหารญี่ปุ่นยอดเยี่ยม บริการดีมาก'">欧米人：「最高の日本食体験。サービスが丁寧」</span>
+          </div>
         </div>
       </div>
     </div>
@@ -767,6 +880,17 @@
   <!-- Reviews -->
   <div class="block">
     <div class="block-label" data-ja="みんなの声" data-en="Reviews" data-th="ความเห็น">みんなの声</div>
+
+    <div class="reviews-section" id="reviews-section">
+      <div class="review-locked-prompt">
+        <div class="locked-prompt-content">
+          <div class="locked-prompt-icon">🔒</div>
+          <div class="locked-prompt-title" id="prompt-title">レビュー全文を表示</div>
+          <div class="locked-prompt-text" id="prompt-text">会員登録してすべてのレビューを読む</div>
+          <button class="locked-prompt-btn" id="prompt-btn" onclick="window.location.href='login.html'">無料で会員登録</button>
+        </div>
+      </div>
+
     <div class="review-filters">
       <button class="rf-btn active" data-ja="すべて" data-en="All" data-th="ทั้งหมด">すべて</button>
       <button class="rf-btn" data-ja="🇯🇵 日本人" data-en="🇯🇵 Japanese" data-th="🇯🇵 ชาวญี่ปุ่น">🇯🇵 日本人</button>
@@ -810,8 +934,20 @@
       <div class="review-text">Best omakase experience outside Japan. Impeccable service and the freshest fish I've had in Bangkok.</div>
       <span class="review-source">via TripAdvisor</span>
     </div>
+    </div><!-- /reviews-section -->
   </div>
 
+</div>
+
+<!-- Login Prompt Modal -->
+<div class="login-prompt-overlay" id="login-prompt-overlay" onclick="closeLoginPrompt(event)">
+  <div class="login-prompt-content" onclick="event.stopPropagation()">
+    <div class="login-prompt-icon">🔐</div>
+    <div class="login-prompt-title" id="login-prompt-title">予約機能をご利用いただくには</div>
+    <div class="login-prompt-text" id="login-prompt-text">無料会員登録が必要です。</div>
+    <button class="login-prompt-btn" onclick="window.location.href='login.html'" id="login-prompt-btn">無料で会員登録</button>
+    <button class="login-prompt-close" onclick="closeLoginPrompt()">閉じる</button>
+  </div>
 </div>
 
 <!-- Reserve Modal -->
@@ -979,7 +1115,34 @@
     const saved = localStorage.getItem('jeeb-lang') || 'ja';
     const btn = document.querySelector(`button[onclick="switchLang('${saved}', this)"]`);
     if (btn && saved !== 'ja') switchLang(saved, btn);
+    initializeReviewSmoke();
   });
+
+  // ─── Review & AI Summary Smoke Logic ───
+  function initializeReviewSmoke() {
+    const userData = localStorage.getItem('jeeb-user');
+    const reviewsSection = document.getElementById('reviews-section');
+    const aiSummarySection = document.getElementById('ai-summary-section');
+    const promptBtn = document.getElementById('prompt-btn');
+    const aiPromptBtn = document.getElementById('ai-prompt-btn');
+
+    if (!userData) {
+      // Not logged in: Show smoke + lock prompt
+      reviewsSection.classList.add('smoke');
+      aiSummarySection.classList.add('smoke');
+      promptBtn.textContent = '無料で会員登録';
+      promptBtn.onclick = () => window.location.href = 'login.html';
+      aiPromptBtn.textContent = '無料で会員登録';
+      aiPromptBtn.onclick = () => window.location.href = 'login.html';
+    } else {
+      const user = JSON.parse(userData);
+      if (user.tier === 'silver' || user.tier === 'gold' || user.tier === 'black') {
+        // Silver/Gold/Black member: No smoke, full access to reviews and AI summary
+        reviewsSection.classList.remove('smoke');
+        aiSummarySection.classList.remove('smoke');
+      }
+    }
+  }
 
   // Menu tabs
   document.querySelectorAll('.menu-tab').forEach(tab => {
@@ -999,8 +1162,21 @@
 
   // ─── Reserve ───
   function openReserve() {
+    const userData = localStorage.getItem('jeeb-user');
+    if (!userData) {
+      // Not logged in: Show login prompt modal
+      document.getElementById('login-prompt-overlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+      return;
+    }
     document.getElementById('reserve-overlay').classList.add('open');
     document.body.style.overflow = 'hidden';
+  }
+  function closeLoginPrompt(e) {
+    // Close only if clicking overlay background, not content
+    if (e && e.target.id !== 'login-prompt-overlay') return;
+    document.getElementById('login-prompt-overlay').classList.remove('open');
+    document.body.style.overflow = '';
   }
   function closeReserve(e) {
     if (e.target === document.getElementById('reserve-overlay')) closeReserveBtn();
