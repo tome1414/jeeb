@@ -433,6 +433,109 @@
   }
   .share-copy:hover { background: var(--gray-200); }
 
+  /* ─── Reserve Modal ─── */
+  .reserve-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    z-index: 300; display: flex; align-items: flex-end;
+    opacity: 0; pointer-events: none; transition: opacity 0.25s;
+  }
+  .reserve-overlay.open { opacity: 1; pointer-events: auto; }
+  .reserve-sheet {
+    width: 100%; background: var(--bg);
+    border-radius: 20px 20px 0 0;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.32,0.72,0,1);
+    max-height: 94vh; overflow-y: auto;
+    padding-bottom: 40px;
+  }
+  .reserve-overlay.open .reserve-sheet { transform: translateY(0); }
+  .reserve-top-label {
+    text-align: center; font-size: 11px; color: var(--gray-400);
+    padding: 14px 0 0; letter-spacing: 0.04em;
+  }
+  .reserve-card {
+    background: var(--white); border-radius: 14px;
+    margin: 12px 14px; padding: 22px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+  }
+  .reserve-title { font-size: 20px; font-weight: 700; margin-bottom: 2px; }
+  .reserve-subtitle { font-size: 13px; color: var(--gray-400); margin-bottom: 22px; }
+  .reserve-section-lbl {
+    font-size: 10px; font-weight: 700; color: var(--gray-400);
+    text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 10px;
+  }
+  .reserve-row { display: flex; gap: 10px; margin-bottom: 12px; }
+  .reserve-field { flex: 1; }
+  .reserve-field-lbl { font-size: 11px; color: var(--gray-600); margin-bottom: 5px; }
+  .reserve-input {
+    width: 100%; padding: 11px 14px;
+    border: 1px solid var(--gray-200); border-radius: 10px;
+    font-size: 14px; color: var(--black);
+    background: var(--white); font-family: inherit;
+    outline: none; transition: border-color 0.15s; appearance: none;
+  }
+  .reserve-input:focus { border-color: var(--black); }
+  .reserve-field-wrap { margin-bottom: 12px; }
+  .prepay-notice {
+    border: 1.5px solid #F59E0B;
+    background: rgba(251,191,36,0.08);
+    border-radius: 10px; padding: 12px 14px;
+    margin-bottom: 14px;
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .prepay-notice-icon { font-size: 15px; flex-shrink: 0; }
+  .prepay-notice-title { font-size: 13px; font-weight: 600; color: #92400E; margin-bottom: 4px; }
+  .prepay-notice-body { font-size: 12px; color: #92400E; line-height: 1.65; }
+  .prepay-breakdown {
+    background: rgba(251,191,36,0.06);
+    border: 1px solid rgba(251,191,36,0.25);
+    border-radius: 10px; padding: 16px; margin-bottom: 16px;
+  }
+  .prepay-breakdown-lbl { font-size: 10px; font-weight: 700; color: var(--gray-400); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 10px; }
+  .prepay-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 13px; color: var(--gray-600); }
+  .prepay-divider { border: none; border-top: 1px solid var(--gray-200); margin: 8px 0; }
+  .prepay-total-row { display: flex; justify-content: space-between; padding: 3px 0; font-size: 14px; font-weight: 700; color: var(--black); }
+  .pay-methods { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .pay-opt {
+    display: flex; align-items: center; gap: 12px;
+    border: 1.5px solid var(--gray-200); border-radius: 10px;
+    padding: 12px 14px; cursor: pointer; transition: all 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .pay-opt.selected { border-color: var(--ai); background: var(--ai-dim); }
+  .pay-opt input[type=radio] { accent-color: var(--ai); width: 16px; height: 16px; flex-shrink: 0; cursor: pointer; }
+  .pay-opt-name { font-size: 13px; font-weight: 600; color: var(--black); }
+  .pay-opt-sub { font-size: 11px; color: var(--gray-400); margin-top: 1px; }
+  .pay-required-tag { font-size: 10px; font-weight: 600; color: #FF3B30; margin-left: 6px; vertical-align: middle; }
+  .reserve-textarea {
+    width: 100%; padding: 11px 14px;
+    border: 1px solid var(--gray-200); border-radius: 10px;
+    font-size: 14px; color: var(--black);
+    background: var(--white); font-family: inherit;
+    outline: none; min-height: 80px; resize: vertical;
+    transition: border-color 0.15s;
+  }
+  .reserve-textarea:focus { border-color: var(--black); }
+  .optional-tag { font-size: 10px; color: var(--gray-400); font-weight: 400; margin-left: 5px; }
+  .cancel-policy-note { font-size: 11px; color: var(--gray-400); line-height: 1.75; margin-bottom: 16px; }
+  .reserve-submit-btn {
+    width: 100%; padding: 15px;
+    background: var(--black); color: var(--white);
+    border: none; border-radius: 12px;
+    font-size: 15px; font-weight: 700;
+    cursor: pointer; font-family: inherit; margin-bottom: 10px;
+    transition: opacity 0.15s;
+  }
+  .reserve-submit-btn:hover { opacity: 0.85; }
+  .reserve-cancel-btn {
+    width: 100%; padding: 14px;
+    background: none; color: var(--black);
+    border: 1.5px solid var(--gray-200); border-radius: 12px;
+    font-size: 15px; font-weight: 600;
+    cursor: pointer; font-family: inherit; transition: background 0.15s;
+  }
+  .reserve-cancel-btn:hover { background: var(--gray-100); }
+
   /* ─── Compare Toast ─── */
   .compare-toast {
     position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%) translateY(20px);
@@ -711,6 +814,109 @@
 
 </div>
 
+<!-- Reserve Modal -->
+<div class="reserve-overlay" id="reserve-overlay" onclick="closeReserve(event)">
+  <div class="reserve-sheet" onclick="event.stopPropagation()">
+    <p class="reserve-top-label">予約フロー — 前払いあり</p>
+    <div class="reserve-card">
+      <div class="reserve-title">予約する</div>
+      <div class="reserve-subtitle">鮨 さいとう トンロー店 — トンロー</div>
+
+      <div class="reserve-section-lbl">来店情報</div>
+      <div class="reserve-row">
+        <div class="reserve-field">
+          <div class="reserve-field-lbl">日付</div>
+          <input class="reserve-input" type="date" value="2026-04-15" id="reserve-date">
+        </div>
+        <div class="reserve-field">
+          <div class="reserve-field-lbl">時間</div>
+          <select class="reserve-input" id="reserve-time">
+            <option>17:30</option>
+            <option selected>19:00</option>
+            <option>19:30</option>
+            <option>20:00</option>
+            <option>20:30</option>
+          </select>
+        </div>
+      </div>
+      <div class="reserve-field-wrap">
+        <div class="reserve-field-lbl">人数</div>
+        <select class="reserve-input" id="reserve-guests" onchange="updateDeposit(this.value)">
+          <option value="1">1名</option>
+          <option value="2" selected>2名</option>
+          <option value="3">3名</option>
+          <option value="4">4名</option>
+          <option value="5">5名</option>
+          <option value="6">6名</option>
+        </select>
+      </div>
+      <div class="reserve-field-wrap">
+        <div class="reserve-field-lbl">お名前</div>
+        <input class="reserve-input" type="text" placeholder="山田 太郎">
+      </div>
+      <div class="reserve-field-wrap" style="margin-bottom:18px;">
+        <div class="reserve-field-lbl">連絡先（WhatsApp / LINE）</div>
+        <input class="reserve-input" type="tel" placeholder="+66 xx-xxxx-xxxx">
+      </div>
+
+      <!-- Pre-payment notice -->
+      <div class="prepay-notice">
+        <div class="prepay-notice-icon">⚠️</div>
+        <div>
+          <div class="prepay-notice-title">この店舗は事前決済が必要です</div>
+          <div class="prepay-notice-body">無断キャンセルを防ぐためデポジットをお支払いいただきます。来店時に合計金額から差し引かれます。</div>
+        </div>
+      </div>
+
+      <!-- Breakdown -->
+      <div class="prepay-breakdown">
+        <div class="prepay-breakdown-lbl">事前決済内容</div>
+        <div class="prepay-row"><span id="deposit-label">デポジット（500 THB × 2名）</span><span id="deposit-amount">1,000 THB</span></div>
+        <div class="prepay-row"><span>手数料</span><span>0 THB</span></div>
+        <hr class="prepay-divider">
+        <div class="prepay-total-row"><span>今回お支払い</span><span id="deposit-total">1,000 THB</span></div>
+      </div>
+
+      <!-- Payment method -->
+      <div class="reserve-section-lbl">お支払い方法<span class="pay-required-tag">必須</span></div>
+      <div class="pay-methods">
+        <label class="pay-opt selected">
+          <input type="radio" name="reserve-payment" checked onchange="selectPayOpt(this)">
+          <div>
+            <div class="pay-opt-name">クレジット / デビットカード</div>
+            <div class="pay-opt-sub">Visa・Mastercard・JCB</div>
+          </div>
+        </label>
+        <label class="pay-opt">
+          <input type="radio" name="reserve-payment" onchange="selectPayOpt(this)">
+          <div>
+            <div class="pay-opt-name">PromptPay / QR決済</div>
+            <div class="pay-opt-sub">タイ国内銀行アプリ</div>
+          </div>
+        </label>
+        <label class="pay-opt">
+          <input type="radio" name="reserve-payment" onchange="selectPayOpt(this)">
+          <div>
+            <div class="pay-opt-name">PayPal</div>
+            <div class="pay-opt-sub">海外カードをお持ちの方</div>
+          </div>
+        </label>
+      </div>
+
+      <!-- Special requests -->
+      <div class="reserve-field-wrap" style="margin-bottom:14px;">
+        <div class="reserve-field-lbl">特別リクエスト<span class="optional-tag">任意</span></div>
+        <textarea class="reserve-textarea" placeholder="アレルギー・席のご希望など"></textarea>
+      </div>
+
+      <p class="cancel-policy-note">キャンセルポリシー：来店72時間前までのキャンセルは全額返金。それ以降はデポジット没収となります。</p>
+
+      <button class="reserve-submit-btn" id="reserve-submit-btn" onclick="submitReservation()">1,000 THB を支払って予約を確定する</button>
+      <button class="reserve-cancel-btn" onclick="closeReserveBtn()">キャンセル</button>
+    </div>
+  </div>
+</div>
+
 <!-- Share Modal -->
 <div class="modal-overlay" id="share-overlay" onclick="closeShare(event)">
   <div class="share-sheet">
@@ -753,7 +959,7 @@
   </div>
   <div class="cta-main">
     <div class="cta-icon-btn" onclick="openMap()">🗺</div>
-    <button class="cta-reserve" data-ja="🔔 予約する" data-en="🔔 Reserve" data-th="🔔 จองโต๊ะ">🔔 予約する</button>
+    <button class="cta-reserve" onclick="openReserve()" data-ja="🔔 予約する" data-en="🔔 Reserve" data-th="🔔 จองโต๊ะ">🔔 予約する</button>
     <div class="cta-icon-btn" id="fav-btn" onclick="toggleFav()">♡</div>
   </div>
 </div>
@@ -790,6 +996,35 @@
       btn.classList.add('active');
     });
   });
+
+  // ─── Reserve ───
+  function openReserve() {
+    document.getElementById('reserve-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeReserve(e) {
+    if (e.target === document.getElementById('reserve-overlay')) closeReserveBtn();
+  }
+  function closeReserveBtn() {
+    document.getElementById('reserve-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function updateDeposit(guests) {
+    const n = parseInt(guests);
+    const amount = 500 * n;
+    document.getElementById('deposit-label').textContent = `デポジット（500 THB × ${n}名）`;
+    document.getElementById('deposit-amount').textContent = `${amount.toLocaleString()} THB`;
+    document.getElementById('deposit-total').textContent = `${amount.toLocaleString()} THB`;
+    document.getElementById('reserve-submit-btn').textContent = `${amount.toLocaleString()} THB を支払って予約を確定する`;
+  }
+  function selectPayOpt(radio) {
+    document.querySelectorAll('.pay-opt').forEach(o => o.classList.remove('selected'));
+    radio.closest('.pay-opt').classList.add('selected');
+  }
+  function submitReservation() {
+    showToast('✓ 予約が確定しました！確認メッセージを送ります');
+    closeReserveBtn();
+  }
 
   // ─── Share ───
   function openShare() {
