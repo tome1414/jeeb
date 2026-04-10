@@ -266,7 +266,7 @@
       <button class="lang-btn" onclick="setLang(this)">EN</button>
       <button class="lang-btn" onclick="setLang(this)">TH</button>
     </div>
-    <button class="login-btn" onclick="openSaved()">ログイン</button>
+    <button class="login-btn" id="header-login-btn" onclick="handleHeaderLogin()">ログイン</button>
   </div>
 </header>
 
@@ -568,7 +568,7 @@
     <div class="nav-icon">♡</div>
     <span class="nav-label">Saved<span class="nav-badge" id="saved-badge" style="display:none;">0</span></span>
   </div>
-  <div class="nav-item">
+  <div class="nav-item" onclick="navigateToProfile()">
     <div class="nav-icon">◯</div>
     <span class="nav-label">Profile</span>
   </div>
@@ -579,6 +579,7 @@
 let compareList = [];   // [{id, name, img}]
 let savedList = [];     // [name]
 let userLat = null, userLng = null;
+let currentUser = null; // User data from localStorage
 
 // Store coords for distance calc
 const storeCoords = {
@@ -588,6 +589,39 @@ const storeCoords = {
   'dist-4': { lat:13.7260, lng:100.5855, name:'麺屋 一燈 トンロー' },
   'dist-5': { lat:13.7295, lng:100.5705, name:'鮨 藍 プロンポン' },
 };
+
+// ── User State ──
+function loadUser() {
+  const userData = localStorage.getItem('jeeb-user');
+  if (userData) {
+    currentUser = JSON.parse(userData);
+    updateHeaderUI();
+  }
+}
+
+function updateHeaderUI() {
+  if (currentUser) {
+    const btn = document.getElementById('header-login-btn');
+    btn.textContent = `👤 ${currentUser.name}`;
+    btn.onclick = () => navigateToProfile();
+  }
+}
+
+function handleHeaderLogin() {
+  if (currentUser) {
+    navigateToProfile();
+  } else {
+    window.location.href = 'login.html';
+  }
+}
+
+function navigateToProfile() {
+  if (!currentUser) {
+    window.location.href = 'login.html';
+  } else {
+    window.location.href = 'profile.html';
+  }
+}
 
 // ── Language ──
 function setLang(btn) {
@@ -609,6 +643,11 @@ document.querySelectorAll('.area-tab').forEach(t => {
     document.querySelectorAll('.area-tab').forEach(x => x.classList.remove('active'));
     t.classList.add('active');
   });
+});
+
+// ── Initialize on Page Load ──
+window.addEventListener('DOMContentLoaded', () => {
+  loadUser();
 });
 
 // ── GPS / Location ──

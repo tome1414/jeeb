@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ログイン / 無料登録 — JEEB</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Sans:wght@300;400;500;700&family=Noto+Sans+Thai:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F8F8F6;
+      --white: #FFFFFF;
+      --black: #0A0A0A;
+      --gray-100: #F0F0EE;
+      --gray-200: #E0E0DC;
+      --gray-400: #9A9A96;
+      --gray-600: #5A5A56;
+      --live: #00D084;
+      --ai: #0066FF;
+      --ai-dim: rgba(0,102,255,0.08);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Noto Sans JP', 'Noto Sans', sans-serif;
+      background: var(--bg);
+      color: var(--black);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── Header ─── */
+    .login-header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(248,248,246,0.95); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--gray-200);
+      height: 56px; padding: 0 16px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo {
+      font-size: 17px; font-weight: 700; letter-spacing: 0.08em;
+      color: var(--black); text-decoration: none;
+    }
+    .lang-group {
+      display: flex; gap: 2px;
+    }
+    .lang-btn {
+      padding: 5px 10px; border: none; background: none;
+      font-size: 11px; font-weight: 500; color: var(--gray-400);
+      cursor: pointer; border-radius: 4px; letter-spacing: 0.06em;
+      transition: all 0.15s; font-family: inherit;
+    }
+    .lang-btn.active { background: var(--black); color: var(--white); }
+
+    /* ─── Container ─── */
+    .login-container {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      padding: 32px 20px;
+    }
+
+    .login-box {
+      width: 100%; max-width: 340px;
+    }
+
+    .login-title {
+      font-size: 26px; font-weight: 300; margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+    .login-subtitle {
+      font-size: 13px; color: var(--gray-400); margin-bottom: 32px;
+    }
+
+    /* ─── Tab ─── */
+    .login-tabs {
+      display: flex; gap: 0; margin-bottom: 24px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+    .login-tab {
+      flex: 1; padding: 12px 0;
+      font-size: 13px; font-weight: 400; color: var(--gray-400);
+      cursor: pointer; border-bottom: 2px solid transparent;
+      margin-bottom: -1px; transition: all 0.15s;
+      background: none; border: none; font-family: inherit;
+      text-align: center;
+    }
+    .login-tab.active {
+      color: var(--black); font-weight: 600;
+      border-bottom-color: var(--black);
+    }
+
+    /* ─── Form ─── */
+    .login-form {
+      display: none;
+    }
+    .login-form.active {
+      display: block;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-label {
+      display: block; font-size: 12px; color: var(--gray-600);
+      margin-bottom: 6px; font-weight: 500;
+    }
+    .form-input {
+      width: 100%; padding: 12px 14px;
+      border: 1px solid var(--gray-200); border-radius: 10px;
+      font-size: 14px; color: var(--black);
+      background: var(--white); font-family: inherit;
+      outline: none; transition: border-color 0.15s;
+      appearance: none;
+    }
+    .form-input:focus {
+      border-color: var(--black);
+    }
+    .form-input::placeholder {
+      color: var(--gray-400);
+    }
+
+    /* Signup-only fields */
+    .signup-only {
+      display: none;
+    }
+    .login-form.signup .signup-only {
+      display: block;
+    }
+
+    /* ─── Checkbox ─── */
+    .form-check {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--gray-600);
+      margin-bottom: 20px;
+    }
+    .form-check input[type=checkbox] {
+      width: 16px; height: 16px; cursor: pointer;
+      accent-color: var(--ai);
+    }
+    .form-check label {
+      cursor: pointer; flex: 1;
+    }
+
+    /* ─── Links ─── */
+    .login-forgot {
+      text-align: center; margin-bottom: 20px;
+    }
+    .login-forgot a {
+      font-size: 12px; color: var(--ai);
+      text-decoration: none; font-weight: 500;
+    }
+
+    /* ─── Buttons ─── */
+    .login-btn-primary {
+      width: 100%; padding: 14px;
+      background: var(--black); color: var(--white);
+      border: none; border-radius: 10px;
+      font-size: 15px; font-weight: 600;
+      cursor: pointer; font-family: inherit;
+      transition: opacity 0.15s; margin-bottom: 10px;
+    }
+    .login-btn-primary:hover {
+      opacity: 0.85;
+    }
+
+    .login-btn-secondary {
+      width: 100%; padding: 12px;
+      background: none; color: var(--black);
+      border: 1.5px solid var(--gray-200); border-radius: 10px;
+      font-size: 14px; font-weight: 500;
+      cursor: pointer; font-family: inherit;
+      transition: background 0.15s;
+    }
+    .login-btn-secondary:hover {
+      background: var(--gray-100);
+    }
+
+    /* ─── Divider ─── */
+    .form-divider {
+      display: flex; align-items: center; gap: 10px;
+      margin: 20px 0;
+    }
+    .form-divider::before,
+    .form-divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--gray-200);
+    }
+    .form-divider-text {
+      font-size: 11px; color: var(--gray-400);
+    }
+
+    /* ─── Social Login ─── */
+    .social-login {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+      margin-bottom: 20px;
+    }
+    .social-btn {
+      padding: 11px; border: 1px solid var(--gray-200); border-radius: 10px;
+      background: var(--white); cursor: pointer; font-family: inherit;
+      font-size: 13px; font-weight: 500; color: var(--gray-600);
+      transition: background 0.15s; display: flex; align-items: center;
+      justify-content: center; gap: 6px;
+    }
+    .social-btn:hover {
+      background: var(--gray-100);
+    }
+
+    /* ─── Error ─── */
+    .form-error {
+      padding: 10px 12px; background: rgba(255,59,48,0.08);
+      border: 1px solid rgba(255,59,48,0.2); border-radius: 8px;
+      font-size: 12px; color: #FF3B30; margin-bottom: 16px;
+      display: none;
+    }
+    .form-error.show {
+      display: block;
+    }
+
+    /* ─── Footer ─── */
+    .login-footer {
+      text-align: center; padding: 20px;
+      border-top: 1px solid var(--gray-200);
+      font-size: 12px; color: var(--gray-400);
+    }
+    .login-footer a {
+      color: var(--ai); text-decoration: none; font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+
+<header class="login-header">
+  <a href="index.html" class="logo">JEEB</a>
+  <div class="lang-group">
+    <button class="lang-btn active" onclick="setLang(this)">JP</button>
+    <button class="lang-btn" onclick="setLang(this)">EN</button>
+    <button class="lang-btn" onclick="setLang(this)">TH</button>
+  </div>
+</header>
+
+<div class="login-container">
+  <div class="login-box">
+    <div class="login-title" id="title-text">ログイン</div>
+    <div class="login-subtitle" id="subtitle-text">JEEBアカウントでログイン</div>
+
+    <div class="login-tabs">
+      <button class="login-tab active" onclick="switchTab(this, 'login')" id="tab-login">ログイン</button>
+      <button class="login-tab" onclick="switchTab(this, 'signup')" id="tab-signup">無料登録</button>
+    </div>
+
+    <!-- Login Form -->
+    <form class="login-form active" id="login-form" onsubmit="handleLogin(event)">
+      <div class="form-error" id="login-error"></div>
+
+      <div class="form-group">
+        <label class="form-label" id="label-email">メールアドレス</label>
+        <input class="form-input" type="email" id="login-email" placeholder="example@example.com" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" id="label-password">パスワード</label>
+        <input class="form-input" type="password" id="login-password" placeholder="8文字以上" required>
+      </div>
+
+      <div class="form-check">
+        <input type="checkbox" id="login-remember">
+        <label for="login-remember" id="label-remember">ログイン状態を保持</label>
+      </div>
+
+      <div class="login-forgot">
+        <a href="#" onclick="event.preventDefault(); showError('login-error', 'パスワードリセット機能は準備中です')" id="forgot-text">パスワードをお忘れですか？</a>
+      </div>
+
+      <button type="submit" class="login-btn-primary" id="btn-login">ログイン</button>
+    </form>
+
+    <!-- Signup Form -->
+    <form class="login-form" id="signup-form" onsubmit="handleSignup(event)">
+      <div class="form-error" id="signup-error"></div>
+
+      <div class="form-group signup-only">
+        <label class="form-label" id="label-name">名前</label>
+        <input class="form-input" type="text" id="signup-name" placeholder="山田 太郎" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" id="label-signup-email">メールアドレス</label>
+        <input class="form-input" type="email" id="signup-email" placeholder="example@example.com" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" id="label-signup-password">パスワード</label>
+        <input class="form-input" type="password" id="signup-password" placeholder="8文字以上の英数字" required>
+      </div>
+
+      <div class="form-group signup-only">
+        <label class="form-label" id="label-confirm-password">パスワード（確認）</label>
+        <input class="form-input" type="password" id="signup-confirm" placeholder="確認用パスワード" required>
+      </div>
+
+      <div class="form-check">
+        <input type="checkbox" id="signup-terms" required>
+        <label for="signup-terms" id="label-terms"><a href="#" onclick="event.preventDefault()" style="color:var(--ai);text-decoration:none;">利用規約</a>に同意します</label>
+      </div>
+
+      <button type="submit" class="login-btn-primary" id="btn-signup">無料で登録</button>
+    </form>
+
+    <div class="form-divider">
+      <span class="form-divider-text" id="divider-text">または</span>
+    </div>
+
+    <div class="social-login">
+      <button type="button" class="social-btn" onclick="showError('login-error', 'Google ログインは準備中です')" id="btn-google">🔵 Google</button>
+      <button type="button" class="social-btn" onclick="showError('login-error', 'Apple ログインは準備中です')" id="btn-apple">⚪ Apple</button>
+    </div>
+  </div>
+</div>
+
+<footer class="login-footer">
+  <p id="footer-text">アカウントをお持ちでない方は <a href="#" onclick="switchTab(document.getElementById('tab-signup'), 'signup')">無料登録</a></p>
+</footer>
+
+<script>
+  // ─── Language ───
+  let currentLang = localStorage.getItem('jeeb-lang') || 'ja';
+
+  const translations = {
+    ja: {
+      'title-text': 'ログイン',
+      'subtitle-text': 'JEEBアカウントでログイン',
+      'tab-login': 'ログイン',
+      'tab-signup': '無料登録',
+      'label-email': 'メールアドレス',
+      'label-password': 'パスワード',
+      'label-remember': 'ログイン状態を保持',
+      'forgot-text': 'パスワードをお忘れですか？',
+      'btn-login': 'ログイン',
+      'label-name': '名前',
+      'label-signup-email': 'メールアドレス',
+      'label-signup-password': 'パスワード',
+      'label-confirm-password': 'パスワード（確認）',
+      'label-terms': '<a href="#" onclick="event.preventDefault()" style="color:var(--ai);text-decoration:none;">利用規約</a>に同意します',
+      'btn-signup': '無料で登録',
+      'divider-text': 'または',
+      'btn-google': '🔵 Google',
+      'btn-apple': '⚪ Apple',
+      'footer-text': 'アカウントをお持ちでない方は <a href="#" onclick="switchTab(document.getElementById(\'tab-signup\'), \'signup\')">無料登録</a>'
+    },
+    en: {
+      'title-text': 'Log In',
+      'subtitle-text': 'Sign in to your JEEB account',
+      'tab-login': 'Log In',
+      'tab-signup': 'Sign Up',
+      'label-email': 'Email Address',
+      'label-password': 'Password',
+      'label-remember': 'Keep me logged in',
+      'forgot-text': 'Forgot your password?',
+      'btn-login': 'Log In',
+      'label-name': 'Full Name',
+      'label-signup-email': 'Email Address',
+      'label-signup-password': 'Password',
+      'label-confirm-password': 'Confirm Password',
+      'label-terms': 'I agree to <a href="#" onclick="event.preventDefault()" style="color:var(--ai);text-decoration:none;">Terms of Service</a>',
+      'btn-signup': 'Sign Up Free',
+      'divider-text': 'or',
+      'btn-google': '🔵 Google',
+      'btn-apple': '⚪ Apple',
+      'footer-text': 'Don\'t have an account? <a href="#" onclick="switchTab(document.getElementById(\'tab-signup\'), \'signup\')">Sign up</a>'
+    },
+    th: {
+      'title-text': 'เข้าสู่ระบบ',
+      'subtitle-text': 'เข้าสู่บัญชี JEEB ของคุณ',
+      'tab-login': 'เข้าสู่ระบบ',
+      'tab-signup': 'สมัครสมาชิก',
+      'label-email': 'ที่อยู่อีเมล',
+      'label-password': 'รหัสผ่าน',
+      'label-remember': 'รักษาสถานะการเข้าสู่ระบบ',
+      'forgot-text': 'ลืมรหัสผ่านของคุณ?',
+      'btn-login': 'เข้าสู่ระบบ',
+      'label-name': 'ชื่อเต็ม',
+      'label-signup-email': 'ที่อยู่อีเมล',
+      'label-signup-password': 'รหัสผ่าน',
+      'label-confirm-password': 'ยืนยันรหัสผ่าน',
+      'label-terms': 'ฉันยอมรับ<a href="#" onclick="event.preventDefault()" style="color:var(--ai);text-decoration:none;">เงื่อนไขการใช้บริการ</a>',
+      'btn-signup': 'สมัครสมาชิกฟรี',
+      'divider-text': 'หรือ',
+      'btn-google': '🔵 Google',
+      'btn-apple': '⚪ Apple',
+      'footer-text': 'ยังไม่มีบัญชี? <a href="#" onclick="switchTab(document.getElementById(\'tab-signup\'), \'signup\')">สมัครสมาชิก</a>'
+    }
+  };
+
+  function setLang(btn) {
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentLang = btn.textContent.toLowerCase();
+    localStorage.setItem('jeeb-lang', currentLang);
+    updateLanguage();
+  }
+
+  function updateLanguage() {
+    const trans = translations[currentLang] || translations.ja;
+    Object.entries(trans).forEach(([id, text]) => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = text;
+    });
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const btn = document.querySelector(`.lang-btn[onclick*="'${currentLang}'"]`) ||
+                document.querySelector('.lang-btn.active');
+    if (btn && !btn.classList.contains('active')) {
+      setLang(btn);
+    } else {
+      updateLanguage();
+    }
+  });
+
+  // ─── Tab Switch ───
+  function switchTab(btn, tabName) {
+    document.querySelectorAll('.login-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.login-form').forEach(f => f.classList.remove('active'));
+    btn.classList.add('active');
+
+    const form = document.getElementById(tabName + '-form');
+    form.classList.add('active');
+    if (tabName === 'signup') form.classList.add('signup');
+    else form.classList.remove('signup');
+
+    document.getElementById(tabName + '-error').classList.remove('show');
+    updateLanguage();
+  }
+
+  // ─── Form Handling ───
+  function showError(elementId, message) {
+    const el = document.getElementById(elementId);
+    el.textContent = message;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 4000);
+  }
+
+  function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  }
+
+  function handleLogin(event) {
+    event.preventDefault();
+    const errorEl = document.getElementById('login-error');
+    errorEl.classList.remove('show');
+
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+
+    if (!validateEmail(email)) {
+      showError('login-error', '有効なメールアドレスを入力してください');
+      return;
+    }
+    if (password.length < 8) {
+      showError('login-error', 'パスワードは8文字以上である必要があります');
+      return;
+    }
+
+    // Save user to localStorage
+    const user = {
+      id: 'user_' + Date.now(),
+      email: email,
+      name: email.split('@')[0],
+      avatar: '👤',
+      tier: 'silver',
+      subscriptionActive: false,
+      subscriptionRenewal: null,
+      savedRestaurants: [],
+      visitHistory: [],
+      discountCount: 0,
+      createdAt: new Date().toISOString()
+    };
+
+    localStorage.setItem('jeeb-user', JSON.stringify(user));
+    window.location.href = 'profile.html';
+  }
+
+  function handleSignup(event) {
+    event.preventDefault();
+    const errorEl = document.getElementById('signup-error');
+    errorEl.classList.remove('show');
+
+    const name = document.getElementById('signup-name').value;
+    const email = document.getElementById('signup-email').value;
+    const password = document.getElementById('signup-password').value;
+    const confirm = document.getElementById('signup-confirm').value;
+    const terms = document.getElementById('signup-terms').checked;
+
+    if (!name.trim()) {
+      showError('signup-error', '名前を入力してください');
+      return;
+    }
+    if (!validateEmail(email)) {
+      showError('signup-error', '有効なメールアドレスを入力してください');
+      return;
+    }
+    if (password.length < 8) {
+      showError('signup-error', 'パスワードは8文字以上である必要があります');
+      return;
+    }
+    if (password !== confirm) {
+      showError('signup-error', 'パスワードが一致しません');
+      return;
+    }
+    if (!terms) {
+      showError('signup-error', '利用規約に同意してください');
+      return;
+    }
+
+    // Save user to localStorage
+    const user = {
+      id: 'user_' + Date.now(),
+      email: email,
+      name: name,
+      avatar: '👤',
+      tier: 'silver',
+      subscriptionActive: false,
+      subscriptionRenewal: null,
+      savedRestaurants: [],
+      visitHistory: [],
+      discountCount: 0,
+      createdAt: new Date().toISOString()
+    };
+
+    localStorage.setItem('jeeb-user', JSON.stringify(user));
+    window.location.href = 'profile.html';
+  }
+</script>
+
+</body>
+</html>
