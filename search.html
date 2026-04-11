@@ -37,36 +37,83 @@
   /* ── Screens ── */
   .screen { display:none; }
   .screen.active { display:block; }
+  #screen-scenario.active { display:flex; }
 
   /* ── Scenario Screen ── */
-  .ai-hero { padding:32px 20px 24px; max-width:720px; margin:0 auto; text-align:center; }
-  .ai-hero-badge { display:inline-flex; align-items:center; gap:6px; padding:5px 12px; background:var(--ai-dim); border-radius:100px; margin-bottom:16px; }
+  #screen-scenario {
+    flex-direction:column;
+    height:calc(100vh - 52px - 68px); overflow:hidden;
+    max-width:720px; margin:0 auto;
+  }
+
+  /* compact hero */
+  .ai-hero { padding:14px 20px 12px; flex-shrink:0; }
+  .ai-hero-top { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
   .ai-dot { width:6px; height:6px; background:var(--ai); border-radius:50%; animation:pulse-ai 2s infinite; flex-shrink:0; }
   @keyframes pulse-ai { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
   .ai-badge-label { font-size:10px; font-weight:700; letter-spacing:0.14em; color:var(--ai); text-transform:uppercase; }
-  .ai-hero-title { font-size:clamp(22px,5.5vw,32px); font-weight:300; line-height:1.35; color:var(--black); margin-bottom:10px; letter-spacing:-0.02em; }
-  .ai-hero-title strong { font-weight:700; }
-  .ai-hero-sub { font-size:13px; color:var(--gray-400); line-height:1.6; }
+  .ai-hero-title { font-size:17px; font-weight:700; color:var(--black); letter-spacing:-0.02em; }
 
-  .scenario-section { padding:0 20px 100px; max-width:720px; margin:0 auto; }
-  .scenario-section-label { font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--gray-400); margin-bottom:14px; }
-  .scenario-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+  /* search bar */
+  .hero-search-wrap { padding:0 20px 10px; flex-shrink:0; }
+  .hero-search-bar {
+    display:flex; align-items:center; gap:8px;
+    background:var(--white); border:1.5px solid var(--gray-200); border-radius:28px;
+    padding:10px 14px; transition:border-color 0.15s;
+  }
+  .hero-search-bar:focus-within { border-color:var(--ai); }
+  .hero-search-icon { font-size:16px; color:var(--gray-400); flex-shrink:0; }
+  .hero-search-input {
+    flex:1; border:none; background:none; outline:none;
+    font-size:14px; font-family:inherit; color:var(--black);
+  }
+  .hero-search-input::placeholder { color:var(--gray-400); }
+  .mic-btn {
+    width:32px; height:32px; border-radius:50%; border:none; background:var(--gray-100);
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+    font-size:15px; flex-shrink:0; transition:all 0.15s;
+  }
+  .mic-btn:hover { background:var(--ai-dim); }
+  .mic-btn.recording {
+    background:rgba(255,40,40,0.12); color:#FF2828;
+    animation:mic-pulse 1s infinite;
+  }
+  @keyframes mic-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(255,40,40,0.3)} 50%{box-shadow:0 0 0 6px rgba(255,40,40,0)} }
+
+  /* quick chips */
+  .quick-chips { padding:0 20px 10px; flex-shrink:0; }
+  .quick-chips-grid {
+    display:grid; grid-template-columns:repeat(2,1fr); gap:6px;
+  }
+  .quick-chip {
+    padding:7px 10px; background:var(--white); border:1px solid var(--gray-200);
+    border-radius:20px; font-size:11px; font-weight:500; color:var(--gray-600);
+    cursor:pointer; transition:all 0.15s; text-align:center;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .quick-chip:hover { border-color:var(--ai); color:var(--ai); background:var(--ai-dim); }
+
+  /* scenario grid */
+  .scenario-section { flex:1; padding:0 20px 8px; overflow:hidden; display:flex; flex-direction:column; }
+  .scenario-section-label { font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--gray-400); margin-bottom:8px; flex-shrink:0; }
+  .scenario-grid { display:grid; grid-template-columns:repeat(2,1fr); grid-template-rows:repeat(3,1fr); gap:8px; flex:1; min-height:0; }
   .scenario-card {
-    background:var(--white); border:1.5px solid var(--gray-200); border-radius:16px;
-    padding:18px 14px; cursor:pointer; transition:all 0.18s; text-align:center;
-    position:relative; overflow:hidden;
+    background:var(--white); border:1.5px solid var(--gray-200); border-radius:14px;
+    padding:10px 12px; cursor:pointer; transition:all 0.18s; text-align:center;
+    position:relative; overflow:hidden; display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
   }
   .scenario-card:hover, .scenario-card.active {
     border-color:var(--ai); box-shadow:0 4px 20px rgba(0,102,255,0.12);
     transform:translateY(-1px);
   }
   .scenario-card.active { background:var(--ai-dim); }
-  .scenario-icon { font-size:30px; margin-bottom:10px; line-height:1; }
-  .scenario-name { font-size:13px; font-weight:700; color:var(--black); margin-bottom:4px; }
-  .scenario-desc { font-size:11px; color:var(--gray-400); line-height:1.5; }
+  .scenario-icon { font-size:24px; margin-bottom:5px; line-height:1; }
+  .scenario-name { font-size:12px; font-weight:700; color:var(--black); margin-bottom:2px; }
+  .scenario-desc { font-size:10px; color:var(--gray-400); line-height:1.4; }
   .scenario-card .scenario-tag {
-    position:absolute; top:10px; right:10px;
-    font-size:9px; font-weight:700; letter-spacing:0.06em; padding:2px 7px;
+    position:absolute; top:7px; right:7px;
+    font-size:9px; font-weight:700; letter-spacing:0.06em; padding:2px 6px;
     border-radius:100px; background:var(--ai-dim); color:var(--ai);
   }
 
@@ -186,16 +233,36 @@
 <div class="screen active" id="screen-scenario">
 
   <div class="ai-hero">
-    <div class="ai-hero-badge">
+    <div class="ai-hero-top">
       <div class="ai-dot"></div>
       <span class="ai-badge-label">AI Concierge</span>
     </div>
-    <div class="ai-hero-title">今夜のお店、<br><strong>一緒に探しませんか？</strong></div>
-    <div class="ai-hero-sub">シナリオを選ぶと、AIが最適なお店を提案します</div>
+    <div class="ai-hero-title">今夜のお店、一緒に探しませんか？</div>
+  </div>
+
+  <div class="hero-search-wrap">
+    <div class="hero-search-bar">
+      <span class="hero-search-icon">🔍</span>
+      <input class="hero-search-input" id="hero-search-input"
+        placeholder="例：個室で和食、予算2,000B以内..."
+        onkeydown="if(event.key==='Enter')searchFromHero()">
+      <button class="mic-btn" id="mic-btn" onclick="toggleRecording()" title="音声入力">🎤</button>
+    </div>
+  </div>
+
+  <div class="quick-chips">
+    <div class="quick-chips-grid">
+      <div class="quick-chip" onclick="heroChip('ワイン持ち込みOK')">🍷 ワイン持ち込みOK</div>
+      <div class="quick-chip" onclick="heroChip('子連れOK、キッズシートあり')">👶 子連れOK</div>
+      <div class="quick-chip" onclick="heroChip('ベジタリアン・ビーガン対応')">🥗 ベジタリアン対応</div>
+      <div class="quick-chip" onclick="heroChip('接待・記念日、個室あり')">💼 接待・記念日</div>
+      <div class="quick-chip" onclick="heroChip('深夜でも入れる')">🌙 深夜でも入れる</div>
+      <div class="quick-chip" onclick="heroChip('コスパ重視、予算400B以内')">💰 コスパ重視</div>
+    </div>
   </div>
 
   <div class="scenario-section">
-    <div class="scenario-section-label">どんなシーンですか？</div>
+    <div class="scenario-section-label">シーンから選ぶ</div>
     <div class="scenario-grid">
 
       <div class="scenario-card" onclick="selectScenario(this,'wine')">
@@ -259,6 +326,7 @@
 
     <div class="convo-input-bar">
       <input class="convo-text" id="convo-input" placeholder="メッセージを入力..." onkeydown="if(event.key==='Enter')sendMessage()">
+      <button class="mic-btn" id="convo-mic-btn" onclick="toggleRecording('convo')" title="音声入力">🎤</button>
       <button class="convo-send" onclick="sendMessage()">→</button>
     </div>
 
@@ -433,6 +501,9 @@ const scenarios = {
 let currentScenario = null;
 let conversationState = 'init'; // 'init' | 'waiting' | 'results'
 let searchResultsMap = null;
+let recognition = null;
+let isRecording = false;
+let recordingTarget = 'hero'; // 'hero' | 'convo'
 
 // ── Navigation ──
 function showScreen(id) {
@@ -456,6 +527,87 @@ function goToScenario() {
 
 function goToConvo() {
   showScreen('screen-convo');
+}
+
+// ── Hero Search ──
+function searchFromHero() {
+  const q = document.getElementById('hero-search-input').value.trim();
+  if (!q) return;
+  // Use 'custom' scenario but pre-fill the input with query text
+  currentScenario = scenarios.custom;
+  conversationState = 'init';
+  document.getElementById('convo-icon').textContent = currentScenario.icon;
+  document.getElementById('convo-name').textContent = currentScenario.name;
+  document.getElementById('convo-sub').textContent = currentScenario.sub;
+  document.getElementById('convo-messages').innerHTML = '';
+  document.getElementById('convo-input').value = q;
+  document.getElementById('hero-search-input').value = '';
+  showScreen('screen-convo');
+  showTyping(() => {
+    addAIMessage(currentScenario.greeting, null);
+    conversationState = 'waiting';
+    // Auto-send the query
+    setTimeout(() => sendMessage(), 200);
+  });
+}
+
+function heroChip(text) {
+  document.getElementById('hero-search-input').value = text;
+  searchFromHero();
+}
+
+// ── Voice Input ──
+function initRecognition() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) return null;
+  const r = new SpeechRecognition();
+  r.lang = 'ja-JP';
+  r.interimResults = false;
+  r.maxAlternatives = 1;
+  r.onresult = (e) => {
+    const transcript = e.results[0][0].transcript;
+    if (recordingTarget === 'convo') {
+      document.getElementById('convo-input').value = transcript;
+    } else {
+      document.getElementById('hero-search-input').value = transcript;
+    }
+    stopRecording();
+  };
+  r.onerror = () => stopRecording();
+  r.onend = () => { if (isRecording) stopRecording(); };
+  return r;
+}
+
+function toggleRecording(target) {
+  recordingTarget = target || 'hero';
+  if (isRecording) {
+    stopRecording();
+  } else {
+    startRecording();
+  }
+}
+
+function startRecording() {
+  if (!recognition) recognition = initRecognition();
+  if (!recognition) {
+    alert('このブラウザは音声入力に対応していません。Chrome / Edgeをお試しください。');
+    return;
+  }
+  isRecording = true;
+  recognition.start();
+  const heroBtn = document.getElementById('mic-btn');
+  const convoBtn = document.getElementById('convo-mic-btn');
+  if (recordingTarget === 'convo' && convoBtn) { convoBtn.classList.add('recording'); convoBtn.textContent = '🔴'; }
+  else if (heroBtn) { heroBtn.classList.add('recording'); heroBtn.textContent = '🔴'; }
+}
+
+function stopRecording() {
+  isRecording = false;
+  if (recognition) { try { recognition.stop(); } catch(e) {} }
+  const heroBtn = document.getElementById('mic-btn');
+  const convoBtn = document.getElementById('convo-mic-btn');
+  if (heroBtn) { heroBtn.classList.remove('recording'); heroBtn.textContent = '🎤'; }
+  if (convoBtn) { convoBtn.classList.remove('recording'); convoBtn.textContent = '🎤'; }
 }
 
 // ── Scenario Selection ──
