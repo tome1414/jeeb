@@ -95,6 +95,10 @@
   .map-popup-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
   .map-popup-status { font-size:11px; font-weight:500; }
   .map-popup-link { display:block; margin-top:8px; font-size:12px; color:var(--ai); font-weight:500; text-decoration:none; }
+  /* ── Map Filter Bar ── */
+  .map-filter-bar { display:flex; gap:8px; padding:10px 12px; overflow-x:auto; background:var(--white); -webkit-overflow-scrolling:touch; border-bottom:1px solid var(--gray-100); flex-shrink:0; }
+  .map-filter-btn { padding:7px 14px; border:1.5px solid var(--gray-200); border-radius:20px; background:var(--white); font-size:12px; font-weight:500; color:var(--gray-600); cursor:pointer; white-space:nowrap; font-family:inherit; transition:all 0.15s; flex-shrink:0; }
+  .map-filter-btn.active { border-color:var(--black); background:var(--black); color:var(--white); }
 
   /* ── Area Tabs ── */
   .area-tabs { display:flex; border-bottom:1px solid var(--gray-200); margin-bottom:18px; }
@@ -215,6 +219,18 @@
   .cmp-reserve-btn.disabled { background:var(--gray-200); color:var(--gray-400); cursor:default; }
   .cmp-detail-btn { width:100%; padding:8px 0; border-radius:8px; background:none; color:var(--black); border:1.5px solid var(--gray-200); font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; transition:background 0.15s; }
   .cmp-detail-btn:hover { background:var(--gray-100); }
+  /* Compare modal tabs */
+  .compare-tabs { display:flex; gap:0; border-bottom:1px solid var(--gray-200); margin:0 20px 16px; }
+  .compare-tab { flex:1; padding:10px 0; border:none; background:none; font-size:14px; font-weight:600; color:var(--gray-400); cursor:pointer; border-bottom:2px solid transparent; transition:all 0.15s; font-family:inherit; }
+  .compare-tab.active { color:var(--black); border-bottom-color:var(--black); }
+  .compare-tab-content { display:none; }
+  .compare-tab-content.active { display:block; }
+  .compare-share-section { padding:0 20px 20px; }
+  .compare-share-title { font-size:14px; font-weight:700; margin-bottom:4px; }
+  .compare-share-sub { font-size:12px; color:var(--gray-400); margin-bottom:20px; }
+  .qr-container { text-align:center; margin:20px 0 0; padding:20px; background:var(--gray-100); border-radius:12px; }
+  .qr-container img { width:150px; height:150px; border-radius:8px; }
+  .qr-label { font-size:11px; color:var(--gray-400); margin-top:8px; }
 
   /* ── Saved Modal ── */
   .saved-modal { background:var(--white); border-radius:20px 20px 0 0; width:100%; padding:20px 20px 40px; }
@@ -320,7 +336,14 @@
     </div>
 
     <!-- MAP -->
-    <div class="map-wrap" id="map-view"><div id="map"></div></div>
+    <div class="map-wrap" id="map-view">
+      <div class="map-filter-bar">
+        <button class="map-filter-btn active" data-filter="all" onclick="applyMapFilter(this,'all')">すべて</button>
+        <button class="map-filter-btn" data-filter="favorites" onclick="applyMapFilter(this,'favorites')">♡ お気に入いのみ</button>
+        <button class="map-filter-btn" data-filter="visited" onclick="applyMapFilter(this,'visited')">✓ 訪問済みのみ</button>
+      </div>
+      <div id="map"></div>
+    </div>
 
     <!-- LIST -->
     <div id="list-view">
@@ -458,8 +481,8 @@
         <a class="card" href="restaurant.html" id="card-5">
           <div class="card-inner">
             <div class="card-img-wrap">
-              <div class="compare-check" onclick="toggleCompare(event,'card-5','鮨 藍 プロンポン','https://images.unsplash.com/photo-1617196034183-421b4040ed20?w=80')"></div>
-              <img src="https://images.unsplash.com/photo-1617196034183-421b4040ed20?w=220&q=80" alt="Omakase Sushi">
+              <div class="compare-check" onclick="toggleCompare(event,'card-5','鮨 藍 プロンポン','https://images.unsplash.com/photo-1553861649-d4a0a62faae2?w=80')"></div>
+              <img src="https://images.unsplash.com/photo-1553861649-d4a0a62faae2?w=220&q=80" alt="Omakase Sushi">
               <div class="live-badge"><div class="live-badge-dot amber"></div><span class="live-badge-label">Busy</span></div>
             </div>
             <div class="card-body">
@@ -507,7 +530,48 @@
       <div class="modal-title">店舗比較</div>
       <button class="modal-close" onclick="closeModal('compare-modal')">✕</button>
     </div>
-    <div id="compare-content"></div>
+    <!-- Tab buttons -->
+    <div class="compare-tabs">
+      <button class="compare-tab active" onclick="switchCompareTab(this,'compare')">比較する</button>
+      <button class="compare-tab" onclick="switchCompareTab(this,'share')">シェアする</button>
+    </div>
+    <!-- Compare tab -->
+    <div class="compare-tab-content active" id="compare-tab-compare">
+      <div id="compare-content"></div>
+    </div>
+    <!-- Share tab -->
+    <div class="compare-tab-content" id="compare-tab-share">
+      <div class="compare-share-section">
+        <div class="compare-share-title">比較結果を共有する</div>
+        <div class="compare-share-sub">友人やSNSにシェアする</div>
+        <div class="share-options">
+          <div class="share-opt" onclick="shareCompareToService('line')">
+            <div class="share-opt-icon" style="background:#06C755;">💬</div>
+            <div class="share-opt-label">LINE</div>
+          </div>
+          <div class="share-opt" onclick="shareCompareToService('twitter')">
+            <div class="share-opt-icon" style="background:#000;">✕</div>
+            <div class="share-opt-label">X (Twitter)</div>
+          </div>
+          <div class="share-opt" onclick="shareCompareToService('instagram')">
+            <div class="share-opt-icon" style="background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);">📷</div>
+            <div class="share-opt-label">Instagram</div>
+          </div>
+          <div class="share-opt" onclick="shareCompareToService('native')">
+            <div class="share-opt-icon" style="background:var(--gray-100);">⬆</div>
+            <div class="share-opt-label">その他</div>
+          </div>
+        </div>
+        <div class="share-url-row">
+          <input class="share-url-input" id="compare-share-url" readonly>
+          <button class="share-copy-btn" onclick="copyCompareUrl()">コピー</button>
+        </div>
+        <div class="qr-container">
+          <img id="compare-qr-img" src="" alt="QRコード">
+          <div class="qr-label">QRコードでスキャンしてシェア</div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -580,6 +644,8 @@ let compareList = [];   // [{id, name, img}]
 let savedList = [];     // [name]
 let userLat = null, userLng = null;
 let currentUser = null; // User data from localStorage
+let mapInstance = null; // Leaflet map instance
+let mapMarkers = {};    // { restaurantName: leafletMarker }
 
 // Store coords for distance calc
 const storeCoords = {
@@ -595,6 +661,11 @@ function loadUser() {
   const userData = localStorage.getItem('jeeb-user');
   if (userData) {
     currentUser = JSON.parse(userData);
+    // Pre-seed demo visit history for mockup testing (test user only)
+    if (currentUser.email === 'test@example.com' && (!currentUser.visitHistory || currentUser.visitHistory.length === 0)) {
+      currentUser.visitHistory = ['鮨 さいとう トンロー', '麺屋 一燈 トンロー'];
+      localStorage.setItem('jeeb-user', JSON.stringify(currentUser));
+    }
     updateHeaderUI();
   }
 }
@@ -683,6 +754,15 @@ function updateDistances() {
 // ── Favorites ──
 function toggleFav(e, btn, name) {
   e.preventDefault(); e.stopPropagation();
+
+  // Check if user is logged in
+  const user = JSON.parse(localStorage.getItem('jeeb-user'));
+  if (!user) {
+    alert('マイリスト機能をご利用いただくには、無料会員登録が必要です。\n\n「OK」をクリックするとログイン画面に進みます。');
+    window.location.href = 'login.html';
+    return;
+  }
+
   const isActive = btn.classList.toggle('active');
   btn.textContent = isActive ? '♥' : '♡';
   if (isActive) {
@@ -910,7 +990,47 @@ function openCompare() {
     </div>`;
 
   document.getElementById('compare-content').innerHTML = tableHTML;
+
+  // Set up share tab URL and QR code
+  const compareUrl = generateCompareUrl();
+  document.getElementById('compare-share-url').value = compareUrl;
+  document.getElementById('compare-qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(compareUrl)}`;
+
+  // Reset to compare tab and open modal
+  switchCompareTab(document.querySelector('.compare-tab'), 'compare');
   document.getElementById('compare-modal').classList.add('show');
+}
+
+// ── Compare Tab Switch ──
+function switchCompareTab(btn, tabName) {
+  document.querySelectorAll('.compare-tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.compare-tab').forEach(el => el.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('compare-tab-' + tabName).classList.add('active');
+}
+
+function generateCompareUrl() {
+  const ids = compareList.map(c => encodeURIComponent(c.id)).join(',');
+  return `https://jeeb.app/compare?stores=${ids}`;
+}
+
+function shareCompareToService(service) {
+  const url = generateCompareUrl();
+  const names = compareList.map(c => c.name).join('・');
+  const text = `【JEEB比較】${names} を比べてみました！`;
+  if (service === 'line') window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`);
+  else if (service === 'twitter') window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`);
+  else if (service === 'native' && navigator.share) navigator.share({ title: text, url });
+}
+
+function copyCompareUrl() {
+  const input = document.getElementById('compare-share-url');
+  input.select();
+  document.execCommand('copy');
+  const btn = input.nextElementSibling;
+  const orig = btn.textContent;
+  btn.textContent = 'コピーした！';
+  setTimeout(() => btn.textContent = orig, 2000);
 }
 
 // ── Share ──
@@ -967,6 +1087,7 @@ function showView(view) {
 function initMap() {
   mapInitialized = true;
   const map = L.map('map').setView([13.7250, 100.5800], 14);
+  mapInstance = map;
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:'© OpenStreetMap', maxZoom:19 }).addTo(map);
   function makeIcon(color) {
     return L.divIcon({
@@ -985,10 +1106,48 @@ function initMap() {
     { lat:13.7220, lng:100.5900, name:'串焼き 炭火 エカマイ', sub:'居酒屋 · Ekkamai', status:'Open', color:'#00D084', url:'#' },
   ];
   spots.forEach(r => {
-    L.marker([r.lat, r.lng], { icon: makeIcon(r.color) }).addTo(map)
-     .bindPopup(`<div class="map-popup"><div class="map-popup-name">${r.name}</div><div class="map-popup-sub">${r.sub}</div><div class="map-popup-row"><div class="map-popup-dot" style="background:${r.color};"></div><span class="map-popup-status">${r.status}</span></div><a class="map-popup-link" href="${r.url}">詳細を見る →</a></div>`);
+    const marker = L.marker([r.lat, r.lng], { icon: makeIcon(r.color) }).addTo(map)
+      .bindPopup(`<div class="map-popup"><div class="map-popup-name">${r.name}</div><div class="map-popup-sub">${r.sub}</div><div class="map-popup-row"><div class="map-popup-dot" style="background:${r.color};"></div><span class="map-popup-status">${r.status}</span></div><a class="map-popup-link" href="${r.url}">詳細を見る →</a></div>`);
+    mapMarkers[r.name] = marker;
   });
   if (userLat) L.circleMarker([userLat, userLng], { color:'#0066FF', fillColor:'#0066FF', fillOpacity:0.8, radius:8 }).addTo(map).bindPopup('現在地');
+
+  // Restore saved filter on map open
+  const user = JSON.parse(localStorage.getItem('jeeb-user'));
+  if (user && user.activeFilters && user.activeFilters.current && user.activeFilters.current !== 'all') {
+    const savedBtn = document.querySelector(`.map-filter-btn[data-filter="${user.activeFilters.current}"]`);
+    if (savedBtn) applyMapFilter(savedBtn, user.activeFilters.current);
+  }
+}
+
+// ── Map Filters ──
+function applyMapFilter(btn, filterType) {
+  document.querySelectorAll('.map-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  if (!mapInstance) return;
+
+  const user = JSON.parse(localStorage.getItem('jeeb-user'));
+  const favorites = savedList;                             // runtime in-memory list
+  const visited = user ? (user.visitHistory || []) : [];
+
+  Object.entries(mapMarkers).forEach(([name, marker]) => {
+    let show = true;
+    if (filterType === 'favorites') show = favorites.includes(name);
+    else if (filterType === 'visited') show = visited.includes(name);
+
+    if (show) {
+      if (!mapInstance.hasLayer(marker)) marker.addTo(mapInstance);
+    } else {
+      if (mapInstance.hasLayer(marker)) mapInstance.removeLayer(marker);
+    }
+  });
+
+  // Persist filter preference
+  if (user) {
+    user.activeFilters = { current: filterType };
+    localStorage.setItem('jeeb-user', JSON.stringify(user));
+  }
 }
 </script>
 </body>

@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JEEB — AIコンシェルジュ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Sans:wght@300;400;500;700&family=Noto+Sans+Thai:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  :root {
+    --bg: #F8F8F6; --white: #FFFFFF; --black: #0A0A0A;
+    --gray-100: #F0F0EE; --gray-200: #E0E0DC;
+    --gray-400: #9A9A96; --gray-600: #5A5A56;
+    --ai: #0066FF; --ai-dim: rgba(0,102,255,0.08);
+    --ai-msg: #0055DD;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Noto Sans JP','Noto Sans','Noto Sans Thai',sans-serif; background:var(--bg); color:var(--black); -webkit-font-smoothing:antialiased; }
+
+  /* ── Header ── */
+  header {
+    position:sticky; top:0; z-index:200;
+    background:rgba(248,248,246,0.95); backdrop-filter:blur(16px);
+    border-bottom:1px solid var(--gray-200);
+    padding:0 20px; height:52px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .header-back { width:36px; height:36px; display:flex; align-items:center; justify-content:center; background:var(--gray-100); border-radius:50%; border:none; cursor:pointer; font-size:18px; }
+  .header-logo { font-size:17px; font-weight:700; letter-spacing:0.08em; color:var(--black); text-decoration:none; }
+  .header-right { display:flex; align-items:center; gap:8px; }
+  .lang-group { display:flex; gap:2px; }
+  .lang-btn { padding:4px 9px; border:none; background:none; font-size:11px; font-weight:500; color:var(--gray-400); cursor:pointer; border-radius:4px; letter-spacing:0.06em; }
+  .lang-btn.active { background:var(--black); color:var(--white); }
+
+  /* ── Screens ── */
+  .screen { display:none; }
+  .screen.active { display:block; }
+
+  /* ── Scenario Screen ── */
+  .ai-hero { padding:32px 20px 24px; max-width:720px; margin:0 auto; text-align:center; }
+  .ai-hero-badge { display:inline-flex; align-items:center; gap:6px; padding:5px 12px; background:var(--ai-dim); border-radius:100px; margin-bottom:16px; }
+  .ai-dot { width:6px; height:6px; background:var(--ai); border-radius:50%; animation:pulse-ai 2s infinite; flex-shrink:0; }
+  @keyframes pulse-ai { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+  .ai-badge-label { font-size:10px; font-weight:700; letter-spacing:0.14em; color:var(--ai); text-transform:uppercase; }
+  .ai-hero-title { font-size:clamp(22px,5.5vw,32px); font-weight:300; line-height:1.35; color:var(--black); margin-bottom:10px; letter-spacing:-0.02em; }
+  .ai-hero-title strong { font-weight:700; }
+  .ai-hero-sub { font-size:13px; color:var(--gray-400); line-height:1.6; }
+
+  .scenario-section { padding:0 20px 100px; max-width:720px; margin:0 auto; }
+  .scenario-section-label { font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--gray-400); margin-bottom:14px; }
+  .scenario-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+  .scenario-card {
+    background:var(--white); border:1.5px solid var(--gray-200); border-radius:16px;
+    padding:18px 14px; cursor:pointer; transition:all 0.18s; text-align:center;
+    position:relative; overflow:hidden;
+  }
+  .scenario-card:hover, .scenario-card.active {
+    border-color:var(--ai); box-shadow:0 4px 20px rgba(0,102,255,0.12);
+    transform:translateY(-1px);
+  }
+  .scenario-card.active { background:var(--ai-dim); }
+  .scenario-icon { font-size:30px; margin-bottom:10px; line-height:1; }
+  .scenario-name { font-size:13px; font-weight:700; color:var(--black); margin-bottom:4px; }
+  .scenario-desc { font-size:11px; color:var(--gray-400); line-height:1.5; }
+  .scenario-card .scenario-tag {
+    position:absolute; top:10px; right:10px;
+    font-size:9px; font-weight:700; letter-spacing:0.06em; padding:2px 7px;
+    border-radius:100px; background:var(--ai-dim); color:var(--ai);
+  }
+
+  /* ── Conversation Screen ── */
+  .convo-wrap { display:flex; flex-direction:column; height:calc(100vh - 52px - 68px); max-width:720px; margin:0 auto; }
+  .convo-scenario-hdr {
+    padding:12px 20px; background:var(--white); border-bottom:1px solid var(--gray-100);
+    display:flex; align-items:center; justify-content:space-between; flex-shrink:0;
+  }
+  .convo-scenario-info { display:flex; align-items:center; gap:10px; }
+  .convo-scenario-icon { font-size:20px; }
+  .convo-scenario-name { font-size:13px; font-weight:700; }
+  .convo-scenario-sub { font-size:11px; color:var(--gray-400); }
+  .convo-change-btn { font-size:12px; color:var(--ai); background:none; border:none; cursor:pointer; font-family:inherit; font-weight:500; }
+
+  .convo-messages { flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:14px; }
+  .msg-row { display:flex; align-items:flex-end; gap:10px; }
+  .msg-row.user { flex-direction:row-reverse; }
+  .msg-avatar { width:28px; height:28px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:14px; }
+  .msg-avatar.ai { background:var(--ai-dim); }
+  .msg-bubble {
+    max-width:78%; padding:11px 14px; border-radius:16px;
+    font-size:13px; line-height:1.6;
+  }
+  .msg-bubble.ai { background:var(--white); border:1px solid var(--gray-200); border-bottom-left-radius:4px; }
+  .msg-bubble.user { background:var(--black); color:var(--white); border-bottom-right-radius:4px; }
+  .msg-bubble.ai .msg-suggestions { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+  .msg-suggestion { padding:5px 12px; background:var(--ai-dim); border:1px solid rgba(0,102,255,0.2); border-radius:100px; font-size:11px; font-weight:600; color:var(--ai); cursor:pointer; }
+  .msg-typing { display:flex; align-items:center; gap:4px; padding:12px 14px; }
+  .typing-dot { width:6px; height:6px; border-radius:50%; background:var(--gray-400); animation:typing 1.2s infinite; }
+  .typing-dot:nth-child(2) { animation-delay:0.2s; }
+  .typing-dot:nth-child(3) { animation-delay:0.4s; }
+  @keyframes typing { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-5px)} }
+
+  .convo-input-bar {
+    padding:12px 20px 16px; background:var(--white); border-top:1px solid var(--gray-100);
+    display:flex; gap:10px; align-items:center; flex-shrink:0;
+  }
+  .convo-text {
+    flex:1; padding:11px 16px; background:var(--gray-100); border:none; border-radius:24px;
+    font-size:14px; font-family:inherit; outline:none; color:var(--black);
+  }
+  .convo-text::placeholder { color:var(--gray-400); }
+  .convo-send {
+    width:40px; height:40px; background:var(--ai); border:none; border-radius:50%;
+    color:var(--white); font-size:18px; cursor:pointer; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; transition:opacity 0.15s;
+  }
+  .convo-send:hover { opacity:0.85; }
+
+  /* ── Results ── */
+  .results-wrap { padding:0 20px 100px; max-width:720px; margin:0 auto; }
+  .results-header { padding:16px 0 12px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--gray-100); margin-bottom:16px; }
+  .results-count { font-size:13px; font-weight:700; }
+  .results-count span { color:var(--ai); }
+  .results-view-toggle { display:flex; background:var(--gray-100); border-radius:8px; padding:3px; gap:3px; }
+  .results-view-btn { padding:5px 14px; border:none; background:none; border-radius:6px; font-size:12px; font-weight:500; color:var(--gray-400); cursor:pointer; font-family:inherit; transition:all 0.15s; }
+  .results-view-btn.active { background:var(--white); color:var(--black); box-shadow:0 1px 4px rgba(0,0,0,0.08); }
+  .result-card {
+    background:var(--white); border:1px solid var(--gray-200); border-radius:14px;
+    padding:14px; margin-bottom:12px; cursor:pointer; transition:all 0.15s;
+    display:flex; gap:12px; align-items:flex-start;
+    text-decoration:none; color:inherit;
+  }
+  .result-card:hover { box-shadow:0 4px 16px rgba(0,0,0,0.08); transform:translateY(-1px); }
+  .result-img { width:64px; height:64px; border-radius:10px; object-fit:cover; flex-shrink:0; }
+  .result-body { flex:1; min-width:0; }
+  .result-name { font-size:14px; font-weight:700; margin-bottom:3px; }
+  .result-sub { font-size:11px; color:var(--gray-400); margin-bottom:6px; }
+  .result-tags { display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px; }
+  .result-tag { padding:2px 8px; border-radius:100px; font-size:10px; font-weight:600; }
+  .result-tag.green { background:rgba(0,150,96,0.1); color:#009660; }
+  .result-tag.blue { background:var(--ai-dim); color:var(--ai); }
+  .result-tag.amber { background:rgba(251,145,0,0.1); color:#B35F00; }
+  .result-actions { display:flex; gap:6px; }
+  .result-btn { padding:6px 12px; border-radius:8px; font-size:11px; font-weight:600; cursor:pointer; font-family:inherit; border:none; transition:all 0.15s; }
+  .result-btn.primary { background:var(--black); color:var(--white); }
+  .result-btn.line { background:#06C755; color:var(--white); }
+  .result-btn.line:hover { opacity:0.9; }
+  #results-map-container { width:100%; height:360px; border-radius:14px; border:1px solid var(--gray-200); overflow:hidden; margin-bottom:12px; }
+
+  /* ── LINE Inquiry Modal ── */
+  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:500; display:none; align-items:flex-end; }
+  .modal-overlay.show { display:flex; }
+  .line-modal { background:var(--white); border-radius:20px 20px 0 0; width:100%; padding:24px 20px 40px; max-width:720px; margin:0 auto; }
+  .modal-handle { width:36px; height:4px; background:var(--gray-200); border-radius:2px; margin:0 auto 20px; }
+  .line-modal-icon { font-size:36px; text-align:center; margin-bottom:12px; }
+  .line-modal-title { font-size:16px; font-weight:700; text-align:center; margin-bottom:6px; }
+  .line-modal-sub { font-size:13px; color:var(--gray-400); text-align:center; margin-bottom:20px; line-height:1.6; }
+  .line-msg-preview { background:var(--gray-100); border-radius:12px; padding:14px; font-size:13px; line-height:1.65; margin-bottom:20px; color:var(--gray-600); }
+  .line-modal-btn { width:100%; padding:14px; background:#06C755; color:var(--white); border:none; border-radius:12px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; }
+  .line-modal-cancel { display:block; text-align:center; margin-top:12px; font-size:13px; color:var(--gray-400); cursor:pointer; }
+
+  /* ── Bottom Nav ── */
+  .bottom-nav { position:fixed; bottom:0; left:0; right:0; background:rgba(248,248,246,0.96); backdrop-filter:blur(16px); border-top:1px solid var(--gray-200); display:flex; padding:8px 0 20px; z-index:200; }
+  .nav-item { flex:1; text-align:center; cursor:pointer; }
+  .nav-icon { font-size:20px; line-height:1; }
+  .nav-label { display:block; font-size:10px; color:var(--gray-400); margin-top:2px; letter-spacing:0.04em; }
+  .nav-item.active .nav-label { color:var(--black); font-weight:600; }
+</style>
+</head>
+<body>
+
+<header>
+  <button class="header-back" onclick="handleBack()">←</button>
+  <a class="header-logo" href="index.html">JEEB</a>
+  <div class="header-right">
+    <div class="lang-group">
+      <button class="lang-btn active">JP</button>
+      <button class="lang-btn">EN</button>
+      <button class="lang-btn">TH</button>
+    </div>
+  </div>
+</header>
+
+<!-- ── Screen 1: Scenario Selection ── -->
+<div class="screen active" id="screen-scenario">
+
+  <div class="ai-hero">
+    <div class="ai-hero-badge">
+      <div class="ai-dot"></div>
+      <span class="ai-badge-label">AI Concierge</span>
+    </div>
+    <div class="ai-hero-title">今夜のお店、<br><strong>一緒に探しませんか？</strong></div>
+    <div class="ai-hero-sub">シナリオを選ぶと、AIが最適なお店を提案します</div>
+  </div>
+
+  <div class="scenario-section">
+    <div class="scenario-section-label">どんなシーンですか？</div>
+    <div class="scenario-grid">
+
+      <div class="scenario-card" onclick="selectScenario(this,'wine')">
+        <span class="scenario-tag">人気</span>
+        <div class="scenario-icon">🍷</div>
+        <div class="scenario-name">ワイン持ち込み</div>
+        <div class="scenario-desc">コルキッジ対応店を<br>まとめて確認</div>
+      </div>
+
+      <div class="scenario-card" onclick="selectScenario(this,'kids')">
+        <div class="scenario-icon">👶</div>
+        <div class="scenario-name">子連れ・家族</div>
+        <div class="scenario-desc">キッズシート・個室で<br>ゆっくり食事</div>
+      </div>
+
+      <div class="scenario-card" onclick="selectScenario(this,'dietary')">
+        <div class="scenario-icon">🥗</div>
+        <div class="scenario-name">食事制限</div>
+        <div class="scenario-desc">ベジタリアン・ハラール<br>アレルギー対応</div>
+      </div>
+
+      <div class="scenario-card" onclick="selectScenario(this,'business')">
+        <span class="scenario-tag">接待</span>
+        <div class="scenario-icon">💼</div>
+        <div class="scenario-name">接待・記念日</div>
+        <div class="scenario-desc">個室・高評価・雰囲気<br>で印象を残す</div>
+      </div>
+
+      <div class="scenario-card" onclick="selectScenario(this,'latenight')">
+        <div class="scenario-icon">🌙</div>
+        <div class="scenario-name">深夜でも入れる</div>
+        <div class="scenario-desc">22時以降も営業中<br>の店舗に絞る</div>
+      </div>
+
+      <div class="scenario-card" onclick="selectScenario(this,'custom')">
+        <div class="scenario-icon">✦</div>
+        <div class="scenario-name">自由に相談</div>
+        <div class="scenario-desc">条件を自然な言葉で<br>AIに伝える</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── Screen 2: Conversation ── -->
+<div class="screen" id="screen-convo">
+  <div class="convo-wrap">
+
+    <div class="convo-scenario-hdr">
+      <div class="convo-scenario-info">
+        <div class="convo-scenario-icon" id="convo-icon"></div>
+        <div>
+          <div class="convo-scenario-name" id="convo-name"></div>
+          <div class="convo-scenario-sub" id="convo-sub"></div>
+        </div>
+      </div>
+      <button class="convo-change-btn" onclick="goToScenario()">変更する</button>
+    </div>
+
+    <div class="convo-messages" id="convo-messages"></div>
+
+    <div class="convo-input-bar">
+      <input class="convo-text" id="convo-input" placeholder="メッセージを入力..." onkeydown="if(event.key==='Enter')sendMessage()">
+      <button class="convo-send" onclick="sendMessage()">→</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── Screen 3: Results ── -->
+<div class="screen" id="screen-results">
+  <div class="results-wrap">
+
+    <div class="results-header">
+      <div class="results-count" id="results-count-label">0件 見つかりました</div>
+      <div class="results-view-toggle">
+        <button class="results-view-btn active" onclick="switchResultsView(this,'list')">リスト</button>
+        <button class="results-view-btn" onclick="switchResultsView(this,'map')">マップ</button>
+      </div>
+    </div>
+
+    <div id="results-list-view"></div>
+    <div id="results-map-container" style="display:none;"></div>
+
+    <div style="text-align:center; margin-top:8px;">
+      <button onclick="goToConvo()" style="background:none; border:none; color:var(--ai); font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; padding:8px;">← 条件を変える</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── LINE Inquiry Modal ── -->
+<div class="modal-overlay" id="line-modal" onclick="closeLineModal(event)">
+  <div class="line-modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="line-modal-icon">💬</div>
+    <div class="line-modal-title" id="line-modal-title">LINEで問い合わせる</div>
+    <div class="line-modal-sub">JEEBを通じて直接お店に問い合わせができます。<br>メッセージを確認してから送信してください。</div>
+    <div class="line-msg-preview" id="line-msg-preview"></div>
+    <button class="line-modal-btn" id="line-modal-send-btn">LINEで送信する</button>
+    <span class="line-modal-cancel" onclick="document.getElementById('line-modal').classList.remove('show')">キャンセル</span>
+  </div>
+</div>
+
+<!-- ── Bottom Nav ── -->
+<div class="bottom-nav">
+  <div class="nav-item" onclick="window.location.href='index.html'">
+    <div class="nav-icon">⌂</div>
+    <span class="nav-label">Home</span>
+  </div>
+  <div class="nav-item active">
+    <div class="nav-icon">⌕</div>
+    <span class="nav-label">Search</span>
+  </div>
+  <div class="nav-item" onclick="window.location.href='index.html'">
+    <div class="nav-icon">◎</div>
+    <span class="nav-label">Map</span>
+  </div>
+  <div class="nav-item" onclick="window.location.href='index.html'">
+    <div class="nav-icon">♡</div>
+    <span class="nav-label">Saved</span>
+  </div>
+  <div class="nav-item" onclick="window.location.href='profile.html'">
+    <div class="nav-icon">◯</div>
+    <span class="nav-label">Profile</span>
+  </div>
+</div>
+
+<script>
+// ── Data ──
+const restaurants = [
+  {
+    id:'r1', name:'鮨 さいとう トンロー', cuisine:'江戸前寿司', area:'Thonglor',
+    img:'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=120&q=70',
+    price:'1,500〜3,000 THB', rating:4.6, url:'restaurant.html',
+    lat:13.7285, lng:100.5830,
+    tags:['wine-byo','private-room','business','reservation-required','high-end'],
+    corkage:'500 THB/本', dietary:[], hours:'17:30〜22:00',
+    aiMatch:'江戸前の技術が光る一軒。ワイン持ち込み可（コルキッジ500B）、接待にも最適。'
+  },
+  {
+    id:'r2', name:'ソムタムダー エカマイ', cuisine:'タイ・イサーン料理', area:'Ekkamai',
+    img:'https://images.unsplash.com/photo-1559314809-0d155014e29e?w=120&q=70',
+    price:'200〜400 THB', rating:4.5, url:'#',
+    lat:13.7198, lng:100.5878,
+    tags:['family','kids-seat','vegan','halal-inquiry','casual'],
+    dietary:['ベジタリアン可','ハラール相談可'], hours:'11:00〜22:00',
+    aiMatch:'子連れに人気。キッズチェアあり、辛さ調整可で家族みんなで楽しめる。'
+  },
+  {
+    id:'r3', name:'和牛焼肉 黒毛', cuisine:'和牛焼肉', area:'Phrom Phong',
+    img:'https://images.unsplash.com/photo-1544025162-d76694265947?w=120&q=70',
+    price:'1,000〜2,500 THB', rating:4.4, url:'#',
+    lat:13.7310, lng:100.5698,
+    tags:['wine-byo','private-room','business','high-end','reservation-required'],
+    corkage:'なし（コルキッジ無料）', dietary:[], hours:'17:00〜23:00',
+    aiMatch:'和牛の品質は折り紙付き。個室完備で接待・記念日に重宝される。ワイン持ち込み無料。'
+  },
+  {
+    id:'r4', name:'麺屋 一燈 トンロー', cuisine:'ラーメン', area:'Thonglor',
+    img:'https://images.unsplash.com/photo-1514190051997-0f6f39ca5cde?w=120&q=70',
+    price:'150〜350 THB', rating:4.5, url:'#',
+    lat:13.7260, lng:100.5855,
+    tags:['latenight','casual','no-reservation'],
+    dietary:[], hours:'11:00〜翌2:00',
+    aiMatch:'深夜2時まで営業。濃厚魚介系スープが深夜の締めに最適。'
+  },
+  {
+    id:'r5', name:'鮨 藍 プロンポン', cuisine:'江戸前おまかせ', area:'Phrom Phong',
+    img:'https://images.unsplash.com/photo-1553861649-892f1c2292e7?w=120&q=70',
+    price:'800〜2,000 THB', rating:4.7, url:'restaurant.html',
+    lat:13.7295, lng:100.5705,
+    tags:['wine-byo','business','high-end','reservation-required','allergy-ok'],
+    corkage:'600 THB/本', dietary:['アレルギー対応可'], hours:'18:00〜22:30',
+    aiMatch:'ミシュラン掲載。おまかせのコスパが高く、ワイン持ち込み可能（要予約時申告）。'
+  },
+  {
+    id:'r6', name:'Roast Coffee & Eatery', cuisine:'カフェ・洋食', area:'Phrom Phong',
+    img:'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=120&q=70',
+    price:'200〜600 THB', rating:4.4, url:'#',
+    lat:13.7340, lng:100.5760,
+    tags:['family','kids-seat','vegan','casual','latenight'],
+    dietary:['ベジタリアン可','ビーガン可'], hours:'8:00〜23:00',
+    aiMatch:'ベジタリアンメニュー充実。子連れOK、深夜23時まで営業で使い勝手が良い。'
+  },
+];
+
+// ── Scenario Definitions ──
+const scenarios = {
+  wine: {
+    icon:'🍷', name:'ワイン持ち込み', sub:'コルキッジ対応店',
+    greeting:'ワインの持ち込みを検討されているのですね！\nどのようなシーンのご予定ですか？',
+    suggestions:['接待・ビジネス','記念日・デート','友人とのディナー'],
+    tags:['wine-byo'],
+    followUp: (userMsg) => `「${userMsg}」のご利用ですね。\n以下のお店はワイン持ち込み対応で、ご状況にぴったりです。`
+  },
+  kids: {
+    icon:'👶', name:'子連れ・家族', sub:'キッズシート・個室対応',
+    greeting:'お子さまとのお食事ですね！\nお子さんは何歳くらいですか？',
+    suggestions:['0〜2歳（ベビーチェア必要）','3〜6歳','小学生以上'],
+    tags:['family','kids-seat'],
+    followUp: (userMsg) => `ありがとうございます。${userMsg}のお子さまに対応できるお店をご紹介します。`
+  },
+  dietary: {
+    icon:'🥗', name:'食事制限', sub:'ベジタリアン・ハラール・アレルギー',
+    greeting:'食事制限についてお聞かせください。\nどのような対応が必要ですか？',
+    suggestions:['ベジタリアン','ハラール対応','アレルギー（要相談）','ビーガン'],
+    tags:['vegan','halal-inquiry','allergy-ok'],
+    followUp: (userMsg) => `「${userMsg}」への対応ですね。安心してお食事いただけるお店を選びました。`
+  },
+  business: {
+    icon:'💼', name:'接待・記念日', sub:'個室・雰囲気・高評価',
+    greeting:'接待や記念日のシーンですね。\n何名様のご予定ですか？',
+    suggestions:['2名（デート・記念日）','4〜6名（接待）','8名以上（会食）'],
+    tags:['private-room','business','high-end'],
+    followUp: (userMsg) => `${userMsg}での利用ですね。個室完備・高評価・雰囲気の良いお店をピックアップしました。`
+  },
+  latenight: {
+    icon:'🌙', name:'深夜でも入れる', sub:'22時以降も営業中',
+    greeting:'深夜のご利用ですね！\n何時ごろまで使えるお店をお探しですか？',
+    suggestions:['22時以降に入りたい','深夜0時以降も営業','24時間営業'],
+    tags:['latenight'],
+    followUp: (userMsg) => `「${userMsg}」のご希望ですね。遅い時間でも安心してご利用いただけるお店です。`
+  },
+  custom: {
+    icon:'✦', name:'自由に相談', sub:'なんでも聞いてください',
+    greeting:'どのようなお店をお探しですか？\n自然な言葉でお聞かせください。\n例：「3名で予算1,500B、和食でゆっくりしたい」',
+    suggestions:['予算1,000B以内で探す','和食が食べたい','今すぐ入れる店'],
+    tags:['*'],
+    followUp: (userMsg) => `「${userMsg}」のご要望ですね。ご希望に合いそうなお店をご提案します。`
+  },
+};
+
+// ── State ──
+let currentScenario = null;
+let conversationState = 'init'; // 'init' | 'waiting' | 'results'
+let searchResultsMap = null;
+
+// ── Navigation ──
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function handleBack() {
+  const active = document.querySelector('.screen.active');
+  if (active.id === 'screen-convo' || active.id === 'screen-results') {
+    goToScenario();
+  } else {
+    window.history.back();
+  }
+}
+
+function goToScenario() {
+  document.querySelectorAll('.scenario-card').forEach(c => c.classList.remove('active'));
+  showScreen('screen-scenario');
+}
+
+function goToConvo() {
+  showScreen('screen-convo');
+}
+
+// ── Scenario Selection ──
+function selectScenario(cardEl, key) {
+  currentScenario = scenarios[key];
+  conversationState = 'init';
+
+  // Update header
+  document.getElementById('convo-icon').textContent = currentScenario.icon;
+  document.getElementById('convo-name').textContent = currentScenario.name;
+  document.getElementById('convo-sub').textContent = currentScenario.sub;
+
+  // Highlight selected card
+  document.querySelectorAll('.scenario-card').forEach(c => c.classList.remove('active'));
+  cardEl.classList.add('active');
+
+  // Clear messages
+  document.getElementById('convo-messages').innerHTML = '';
+  document.getElementById('convo-input').value = '';
+
+  // Switch to convo screen
+  showScreen('screen-convo');
+
+  // Show AI greeting with typing animation
+  showTyping(() => {
+    addAIMessage(currentScenario.greeting, currentScenario.suggestions);
+    conversationState = 'waiting';
+  });
+}
+
+// ── Conversation ──
+function sendMessage() {
+  const input = document.getElementById('convo-input');
+  const text = input.value.trim();
+  if (!text || !currentScenario) return;
+
+  addUserMessage(text);
+  input.value = '';
+
+  if (conversationState === 'waiting') {
+    conversationState = 'results';
+    showTyping(() => {
+      const followUp = currentScenario.followUp(text);
+      addAIMessage(followUp, null);
+      setTimeout(() => showResults(currentScenario.tags), 600);
+    });
+  } else {
+    showTyping(() => {
+      addAIMessage('ご確認ありがとうございます。ご要望の条件でさらに絞り込みができますよ。もう少し詳しくお聞かせいただくか、上の結果をご確認ください。', ['もっと高級な店','価格を下げたい','別エリアで探す']);
+    });
+  }
+}
+
+function useSuggestion(text) {
+  document.getElementById('convo-input').value = text;
+  sendMessage();
+}
+
+// ── Message Rendering ──
+function addAIMessage(text, suggestions) {
+  const container = document.getElementById('convo-messages');
+  const suggestionsHTML = suggestions
+    ? `<div class="msg-suggestions">${suggestions.map(s =>
+        `<span class="msg-suggestion" onclick="useSuggestion('${s}')">${s}</span>`
+      ).join('')}</div>`
+    : '';
+
+  const formattedText = text.replace(/\n/g, '<br>');
+  container.insertAdjacentHTML('beforeend', `
+    <div class="msg-row">
+      <div class="msg-avatar ai">✦</div>
+      <div class="msg-bubble ai">${formattedText}${suggestionsHTML}</div>
+    </div>
+  `);
+  container.scrollTop = container.scrollHeight;
+}
+
+function addUserMessage(text) {
+  const container = document.getElementById('convo-messages');
+  container.insertAdjacentHTML('beforeend', `
+    <div class="msg-row user">
+      <div class="msg-bubble user">${text}</div>
+    </div>
+  `);
+  container.scrollTop = container.scrollHeight;
+}
+
+function showTyping(callback) {
+  const container = document.getElementById('convo-messages');
+  const typingId = 'typing-' + Date.now();
+  container.insertAdjacentHTML('beforeend', `
+    <div class="msg-row" id="${typingId}">
+      <div class="msg-avatar ai">✦</div>
+      <div class="msg-bubble ai msg-typing">
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+      </div>
+    </div>
+  `);
+  container.scrollTop = container.scrollHeight;
+  setTimeout(() => {
+    const el = document.getElementById(typingId);
+    if (el) el.remove();
+    callback();
+  }, 900);
+}
+
+// ── Results ──
+function showResults(tags) {
+  let matched;
+  if (tags.includes('*')) {
+    matched = restaurants;
+  } else {
+    matched = restaurants.filter(r => tags.some(t => r.tags.includes(t)));
+  }
+
+  document.getElementById('results-count-label').innerHTML =
+    `<span>${matched.length}件</span>が見つかりました`;
+
+  // List view
+  const listEl = document.getElementById('results-list-view');
+  listEl.innerHTML = matched.map(r => {
+    const tagBadges = r.dietary.map(d => `<span class="result-tag green">${d}</span>`).join('');
+    const hasWine = r.tags.includes('wine-byo');
+    const wineTag = hasWine ? `<span class="result-tag blue">🍷 持ち込み可</span>` : '';
+    const hasPrivate = r.tags.includes('private-room');
+    const privateTag = hasPrivate ? `<span class="result-tag amber">個室あり</span>` : '';
+
+    return `
+      <a class="result-card" href="${r.url}">
+        <img class="result-img" src="${r.img}" alt="${r.name}">
+        <div class="result-body">
+          <div class="result-name">${r.name}</div>
+          <div class="result-sub">${r.cuisine} · ${r.area} · ★${r.rating}</div>
+          <div class="result-tags">${wineTag}${privateTag}${tagBadges}</div>
+          <div style="font-size:11px;color:var(--gray-400);margin-bottom:8px;">${r.aiMatch}</div>
+          <div class="result-actions">
+            <button class="result-btn primary" onclick="event.preventDefault();window.location='${r.url}'">詳細を見る</button>
+            <button class="result-btn line" onclick="event.preventDefault();openLineModal('${r.id}')">💬 LINE問い合わせ</button>
+          </div>
+        </div>
+      </a>
+    `;
+  }).join('');
+
+  // Store matched for map
+  window._matchedRestaurants = matched;
+
+  showScreen('screen-results');
+}
+
+function switchResultsView(btn, view) {
+  document.querySelectorAll('.results-view-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  const listEl = document.getElementById('results-list-view');
+  const mapEl = document.getElementById('results-map-container');
+
+  if (view === 'list') {
+    listEl.style.display = 'block';
+    mapEl.style.display = 'none';
+  } else {
+    listEl.style.display = 'none';
+    mapEl.style.display = 'block';
+    initResultsMap(window._matchedRestaurants || []);
+  }
+}
+
+function initResultsMap(spots) {
+  const container = document.getElementById('results-map-container');
+  container.innerHTML = ''; // Clear previous map
+
+  const mapDiv = document.createElement('div');
+  mapDiv.style.cssText = 'width:100%;height:360px;';
+  container.appendChild(mapDiv);
+
+  const map = L.map(mapDiv).setView([13.7250, 100.5800], 14);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:'© OpenStreetMap', maxZoom:19 }).addTo(map);
+
+  spots.forEach(r => {
+    const icon = L.divIcon({
+      html:`<div style="width:26px;height:26px;background:#0066FF;border:2px solid white;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.3);font-size:12px;">✦</div>`,
+      iconSize:[26,26], iconAnchor:[13,26], popupAnchor:[0,-26], className:''
+    });
+    L.marker([r.lat, r.lng], { icon })
+      .addTo(map)
+      .bindPopup(`<div style="padding:8px 10px;min-width:140px;font-family:sans-serif;">
+        <div style="font-size:13px;font-weight:700;margin-bottom:3px;">${r.name}</div>
+        <div style="font-size:11px;color:#9A9A96;">${r.cuisine} · ${r.area}</div>
+        <a href="${r.url}" style="display:block;margin-top:8px;font-size:12px;color:#0066FF;font-weight:600;text-decoration:none;">詳細を見る →</a>
+      </div>`);
+  });
+}
+
+// ── LINE Inquiry ──
+function openLineModal(restaurantId) {
+  const r = restaurants.find(x => x.id === restaurantId);
+  if (!r) return;
+
+  document.getElementById('line-modal-title').textContent = r.name + ' に問い合わせる';
+  document.getElementById('line-msg-preview').textContent =
+    `こんにちは。JEEBのAIコンシェルジュからのお問い合わせです。\n\n「${r.name}」について以下の点を確認させてください：\n・ご予約の空き状況\n・ワインの持ち込み条件（コルキッジ：${r.corkage || '要確認'}）\n\nよろしくお願いいたします。`;
+
+  const lineUrl = `https://line.me/ti/p/@jeeb-concierge?message=${encodeURIComponent('JEEBより：' + r.name + 'についてお問い合わせしたいです。')}`;
+  document.getElementById('line-modal-send-btn').onclick = () => window.open(lineUrl);
+
+  document.getElementById('line-modal').classList.add('show');
+}
+
+function closeLineModal(e) {
+  if (e.target === document.getElementById('line-modal')) {
+    document.getElementById('line-modal').classList.remove('show');
+  }
+}
+</script>
+</body>
+</html>
