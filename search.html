@@ -257,33 +257,40 @@
       <div class="scenario-card" onclick="selectScenario(this,'wine')">
         <span class="scenario-tag">人気</span>
         <div class="scenario-icon">🍷</div>
-        <div class="scenario-name">ワイン持ち込み</div>
-        <div class="scenario-desc">コルキッジ対応店を<br>まとめて確認</div>
+        <div class="scenario-name">持ち込みで乾杯</div>
+        <div class="scenario-desc">BYO歓迎・コルキッジ<br>対応のお店だけ</div>
       </div>
 
-      <div class="scenario-card" onclick="selectScenario(this,'kids')">
-        <div class="scenario-icon">👶</div>
-        <div class="scenario-name">子連れ・家族</div>
-        <div class="scenario-desc">キッズシート・個室で<br>ゆっくり食事</div>
+      <div class="scenario-card" onclick="selectScenario(this,'speedlunch')">
+        <span class="scenario-tag">ランチ</span>
+        <div class="scenario-icon">⚡</div>
+        <div class="scenario-name">頼んで5分で出てくる</div>
+        <div class="scenario-desc">回転が速い・時間が<br>ないときの強い味方</div>
       </div>
 
-      <div class="scenario-card" onclick="selectScenario(this,'dietary')">
-        <div class="scenario-icon">🥗</div>
-        <div class="scenario-name">食事制限</div>
-        <div class="scenario-desc">ベジタリアン・ハラール<br>アレルギー対応</div>
+      <div class="scenario-card" onclick="selectScenario(this,'thaifav')">
+        <div class="scenario-icon">🇹🇭</div>
+        <div class="scenario-name">タイ人がこっそり通う</div>
+        <div class="scenario-desc">観光客より地元民に<br>愛されている名店</div>
+      </div>
+
+      <div class="scenario-card" onclick="selectScenario(this,'oldschool')">
+        <div class="scenario-icon">🏛️</div>
+        <div class="scenario-name">バンコク老舗の一軒</div>
+        <div class="scenario-desc">10年以上続く<br>歴史が証明する味</div>
+      </div>
+
+      <div class="scenario-card" onclick="selectScenario(this,'latenight')">
+        <div class="scenario-icon">🌙</div>
+        <div class="scenario-name">深夜でも空いてる</div>
+        <div class="scenario-desc">22時以降も営業中<br>の店舗に絞る</div>
       </div>
 
       <div class="scenario-card" onclick="selectScenario(this,'business')">
         <span class="scenario-tag">接待</span>
         <div class="scenario-icon">💼</div>
-        <div class="scenario-name">接待・記念日</div>
-        <div class="scenario-desc">個室・高評価・雰囲気<br>で印象を残す</div>
-      </div>
-
-      <div class="scenario-card" style="grid-column:span 2;" onclick="selectScenario(this,'latenight')">
-        <div class="scenario-icon">🌙</div>
-        <div class="scenario-name">深夜でも入れる</div>
-        <div class="scenario-desc">22時以降も営業中の店舗に絞る</div>
+        <div class="scenario-name">一生忘れない夜に</div>
+        <div class="scenario-desc">個室×高評価×雰囲気<br>で印象を残す</div>
       </div>
 
     </div>
@@ -383,36 +390,36 @@ const restaurants = [
     img:'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=120&q=70',
     price:'1,500〜3,000 THB', rating:4.6, url:'restaurant.html',
     lat:13.7285, lng:100.5830,
-    tags:['wine-byo','private-room','business','reservation-required','high-end'],
+    tags:['wine-byo','private-room','business','reservation-required','high-end','oldschool'],
     corkage:'500 THB/本', dietary:[], hours:'17:30〜22:00',
-    aiMatch:'江戸前の技術が光る一軒。ワイン持ち込み可（コルキッジ500B）、接待にも最適。'
+    aiMatch:'江戸前の技術が光る一軒。ワイン持ち込み可（コルキッジ500B）、接待にも最適。バンコク在住の日本人に長年愛される老舗。'
   },
   {
     id:'r2', name:'ソムタムダー エカマイ', cuisine:'タイ・イサーン料理', area:'Ekkamai',
     img:'https://images.unsplash.com/photo-1559314809-0d155014e29e?w=120&q=70',
     price:'200〜400 THB', rating:4.5, url:'#',
     lat:13.7198, lng:100.5878,
-    tags:['family','kids-seat','vegan','halal-inquiry','casual'],
+    tags:['family','kids-seat','vegan','halal-inquiry','casual','thaifav','no-reservation'],
     dietary:['ベジタリアン可','ハラール相談可'], hours:'11:00〜22:00',
-    aiMatch:'子連れに人気。キッズチェアあり、辛さ調整可で家族みんなで楽しめる。'
+    aiMatch:'タイ人の常連客が絶えない本物のイサーン料理。子連れにも人気で辛さ調整可。'
   },
   {
     id:'r3', name:'和牛焼肉 黒毛', cuisine:'和牛焼肉', area:'Phrom Phong',
     img:'https://images.unsplash.com/photo-1544025162-d76694265947?w=120&q=70',
     price:'1,000〜2,500 THB', rating:4.4, url:'#',
     lat:13.7310, lng:100.5698,
-    tags:['wine-byo','private-room','business','high-end','reservation-required'],
+    tags:['wine-byo','private-room','business','high-end','reservation-required','oldschool'],
     corkage:'なし（コルキッジ無料）', dietary:[], hours:'17:00〜23:00',
-    aiMatch:'和牛の品質は折り紙付き。個室完備で接待・記念日に重宝される。ワイン持ち込み無料。'
+    aiMatch:'バンコクで12年続く和牛焼肉の老舗。個室完備で接待・記念日に重宝される。ワイン持ち込み無料。'
   },
   {
     id:'r4', name:'麺屋 一燈 トンロー', cuisine:'ラーメン', area:'Thonglor',
     img:'https://images.unsplash.com/photo-1514190051997-0f6f39ca5cde?w=120&q=70',
     price:'150〜350 THB', rating:4.5, url:'#',
     lat:13.7260, lng:100.5855,
-    tags:['latenight','casual','no-reservation'],
+    tags:['latenight','casual','no-reservation','thaifav'],
     dietary:[], hours:'11:00〜翌2:00',
-    aiMatch:'深夜2時まで営業。濃厚魚介系スープが深夜の締めに最適。'
+    aiMatch:'タイ人ラーメンマニアが通う深夜の名店。深夜2時まで営業、濃厚魚介系スープ。注文から5分で着丼。'
   },
   {
     id:'r5', name:'鮨 藍 プロンポン', cuisine:'江戸前おまかせ', area:'Phrom Phong',
@@ -428,52 +435,60 @@ const restaurants = [
     img:'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=120&q=70',
     price:'200〜600 THB', rating:4.4, url:'#',
     lat:13.7340, lng:100.5760,
-    tags:['family','kids-seat','vegan','casual','latenight'],
+    tags:['family','kids-seat','vegan','casual','latenight','thaifav','no-reservation'],
     dietary:['ベジタリアン可','ビーガン可'], hours:'8:00〜23:00',
-    aiMatch:'ベジタリアンメニュー充実。子連れOK、深夜23時まで営業で使い勝手が良い。'
+    aiMatch:'タイ人にも大人気のカフェ。ベジタリアンメニュー充実、深夜23時まで営業。'
   },
 ];
 
 // ── Scenario Definitions ──
 const scenarios = {
   wine: {
-    icon:'🍷', name:'ワイン持ち込み', sub:'コルキッジ対応店',
-    greeting:'ワインの持ち込みを検討されているのですね！\nどのようなシーンのご予定ですか？',
-    suggestions:['接待・ビジネス','記念日・デート','友人とのディナー'],
+    icon:'🍷', name:'持ち込みで乾杯', sub:'BYO歓迎・コルキッジ対応店',
+    greeting:'お気に入りのワインを持ち込みたいのですね！\nどんなシーンですか？',
+    suggestions:['記念日・デート','友人とのディナー','接待・ビジネス'],
     tags:['wine-byo'],
-    followUp: (userMsg) => `「${userMsg}」のご利用ですね。\n以下のお店はワイン持ち込み対応で、ご状況にぴったりです。`
+    followUp: (userMsg) => `「${userMsg}」ですね。ワイン持ち込みOKで、そのシーンにぴったりのお店をご紹介します。`
   },
-  kids: {
-    icon:'👶', name:'子連れ・家族', sub:'キッズシート・個室対応',
-    greeting:'お子さまとのお食事ですね！\nお子さんは何歳くらいですか？',
-    suggestions:['0〜2歳（ベビーチェア必要）','3〜6歳','小学生以上'],
-    tags:['family','kids-seat'],
-    followUp: (userMsg) => `ありがとうございます。${userMsg}のお子さまに対応できるお店をご紹介します。`
+  speedlunch: {
+    icon:'⚡', name:'頼んで5分で出てくる', sub:'爆速ランチ・時短ご飯',
+    greeting:'時間がないときの頼れる一軒ですね！\n何時ごろランチを考えていますか？',
+    suggestions:['12時台（混む前に入りたい）','13時以降','テイクアウトも可なら嬉しい'],
+    tags:['latenight','casual','no-reservation'],
+    followUp: (userMsg) => `「${userMsg}」の時間帯ですね。回転が速くて待たないお店を選びました。`
   },
-  dietary: {
-    icon:'🥗', name:'食事制限', sub:'ベジタリアン・ハラール・アレルギー',
-    greeting:'食事制限についてお聞かせください。\nどのような対応が必要ですか？',
-    suggestions:['ベジタリアン','ハラール対応','アレルギー（要相談）','ビーガン'],
-    tags:['vegan','halal-inquiry','allergy-ok'],
-    followUp: (userMsg) => `「${userMsg}」への対応ですね。安心してお食事いただけるお店を選びました。`
+  thaifav: {
+    icon:'🇹🇭', name:'タイ人がこっそり通う', sub:'地元民が選ぶ本物の味',
+    greeting:'観光客よりも地元の人が行くお店を探しているのですね！\nどんな料理が気分ですか？',
+    suggestions:['和食・日本食','タイ料理','どちらでも'],
+    tags:['casual','family','no-reservation'],
+    followUp: (userMsg) => `「${userMsg}」ですね。タイ人の常連が多く、味で選ばれているお店をご紹介します。`
   },
-  business: {
-    icon:'💼', name:'接待・記念日', sub:'個室・雰囲気・高評価',
-    greeting:'接待や記念日のシーンですね。\n何名様のご予定ですか？',
-    suggestions:['2名（デート・記念日）','4〜6名（接待）','8名以上（会食）'],
-    tags:['private-room','business','high-end'],
-    followUp: (userMsg) => `${userMsg}での利用ですね。個室完備・高評価・雰囲気の良いお店をピックアップしました。`
+  oldschool: {
+    icon:'🏛️', name:'バンコク老舗の一軒', sub:'10年以上続く歴史が証明する味',
+    greeting:'歴史のあるお店をお探しですね。\nどのエリアがご希望ですか？',
+    suggestions:['Thonglor・Ekkamai','Phrom Phong','エリアはこだわらない'],
+    tags:['high-end','reservation-required','business'],
+    followUp: (userMsg) => `「${userMsg}」ですね。長年バンコクで愛され続けてきた、信頼できるお店をご紹介します。`
   },
   latenight: {
-    icon:'🌙', name:'深夜でも入れる', sub:'22時以降も営業中',
+    icon:'🌙', name:'深夜でも空いてる', sub:'22時以降も営業中',
     greeting:'深夜のご利用ですね！\n何時ごろまで使えるお店をお探しですか？',
-    suggestions:['22時以降に入りたい','深夜0時以降も営業','24時間営業'],
+    suggestions:['22時以降に入りたい','深夜0時以降も営業','終電後でも大丈夫な店'],
     tags:['latenight'],
     followUp: (userMsg) => `「${userMsg}」のご希望ですね。遅い時間でも安心してご利用いただけるお店です。`
   },
+  business: {
+    icon:'💼', name:'一生忘れない夜に', sub:'接待・記念日・特別なディナー',
+    greeting:'特別な夜のお店探しですね。\n何名様のご予定ですか？',
+    suggestions:['2名（記念日・デート）','4〜6名（接待）','8名以上（会食・パーティ）'],
+    tags:['private-room','business','high-end'],
+    followUp: (userMsg) => `${userMsg}での利用ですね。個室×高評価×雰囲気で、忘れられない夜をご用意します。`
+  },
+  // フリーテキスト検索からの流入用（カード非表示）
   custom: {
-    icon:'✦', name:'自由に相談', sub:'なんでも聞いてください',
-    greeting:'どのようなお店をお探しですか？\n自然な言葉でお聞かせください。\n例：「3名で予算1,500B、和食でゆっくりしたい」',
+    icon:'✦', name:'フリー検索', sub:'条件を直接入力',
+    greeting:'どのようなお店をお探しですか？\n自然な言葉でお気軽にどうぞ。\n例：「3名で予算1,500B、和食でゆっくりしたい」',
     suggestions:['予算1,000B以内で探す','和食が食べたい','今すぐ入れる店'],
     tags:['*'],
     followUp: (userMsg) => `「${userMsg}」のご要望ですね。ご希望に合いそうなお店をご提案します。`
