@@ -96,7 +96,7 @@
   /* scenario grid */
   .scenario-section { flex:1; padding:0 20px 8px; overflow:hidden; display:flex; flex-direction:column; }
   .scenario-section-label { font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--gray-400); margin-bottom:8px; flex-shrink:0; }
-  .scenario-grid { display:grid; grid-template-columns:repeat(2,1fr); grid-template-rows:repeat(3,1fr); gap:8px; flex:1; min-height:0; }
+  .scenario-grid { display:grid; grid-template-columns:repeat(2,1fr); grid-template-rows:repeat(3,1fr); gap:8px; flex:1; min-height:0; align-content:stretch; }
   .scenario-card {
     background:var(--white); border:1.5px solid var(--gray-200); border-radius:14px;
     padding:10px 12px; cursor:pointer; transition:all 0.18s; text-align:center;
@@ -250,17 +250,6 @@
     </div>
   </div>
 
-  <div class="quick-chips">
-    <div class="quick-chips-grid">
-      <div class="quick-chip" onclick="heroChip('ワイン持ち込みOK')">🍷 ワイン持ち込みOK</div>
-      <div class="quick-chip" onclick="heroChip('子連れOK、キッズシートあり')">👶 子連れOK</div>
-      <div class="quick-chip" onclick="heroChip('ベジタリアン・ビーガン対応')">🥗 ベジタリアン対応</div>
-      <div class="quick-chip" onclick="heroChip('接待・記念日、個室あり')">💼 接待・記念日</div>
-      <div class="quick-chip" onclick="heroChip('深夜でも入れる')">🌙 深夜でも入れる</div>
-      <div class="quick-chip" onclick="heroChip('コスパ重視、予算400B以内')">💰 コスパ重視</div>
-    </div>
-  </div>
-
   <div class="scenario-section">
     <div class="scenario-section-label">シーンから選ぶ</div>
     <div class="scenario-grid">
@@ -291,16 +280,10 @@
         <div class="scenario-desc">個室・高評価・雰囲気<br>で印象を残す</div>
       </div>
 
-      <div class="scenario-card" onclick="selectScenario(this,'latenight')">
+      <div class="scenario-card" style="grid-column:span 2;" onclick="selectScenario(this,'latenight')">
         <div class="scenario-icon">🌙</div>
         <div class="scenario-name">深夜でも入れる</div>
-        <div class="scenario-desc">22時以降も営業中<br>の店舗に絞る</div>
-      </div>
-
-      <div class="scenario-card" onclick="selectScenario(this,'custom')">
-        <div class="scenario-icon">✦</div>
-        <div class="scenario-name">自由に相談</div>
-        <div class="scenario-desc">条件を自然な言葉で<br>AIに伝える</div>
+        <div class="scenario-desc">22時以降も営業中の店舗に絞る</div>
       </div>
 
     </div>
