@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JEEB — エンジニア向け開発ブリーフィング</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --navy: #0A0A2E;
+  --navy2: #0D0D3A;
+  --blue: #0066FF;
+  --blue-dim: #E0EBFF;
+  --blue-mid: #0044BB;
+  --white: #FFFFFF;
+  --light: #F5F5F3;
+  --gray: #5A5A56;
+  --gray2: #9A9A96;
+  --dark: #0A0A0A;
+  --green: #00BB77;
+  --amber: #FF9900;
+  --slide-w: 100vw;
+  --slide-h: 100vh;
+}
+
+html, body {
+  width: 100%; height: 100%; overflow: hidden;
+  font-family: 'Inter', 'Noto Sans JP', sans-serif;
+  background: #000;
+}
+
+/* ── Slides ── */
+.deck { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
+
+.slide {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  opacity: 0; transform: translateX(60px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+  pointer-events: none;
+  overflow: hidden;
+}
+.slide.active {
+  opacity: 1; transform: translateX(0);
+  pointer-events: all;
+}
+.slide.exit-left {
+  opacity: 0; transform: translateX(-60px);
+}
+
+/* ── Nav ── */
+.nav-bar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 28px 16px;
+  background: rgba(10,10,46,0.92); backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(0,102,255,0.2);
+}
+.nav-btn {
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 1.5px solid rgba(0,102,255,0.5);
+  background: none; color: var(--blue); font-size: 18px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.nav-btn:hover { background: var(--blue); color: #fff; }
+.nav-btn:disabled { opacity: 0.25; cursor: default; }
+
+.dots { display: flex; gap: 7px; align-items: center; }
+.dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: rgba(255,255,255,0.2); cursor: pointer;
+  transition: all 0.2s;
+}
+.dot.active { background: var(--blue); width: 22px; border-radius: 4px; }
+
+.slide-counter {
+  font-size: 12px; color: rgba(255,255,255,0.4); font-variant-numeric: tabular-nums;
+  min-width: 48px; text-align: right;
+}
+
+.progress {
+  position: fixed; top: 0; left: 0; right: 0; height: 3px;
+  background: rgba(0,102,255,0.15); z-index: 100;
+}
+.progress-bar {
+  height: 100%; background: var(--blue);
+  transition: width 0.4s ease;
+}
+
+/* keyboard hint */
+.kbd-hint {
+  position: fixed; top: 16px; right: 20px; z-index: 100;
+  font-size: 10px; color: rgba(255,255,255,0.2);
+  letter-spacing: 0.06em;
+}
+
+/* ── Shared Layout Helpers ── */
+.slide-inner {
+  flex: 1; display: flex; flex-direction: column;
+  padding: 0 0 68px 0; /* leave room for nav */
+}
+
+.tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 12px; border-radius: 100px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+}
+.tag-blue { background: rgba(0,102,255,0.15); color: var(--blue); }
+
+.card {
+  background: #fff; border-radius: 14px;
+  border: 1px solid rgba(0,0,0,0.08);
+  overflow: hidden;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+}
+.card-top {
+  height: 5px; background: var(--blue);
+}
+
+/* ══════════════════════════════════════════════
+   SLIDE 1 — Title
+══════════════════════════════════════════════ */
+#s1 { background: var(--navy); }
+#s1 .inner {
+  flex: 1; display: flex; flex-direction: column;
+  justify-content: center; padding: 0 80px 80px;
+  position: relative; overflow: hidden;
+}
+#s1 .bg-circle {
+  position: absolute; border-radius: 50%;
+  background: rgba(0,102,255,0.06);
+  pointer-events: none;
+}
+#s1 .tag { margin-bottom: 28px; }
+#s1 h1 {
+  font-size: clamp(72px, 12vw, 120px); font-weight: 900;
+  color: #fff; letter-spacing: -0.04em; line-height: 1;
+  margin-bottom: 18px;
+}
+#s1 h1 span { color: var(--blue); }
+#s1 .subtitle {
+  font-size: clamp(16px, 2.2vw, 22px); color: rgba(170,200,255,0.9);
+  font-weight: 300; letter-spacing: 0.02em; margin-bottom: 10px;
+}
+#s1 .sub2 {
+  font-size: clamp(12px, 1.4vw, 15px); color: rgba(120,150,200,0.7);
+  letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500;
+}
+#s1 .tagline {
+  position: absolute; bottom: 90px; right: 80px;
+  font-size: 13px; color: rgba(100,130,180,0.6);
+  font-style: italic; letter-spacing: 0.04em;
+}
+#s1 .right-accent {
+  position: absolute; right: -60px; top: -60px;
+  width: 420px; height: 420px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,102,255,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ══════════════════════════════════════════════
+   SLIDE 2 — 何を作るのか
+══════════════════════════════════════════════ */
+#s2 { background: var(--light); }
+#s2 .inner {
+  flex: 1; display: grid; grid-template-columns: 1fr 280px;
+  gap: 32px; padding: 40px 64px 80px;
+  align-items: start;
+}
+#s2 .left h2 {
+  font-size: clamp(26px,3.5vw,40px); font-weight: 800;
+  color: var(--navy); margin-bottom: 6px; letter-spacing: -0.02em;
+}
+#s2 .left .sub { font-size: 13px; color: var(--gray2); margin-bottom: 28px; }
+.bullet-row {
+  display: flex; gap: 16px; align-items: flex-start;
+  padding: 16px; background: #fff; border-radius: 12px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 1px 8px rgba(0,0,0,0.04);
+}
+.bullet-icon {
+  width: 44px; height: 44px; border-radius: 10px;
+  background: var(--blue-dim); display: flex; align-items: center;
+  justify-content: center; font-size: 20px; flex-shrink: 0;
+}
+.bullet-title { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 3px; }
+.bullet-desc  { font-size: 12px; color: var(--gray); line-height: 1.5; }
+
+#s2 .callout {
+  background: var(--navy); border-radius: 16px;
+  padding: 28px 24px; margin-top: 50px;
+  position: relative;
+}
+#s2 .callout::before {
+  content: '\201C'; font-size: 60px; color: var(--blue);
+  line-height: 1; position: absolute; top: 8px; left: 18px;
+  font-family: Georgia, serif;
+}
+#s2 .callout-text {
+  font-size: 15px; font-weight: 700; color: #fff;
+  line-height: 1.7; padding-top: 28px;
+}
+#s2 .callout-text em { color: var(--blue); font-style: normal; }
+
+/* ══════════════════════════════════════════════
+   SLIDE 3 — 既にここまで動いている
+══════════════════════════════════════════════ */
+#s3 { background: var(--light); }
+#s3 .inner {
+  flex: 1; display: flex; flex-direction: column;
+  padding: 36px 64px 80px;
+}
+#s3 h2 {
+  font-size: clamp(24px,3.2vw,36px); font-weight: 800;
+  color: var(--navy); margin-bottom: 4px; letter-spacing: -0.02em;
+}
+#s3 .sub { font-size: 12px; color: var(--gray2); margin-bottom: 20px; }
+.mock-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 14px; flex: 1;
+}
+.mock-card {
+  background: #fff; border-radius: 14px;
+  border: 1px solid rgba(0,0,0,0.07);
+  overflow: hidden; padding: 18px 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+}
+.mock-card-top {
+  height: 4px; background: var(--blue);
+  margin: -18px -20px 14px;
+}
+.mock-card-icon { font-size: 20px; margin-bottom: 8px; }
+.mock-card-title { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 2px; }
+.mock-card-sub   { font-size: 11px; color: var(--blue); font-weight: 600; margin-bottom: 10px; }
+.mock-card-list  { list-style: none; }
+.mock-card-list li {
+  font-size: 11px; color: var(--gray); padding: 3px 0;
+  padding-left: 14px; position: relative;
+}
+.mock-card-list li::before {
+  content: '•'; position: absolute; left: 0; color: var(--blue);
+}
+#s3 .asset-note {
+  margin-top: 12px; padding: 10px 16px;
+  background: var(--blue-dim); border-radius: 8px;
+  font-size: 12px; font-weight: 600; color: var(--navy);
+}
+
+/* ══════════════════════════════════════════════
+   SLIDE 4 — マネタイズ
+══════════════════════════════════════════════ */
+#s4 { background: var(--light); }
+#s4 .inner {
+  flex: 1; display: flex; flex-direction: column;
+  padding: 36px 64px 80px;
+}
+#s4 h2 {
+  font-size: clamp(24px,3.2vw,36px); font-weight: 800;
+  color: var(--navy); margin-bottom: 4px;
+}
+#s4 .sub { font-size: 12px; color: var(--gray2); margin-bottom: 20px; }
+.mono-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 16px; flex: 1;
+}
+.mono-col {
+  border-radius: 16px; overflow: hidden;
+  display: flex; flex-direction: column;
+}
+.mono-col.b2b { background: var(--navy); }
+.mono-col.b2c { background: #fff; border: 1px solid rgba(0,0,0,0.08); }
+.mono-col-hdr {
+  padding: 18px 22px 14px; border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.mono-col.b2c .mono-col-hdr { border-bottom-color: rgba(0,0,0,0.06); }
+.mono-col-hdr .label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; margin-bottom: 4px;
+}
+.b2b .label { color: var(--blue); }
+.b2c .label { color: var(--blue); }
+.mono-col-hdr .title { font-size: 18px; font-weight: 800; }
+.b2b .title { color: #fff; }
+.b2c .title { color: var(--navy); }
+.mono-col-body { padding: 14px 22px; flex: 1; }
+.mono-row {
+  padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+  display: flex; flex-direction: column; gap: 2px;
+}
+.b2c .mono-row { border-bottom-color: rgba(0,0,0,0.05); }
+.mono-row:last-child { border-bottom: none; }
+.mono-row-title { font-size: 13px; font-weight: 700; }
+.b2b .mono-row-title { color: #fff; }
+.b2c .mono-row-title { color: var(--navy); }
+.mono-row-desc { font-size: 11px; }
+.b2b .mono-row-desc { color: rgba(170,200,255,0.7); }
+.b2c .mono-row-desc { color: var(--gray); }
+
+.mono-footer {
+  grid-column: 1/-1; background: var(--blue);
+  border-radius: 10px; padding: 12px 22px;
+  font-size: 13px; font-weight: 700; color: #fff;
+  text-align: center;
+}
+
+/* ══════════════════════════════════════════════
+   SLIDE 5 — 技術スタック
+══════════════════════════════════════════════ */
+#s5 { background: var(--light); }
+#s5 .inner {
+  flex: 1; display: flex; flex-direction: column;
+  padding: 36px 64px 80px;
+}
+#s5 h2 {
+  font-size: clamp(24px,3.2vw,36px); font-weight: 800;
+  color: var(--navy); margin-bottom: 4px;
+}
+#s5 .sub { font-size: 12px; color: var(--gray2); margin-bottom: 20px; }
+.stack-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 16px; flex: 1;
+}
+.stack-col {
+  background: #fff; border-radius: 14px;
+  border: 1px solid rgba(0,0,0,0.07);
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+}
+.stack-col-hdr {
+  background: var(--navy); padding: 16px 20px;
+  font-size: 14px; font-weight: 700; color: #fff;
+}
+.stack-col-hdr span { display: block; font-size: 11px; color: rgba(170,200,255,0.6); margin-top: 2px; font-weight: 400; }
+.stack-items { padding: 12px 0; }
+.stack-item {
+  padding: 9px 20px; font-size: 13px; color: var(--dark);
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+  display: flex; align-items: center; gap: 8px;
+}
+.stack-item:last-child { border-bottom: none; }
+.stack-item::before {
+  content: ''; width: 6px; height: 6px;
+  border-radius: 50%; background: var(--blue); flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════════════
+   SLIDE 6 — メニュー × リアクション
+══════════════════════════════════════════════ */
+#s6 { background: var(--light); }
+#s6 .inner {
+  flex: 1; display: flex; flex-direction: column;
+  padding: 36px 64px 80px;
+}
+#s6 h2 {
+  font-size: clamp(22px,3vw,34px); font-weight: 800;
+  color: var(--navy); margin-bottom: 4px; letter-spacing: -0.02em;
+}
+#s6 .sub { font-size: 12px; color: var(--gray2); margin-bottom: 20px; }
+.reaction-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 14px; flex: 1;
+}
+.reaction-card {
+  background: #fff; border-radius: 14px;
+  border: 1px solid rgba(0,0,0,0.07);
+  padding: 20px 22px; display: flex; flex-direction: column; gap: 8px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  position: relative; overflow: hidden;
+}
+.reaction-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+  background: var(--blue);
+}
+.reaction-card .r-icon { font-size: 26px; line-height: 1; }
+.reaction-card .r-title { font-size: 15px; font-weight: 700; color: var(--navy); }
+.reaction-card .r-sub   { font-size: 12px; color: var(--blue); font-weight: 600; }
+.reaction-card .r-items { list-style: none; margin-top: 4px; }
+.reaction-card .r-items li {
+  font-size: 11px; color: var(--gray); padding: 2px 0 2px 14px; position: relative;
+}
+.reaction-card .r-items li::before { content: '•'; position: absolute; left: 0; color: var(--blue); }
+
+/* ══════════════════════════════════════════════
+   SLIDE 7 — ロードマップ
+══════════════════════════════════════════════ */
+#s7 { background: var(--light); }
+#s7 .inner {
+  flex: 1; display: flex; flex-direction: column;
+  padding: 36px 64px 80px;
+}
+#s7 h2 {
+  font-size: clamp(24px,3.2vw,36px); font-weight: 800;
+  color: var(--navy); margin-bottom: 4px;
+}
+#s7 .sub { font-size: 12px; color: var(--gray2); margin-bottom: 24px; }
+.timeline {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  gap: 14px; flex: 1;
+  align-items: stretch;
+}
+.tl-item {
+  display: flex; flex-direction: column; position: relative;
+}
+.tl-item:not(:last-child)::after {
+  content: '›'; position: absolute;
+  right: -12px; top: 38px;
+  font-size: 22px; color: var(--gray2); z-index: 1;
+}
+.tl-header {
+  border-radius: 12px 12px 0 0;
+  padding: 16px 16px 14px; text-align: center;
+}
+.tl-phase { font-size: 20px; font-weight: 900; color: #fff; }
+.tl-period { font-size: 11px; color: rgba(255,255,255,0.65); margin-top: 2px; }
+.tl-body {
+  background: #fff; flex: 1;
+  border: 1px solid rgba(0,0,0,0.07);
+  border-top: none; padding: 14px 16px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.tl-scope { font-size: 12px; color: var(--dark); line-height: 1.5; flex: 1; }
+.tl-kpi {
+  padding: 8px 10px; border-radius: 7px;
+  background: var(--blue-dim); font-size: 11px;
+  font-weight: 700; color: var(--navy);
+  text-align: center;
+}
+.tl-body { border-radius: 0 0 12px 12px; }
+
+/* ══════════════════════════════════════════════
+   SLIDE 8 — Stretch Goals
+══════════════════════════════════════════════ */
+#s8 { background: var(--navy); }
+#s8 .inner {
+  flex: 1; display: flex; flex-direction: column;
+  padding: 36px 64px 80px;
+}
+#s8 h2 {
+  font-size: clamp(24px,3.2vw,36px); font-weight: 800;
+  color: #fff; margin-bottom: 4px;
+}
+#s8 .sub {
+  font-size: 12px; color: rgba(170,200,255,0.6);
+  margin-bottom: 22px; font-style: italic;
+}
+.stretch-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(3, 1fr);
+  gap: 12px; flex: 1;
+}
+.stretch-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(0,102,255,0.2);
+  border-radius: 12px; padding: 14px 18px;
+  display: flex; gap: 14px; align-items: flex-start;
+  transition: background 0.15s;
+}
+.stretch-card:hover { background: rgba(0,102,255,0.08); }
+.stretch-icon { font-size: 24px; flex-shrink: 0; line-height: 1.2; }
+.stretch-title { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+.stretch-desc  { font-size: 11px; color: rgba(170,200,255,0.65); line-height: 1.4; }
+
+/* ══════════════════════════════════════════════
+   SLIDE 9 — Web → App
+══════════════════════════════════════════════ */
+#s9 { background: var(--light); }
+#s9 .inner {
+  flex: 1; display: flex; flex-direction: column;
+  padding: 36px 64px 80px;
+}
+#s9 h2 {
+  font-size: clamp(24px,3.2vw,36px); font-weight: 800;
+  color: var(--navy); margin-bottom: 4px;
+}
+#s9 .sub { font-size: 12px; color: var(--gray2); margin-bottom: 24px; }
+.evo-grid {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 0; flex: 1; align-items: stretch;
+  position: relative;
+}
+.evo-arrow {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  font-size: 26px; color: var(--blue); z-index: 2;
+  pointer-events: none;
+}
+.evo-col {
+  border-radius: 16px; overflow: hidden;
+  display: flex; flex-direction: column;
+  border: 2px solid transparent;
+  margin: 0 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+.evo-col:first-child { margin-left: 0; }
+.evo-col:last-child  { margin-right: 0; }
+.evo-hdr {
+  padding: 22px 20px 16px; text-align: center;
+}
+.evo-stage { font-size: 28px; margin-bottom: 8px; }
+.evo-title { font-size: 17px; font-weight: 800; margin-bottom: 4px; }
+.evo-period { font-size: 11px; opacity: 0.7; font-style: italic; }
+.evo-body {
+  background: #fff; flex: 1; padding: 16px 18px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.evo-item {
+  display: flex; gap: 10px; align-items: flex-start;
+}
+.evo-item-check {
+  width: 18px; height: 18px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; color: #fff; flex-shrink: 0; margin-top: 1px;
+}
+.evo-item-text { font-size: 12px; color: var(--dark); line-height: 1.4; }
+.evo-note {
+  margin-top: 14px; padding: 10px 16px;
+  background: var(--blue-dim); border-radius: 8px;
+  font-size: 12px; font-weight: 700; color: var(--navy);
+  text-align: center;
+}
+
+/* ══════════════════════════════════════════════
+   SLIDE 10 — コスト
+══════════════════════════════════════════════ */
+#s10 { background: var(--navy); }
+#s10 .inner {
+  flex: 1; display: flex; flex-direction: column;
+  padding: 36px 64px 80px;
+}
+#s10 h2 {
+  font-size: clamp(24px,3.2vw,36px); font-weight: 800;
+  color: #fff; margin-bottom: 4px;
+}
+#s10 .sub { font-size: 12px; color: rgba(170,200,255,0.6); margin-bottom: 24px; font-style:italic; }
+.cost-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+.cost-table th {
+  background: var(--blue); color: #fff;
+  padding: 12px 20px; text-align: left;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.04em;
+}
+.cost-table th:last-child { text-align: right; }
+.cost-table td {
+  padding: 14px 20px; font-size: 13px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.cost-table td:first-child { color: #fff; font-weight: 600; }
+.cost-table td:nth-child(2) { color: rgba(170,200,255,0.8); text-align: center; }
+.cost-table td:last-child { color: rgba(255,230,100,0.9); text-align: right; font-weight: 700; }
+.cost-table tr:last-child td { background: rgba(0,102,255,0.12); border-bottom: none; }
+.cost-table tr:last-child td:first-child { color: var(--blue); }
+
+.closing {
+  background: rgba(0,102,255,0.12);
+  border: 1px solid rgba(0,102,255,0.3);
+  border-left: 4px solid var(--blue);
+  border-radius: 12px; padding: 20px 24px;
+  margin-top: auto;
+}
+.closing p { font-size: 14px; color: #fff; line-height: 1.7; }
+.closing p strong { color: var(--blue); }
+.closing-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--blue); margin-bottom: 8px;
+}
+</style>
+</head>
+<body>
+
+<div class="progress"><div class="progress-bar" id="progress"></div></div>
+<div class="kbd-hint">← → キーで移動</div>
+
+<!-- ══════════════════════════════════════════
+     SLIDE 1 — Title
+══════════════════════════════════════════ -->
+<div class="deck" id="deck">
+
+<div class="slide active" id="s1">
+  <div class="inner">
+    <div class="right-accent"></div>
+    <div class="tag tag-blue">AI × Restaurant Discovery</div>
+    <h1>JEEB<span>.</span></h1>
+    <p class="subtitle">タイ発・飲食店ディスカバリープラットフォーム</p>
+    <p class="sub2">エンジニア向け 開発ブリーフィング資料 — 2026</p>
+    <p class="tagline">Find your perfect table in Bangkok.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SLIDE 2 — 何を作るのか
+══════════════════════════════════════════ -->
+<div class="slide" id="s2">
+  <div class="slide-inner">
+    <div class="inner">
+      <div class="left">
+        <h2>何を作るのか</h2>
+        <p class="sub">プロジェクト概要 — 4つの柱</p>
+
+        <div class="bullet-row">
+          <div class="bullet-icon">🗺️</div>
+          <div>
+            <div class="bullet-title">多言語飲食店ポータル</div>
+            <div class="bullet-desc">バンコク起点 → タイ全土 → アジアへ。日本食スタートから全業態へ拡張。</div>
+          </div>
+        </div>
+        <div class="bullet-row">
+          <div class="bullet-icon">🤖</div>
+          <div>
+            <div class="bullet-title">AI コンシェルジュ検索</div>
+            <div class="bullet-desc">会話形式でシーンに最適な店を提案。Claude API 連携・音声入力対応。</div>
+          </div>
+        </div>
+        <div class="bullet-row">
+          <div class="bullet-icon">🏪</div>
+          <div>
+            <div class="bullet-title">店舗向け SaaS</div>
+            <div class="bullet-desc">月額 2,000〜5,000 THB で多言語ページ + MEO + 予約システム提供。</div>
+          </div>
+        </div>
+        <div class="bullet-row">
+          <div class="bullet-icon">📱</div>
+          <div>
+            <div class="bullet-title">Web → PWA → ネイティブアプリ</div>
+            <div class="bullet-desc">段階的移行。API は最初からモバイル対応の RESTful 設計で構築。</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="callout">
+          <div class="callout-text">
+            タイに<em>食べログがない。</em><br>
+            プロンポン半径1km に<br>
+            日本食店舗が<em> 150店</em>あるが、<br>
+            独自 HP を持つのは<em> 50店</em>のみ。<br><br>
+            残り <em>100店</em>が狙い目。
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SLIDE 3 — モックアップ
+══════════════════════════════════════════ -->
+<div class="slide" id="s3">
+  <div class="slide-inner">
+    <div class="inner">
+      <h2>既にここまで動いている</h2>
+      <p class="sub">現行モックアップ構成（GitHub 管理・即日確認可能）</p>
+      <div class="mock-grid">
+        <div class="mock-card">
+          <div class="mock-card-top"></div>
+          <div class="mock-card-icon">🏠</div>
+          <div class="mock-card-title">index.html</div>
+          <div class="mock-card-sub">トップページ</div>
+          <ul class="mock-card-list">
+            <li>店舗カード一覧・地図表示</li>
+            <li>Silver / Gold / Black 会員システム</li>
+            <li>フィルター・お気に入り・比較</li>
+          </ul>
+        </div>
+        <div class="mock-card">
+          <div class="mock-card-top"></div>
+          <div class="mock-card-icon">🤖</div>
+          <div class="mock-card-title">search.html</div>
+          <div class="mock-card-sub">AI コンシェルジュ</div>
+          <ul class="mock-card-list">
+            <li>6シナリオカード（独自テーマ）</li>
+            <li>音声入力対応（Web Speech API）</li>
+            <li>会話 → 結果画面フロー</li>
+          </ul>
+        </div>
+        <div class="mock-card">
+          <div class="mock-card-top"></div>
+          <div class="mock-card-icon">🍽️</div>
+          <div class="mock-card-title">restaurant.html</div>
+          <div class="mock-card-sub">店舗詳細ページ</div>
+          <ul class="mock-card-list">
+            <li>比較モーダル（最大3店）</li>
+            <li>前払い決済 UI</li>
+            <li>LINE 問い合わせ連携</li>
+          </ul>
+        </div>
+        <div class="mock-card">
+          <div class="mock-card-top"></div>
+          <div class="mock-card-icon">👤</div>
+          <div class="mock-card-title">profile.html</div>
+          <div class="mock-card-sub">会員プロフィール</div>
+          <ul class="mock-card-list">
+            <li>会員ランク管理・特典表示</li>
+            <li>お気に入り・訪問履歴</li>
+            <li>多言語切り替え</li>
+          </ul>
+        </div>
+      </div>
+      <div class="asset-note">
+        ＋ 既存アセット: <strong>soi24-menu</strong>（5言語対応デジタルメニュー、Firebase 本番稼働中）— 統合・拡張予定
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SLIDE 4 — マネタイズ
+══════════════════════════════════════════ -->
+<div class="slide" id="s4">
+  <div class="slide-inner">
+    <div class="inner">
+      <h2>マネタイズ構造</h2>
+      <p class="sub">B2B（店舗側）+ B2C（ユーザー側）の2軸収益</p>
+      <div class="mono-grid">
+        <div class="mono-col b2b">
+          <div class="mono-col-hdr">
+            <div class="label">Store Side</div>
+            <div class="title">店舗側  B2B</div>
+          </div>
+          <div class="mono-col-body">
+            <div class="mono-row">
+              <div class="mono-row-title">💳  2,000 THB / 月</div>
+              <div class="mono-row-desc">多言語ページ + MEO 対応（ホームページ代わり）</div>
+            </div>
+            <div class="mono-row">
+              <div class="mono-row-title">💳  5,000 THB / 月</div>
+              <div class="mono-row-desc">上記 + 予約システム連携</div>
+            </div>
+            <div class="mono-row">
+              <div class="mono-row-title">⚡  前払い決済</div>
+              <div class="mono-row-desc">3日入金（競合は2〜4週間）</div>
+            </div>
+            <div class="mono-row">
+              <div class="mono-row-title">📈  上位表示オプション</div>
+              <div class="mono-row-desc">＋3,000〜10,000 THB / 月</div>
+            </div>
+          </div>
+        </div>
+        <div class="mono-col b2c">
+          <div class="mono-col-hdr">
+            <div class="label">User Side</div>
+            <div class="title">ユーザー側  B2C</div>
+          </div>
+          <div class="mono-col-body">
+            <div class="mono-row">
+              <div class="mono-row-title">🥈  Silver（無料）</div>
+              <div class="mono-row-desc">検索・AI コンシェルジュ全機能</div>
+            </div>
+            <div class="mono-row">
+              <div class="mono-row-title">🥇  Gold（〜250 THB / 月）</div>
+              <div class="mono-row-desc">加盟店 3% 割引・限定情報</div>
+            </div>
+            <div class="mono-row">
+              <div class="mono-row-title">⬛  Black（招待制）</div>
+              <div class="mono-row-desc">限定予約・専属コンシェルジュ</div>
+            </div>
+          </div>
+        </div>
+        <div class="mono-footer">
+          🎯  加盟 200 店で月次黒字化の見込み　｜　LTV / CAC 比率：推定 8〜15倍
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SLIDE 5 — 技術スタック
+══════════════════════════════════════════ -->
+<div class="slide" id="s5">
+  <div class="slide-inner">
+    <div class="inner">
+      <h2>推奨技術スタック</h2>
+      <p class="sub">スケールを見据えたモダン構成</p>
+      <div class="stack-grid">
+        <div class="stack-col">
+          <div class="stack-col-hdr">🖥️  Frontend<span>ユーザー向け画面</span></div>
+          <div class="stack-items">
+            <div class="stack-item">Next.js 14 (App Router)</div>
+            <div class="stack-item">Tailwind CSS</div>
+            <div class="stack-item">Leaflet.js / Google Maps</div>
+            <div class="stack-item">Web Speech API（音声入力）</div>
+          </div>
+        </div>
+        <div class="stack-col">
+          <div class="stack-col-hdr">⚙️  Backend & AI<span>APIサーバー・検索・推論</span></div>
+          <div class="stack-items">
+            <div class="stack-item">Node.js + Fastify</div>
+            <div class="stack-item">PostgreSQL + Redis</div>
+            <div class="stack-item">Elasticsearch（店舗検索）</div>
+            <div class="stack-item">Anthropic Claude API</div>
+          </div>
+        </div>
+        <div class="stack-col">
+          <div class="stack-col-hdr">☁️  Infrastructure<span>決済・通知・インフラ</span></div>
+          <div class="stack-items">
+            <div class="stack-item">AWS / GCP</div>
+            <div class="stack-item">Omise 決済（タイ特化）</div>
+            <div class="stack-item">LINE Messaging API</div>
+            <div class="stack-item">Firebase（PWA・Push通知）</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SLIDE 6 — メニュー × リアクション
+══════════════════════════════════════════ -->
+<div class="slide" id="s6">
+  <div class="slide-inner">
+    <div class="inner">
+      <h2>メニュー × ソーシャルリアクション</h2>
+      <p class="sub">既存の soi24-menu（5言語対応）を統合し、料理1品ごとに SNS 的インタラクションを付加</p>
+      <div class="reaction-grid">
+        <div class="reaction-card">
+          <div class="r-icon">❤️</div>
+          <div class="r-title">いいね & 食べたい</div>
+          <div class="r-sub">メニュー単位のウィッシュリスト</div>
+          <ul class="r-items">
+            <li>1品ごとにリアクション可能</li>
+            <li>マイプロフィールに蓄積</li>
+            <li>食べた後 → レビューへ自動誘導</li>
+          </ul>
+        </div>
+        <div class="reaction-card">
+          <div class="r-icon">🌟</div>
+          <div class="r-title">著名人バッジ</div>
+          <div class="r-sub">インフルエンサー公式連携</div>
+          <ul class="r-items">
+            <li>「○○さんが食べたい」表示</li>
+            <li>Verified アカウント連携</li>
+            <li>SNS 投稿 URL を紐づけ</li>
+          </ul>
+        </div>
+        <div class="reaction-card">
+          <div class="r-icon">📸</div>
+          <div class="r-title">SNS 話題バッジ</div>
+          <div class="r-sub">TikTok・Instagram との連動</div>
+          <ul class="r-items">
+            <li>コミュニティ報告で自動付与</li>
+            <li>「バズってる一品」として訴求</li>
+            <li>投稿動画へのリンク表示</li>
+          </ul>
+        </div>
+        <div class="reaction-card">
+          <div class="r-icon">📍</div>
+          <div class="r-title">来店誘導プッシュ通知</div>
+          <div class="r-sub">GPS 連動の来店トリガー</div>
+          <ul class="r-items">
+            <li>食べたい品の店舗に近づくと通知</li>
+            <li>「今すぐ食べられます」</li>
+            <li>PWA / ネイティブアプリ対応</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SLIDE 7 — ロードマップ
+══════════════════════════════════════════ -->
+<div class="slide" id="s7">
+  <div class="slide-inner">
+    <div class="inner">
+      <h2>4フェーズ 開発ロードマップ</h2>
+      <p class="sub">α版でまず事例を作り、数字で拡大を正当化する</p>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-header" style="background:var(--blue)">
+            <div class="tl-phase">α版</div>
+            <div class="tl-period">〜 2ヶ月</div>
+          </div>
+          <div class="tl-body">
+            <div class="tl-scope">店舗掲載・検索<br>会員登録<br>基本 API</div>
+            <div class="tl-kpi">🎯 50店舗登録</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-header" style="background:#0088DD">
+            <div class="tl-phase">β版</div>
+            <div class="tl-period">〜 4ヶ月</div>
+          </div>
+          <div class="tl-body">
+            <div class="tl-scope">AI 検索・予約<br>LINE 連携<br>メニュー統合</div>
+            <div class="tl-kpi">🎯 MAU 1,000</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-header" style="background:var(--green)">
+            <div class="tl-phase">v1.0</div>
+            <div class="tl-period">〜 6ヶ月</div>
+          </div>
+          <div class="tl-body">
+            <div class="tl-scope">決済・多言語<br>管理画面<br>PWA 対応</div>
+            <div class="tl-kpi">🎯 100店・黒字化</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-header" style="background:var(--amber)">
+            <div class="tl-phase">v2.0</div>
+            <div class="tl-period">〜 12ヶ月</div>
+          </div>
+          <div class="tl-body">
+            <div class="tl-scope">バンコク全域<br>分析レポート<br>ネイティブ App</div>
+            <div class="tl-kpi">🎯 500店</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SLIDE 8 — Stretch Goals
+══════════════════════════════════════════ -->
+<div class="slide" id="s8">
+  <div class="slide-inner">
+    <div class="inner">
+      <h2>将来の差別化機能</h2>
+      <p class="sub">実現すれば圧倒的な優位性 — 今は不確実でも、狙う価値がある</p>
+      <div class="stretch-grid">
+        <div class="stretch-card">
+          <div class="stretch-icon">🔮</div>
+          <div>
+            <div class="stretch-title">AI メニュー自動デジタル化</div>
+            <div class="stretch-desc">紙メニューを撮影 → 即多言語化（Claude Vision API）</div>
+          </div>
+        </div>
+        <div class="stretch-card">
+          <div class="stretch-icon">👥</div>
+          <div>
+            <div class="stretch-title">ソーシャルダイニング</div>
+            <div class="stretch-desc">「今夜一緒に食べませんか」マッチング機能</div>
+          </div>
+        </div>
+        <div class="stretch-card">
+          <div class="stretch-icon">⏱️</div>
+          <div>
+            <div class="stretch-title">リアルタイム空席通知</div>
+            <div class="stretch-desc">キャンセル枠の自動再販売・プッシュ通知</div>
+          </div>
+        </div>
+        <div class="stretch-card">
+          <div class="stretch-icon">🤳</div>
+          <div>
+            <div class="stretch-title">料理 AI カメラ判定</div>
+            <div class="stretch-desc">写真から「この料理が食べられる店」を逆検索</div>
+          </div>
+        </div>
+        <div class="stretch-card">
+          <div class="stretch-icon">💳</div>
+          <div>
+            <div class="stretch-title">JEEB コイン</div>
+            <div class="stretch-desc">来店・レビューでポイント獲得 → 加盟店で使用</div>
+          </div>
+        </div>
+        <div class="stretch-card">
+          <div class="stretch-icon">📊</div>
+          <div>
+            <div class="stretch-title">店舗 AI アドバイス</div>
+            <div class="stretch-desc">「火曜18時に空席多め → クーポン送付を推奨」自動提案</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SLIDE 9 — Web → App
+══════════════════════════════════════════ -->
+<div class="slide" id="s9">
+  <div class="slide-inner">
+    <div class="inner">
+      <h2>Web から アプリ への Evolution</h2>
+      <p class="sub">段階的移行でリスクを最小化し、ユーザー体験を継続的に向上</p>
+      <div class="evo-grid">
+        <div class="evo-col" style="border-color:var(--blue)">
+          <div class="evo-hdr" style="background:var(--blue)">
+            <div class="evo-stage">🌐</div>
+            <div class="evo-title" style="color:#fff">Web App</div>
+            <div class="evo-period" style="color:rgba(255,255,255,0.7)">現在</div>
+          </div>
+          <div class="evo-body">
+            <div class="evo-item">
+              <div class="evo-item-check" style="background:var(--blue)">✓</div>
+              <div class="evo-item-text">モバイルファースト設計</div>
+            </div>
+            <div class="evo-item">
+              <div class="evo-item-check" style="background:var(--blue)">✓</div>
+              <div class="evo-item-text">GitHub 管理・即日デプロイ</div>
+            </div>
+            <div class="evo-item">
+              <div class="evo-item-check" style="background:var(--blue)">✓</div>
+              <div class="evo-item-text">ブラウザで全機能利用可</div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--blue-mid);">▶</div>
+        <div class="evo-col" style="border-color:#009988">
+          <div class="evo-hdr" style="background:#009988">
+            <div class="evo-stage">📲</div>
+            <div class="evo-title" style="color:#fff">PWA</div>
+            <div class="evo-period" style="color:rgba(255,255,255,0.7)">β版後</div>
+          </div>
+          <div class="evo-body">
+            <div class="evo-item">
+              <div class="evo-item-check" style="background:#009988">✓</div>
+              <div class="evo-item-text">ホーム画面に追加可能</div>
+            </div>
+            <div class="evo-item">
+              <div class="evo-item-check" style="background:#009988">✓</div>
+              <div class="evo-item-text">オフライン対応（メニューキャッシュ）</div>
+            </div>
+            <div class="evo-item">
+              <div class="evo-item-check" style="background:#009988">✓</div>
+              <div class="evo-item-text">プッシュ通知対応</div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--blue-mid);">▶</div>
+        <div class="evo-col" style="border-color:var(--green)">
+          <div class="evo-hdr" style="background:var(--green)">
+            <div class="evo-stage">📱</div>
+            <div class="evo-title" style="color:#fff">Native App</div>
+            <div class="evo-period" style="color:rgba(255,255,255,0.7)">v2.0</div>
+          </div>
+          <div class="evo-body">
+            <div class="evo-item">
+              <div class="evo-item-check" style="background:var(--green)">✓</div>
+              <div class="evo-item-text">React Native / Flutter</div>
+            </div>
+            <div class="evo-item">
+              <div class="evo-item-check" style="background:var(--green)">✓</div>
+              <div class="evo-item-text">GPS・カメラ・Apple Pay</div>
+            </div>
+            <div class="evo-item">
+              <div class="evo-item-check" style="background:var(--green)">✓</div>
+              <div class="evo-item-text">App Store 申請・公開</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="evo-note">
+        ⚠️  バックエンド API は最初からモバイル対応の RESTful 設計で構築すること
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SLIDE 10 — コスト
+══════════════════════════════════════════ -->
+<div class="slide" id="s10">
+  <div class="slide-inner">
+    <div class="inner">
+      <h2>開発リソース概算</h2>
+      <p class="sub">α版（2ヶ月）を起点に、事例と数字を積み上げる</p>
+      <table class="cost-table">
+        <thead>
+          <tr>
+            <th>ロール</th>
+            <th>人数</th>
+            <th>月単価目安（THB）</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>フルスタックエンジニア</td>
+            <td>2〜3名</td>
+            <td>15〜30 万</td>
+          </tr>
+          <tr>
+            <td>UI デザイナー</td>
+            <td>1名</td>
+            <td>8〜15 万</td>
+          </tr>
+          <tr>
+            <td>QA エンジニア</td>
+            <td>1名</td>
+            <td>6〜10 万</td>
+          </tr>
+          <tr>
+            <td>合計（α版 2ヶ月）</td>
+            <td>—</td>
+            <td>約 60〜150 万</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="closing">
+        <div class="closing-label">Next Action</div>
+        <p>
+          まずは α 版で <strong>Prompong / Thonglor 50 店</strong>を獲得し、<br>
+          <strong>「継続率・予約数・オーナー満足度」</strong>の数字を揃える。<br>
+          それが Phase 2 以降の拡大とファイナンスの<strong>唯一の根拠</strong>になる。
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /deck -->
+
+<!-- ── Navigation ── -->
+<div class="nav-bar">
+  <button class="nav-btn" id="prev" onclick="go(-1)" disabled>‹</button>
+  <div class="dots" id="dots"></div>
+  <button class="nav-btn" id="next" onclick="go(1)">›</button>
+  <div class="slide-counter" id="counter">1 / 10</div>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total  = slides.length;
+let cur = 0;
+let animating = false;
+
+// Build dots
+const dotsEl = document.getElementById('dots');
+slides.forEach((_, i) => {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' active' : '');
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+});
+
+function goTo(n) {
+  if (animating || n === cur || n < 0 || n >= total) return;
+  animating = true;
+  const prev = cur;
+  cur = n;
+
+  slides[prev].classList.add('exit-left');
+  slides[prev].classList.remove('active');
+  slides[cur].classList.add('active');
+
+  setTimeout(() => {
+    slides[prev].classList.remove('exit-left');
+    animating = false;
+  }, 460);
+
+  updateUI();
+}
+
+function go(dir) { goTo(cur + dir); }
+
+function updateUI() {
+  document.getElementById('counter').textContent = `${cur + 1} / ${total}`;
+  document.getElementById('prev').disabled = cur === 0;
+  document.getElementById('next').disabled = cur === total - 1;
+  document.getElementById('progress').style.width = `${((cur + 1) / total) * 100}%`;
+  document.querySelectorAll('.dot').forEach((d, i) => {
+    d.classList.toggle('active', i === cur);
+  });
+}
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') go(1);
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   go(-1);
+});
+
+// Touch swipe
+let tx = 0;
+document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; });
+document.addEventListener('touchend',   e => {
+  const dx = e.changedTouches[0].clientX - tx;
+  if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
+});
+
+updateUI();
+</script>
+</body>
+</html>
