@@ -649,6 +649,154 @@
     pointer-events: none;
   }
   .compare-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ─── Store Login & Edit Mode ─── */
+  .store-login-section {
+    margin-top: 40px; padding-top: 20px;
+    border-top: 2px solid var(--gray-200);
+  }
+  .store-login-tab {
+    padding: 12px 20px; text-align: center;
+    background: var(--gray-100); border-radius: 12px;
+    cursor: pointer; transition: all 0.15s;
+    font-size: 12px; font-weight: 600; color: var(--gray-600);
+    letter-spacing: 0.05em;
+  }
+  .store-login-tab:hover { background: var(--gray-200); }
+  .store-login-tab.active { background: var(--black); color: var(--white); }
+
+  .store-login-panel {
+    display: none; margin-top: 20px;
+    background: var(--white); border: 1.5px solid var(--gray-200);
+    border-radius: 14px; padding: 20px;
+  }
+  .store-login-panel.active { display: block; }
+
+  .store-login-header {
+    font-size: 15px; font-weight: 700;
+    margin-bottom: 16px; color: var(--black);
+  }
+
+  .store-auth-tabs {
+    display: flex; gap: 8px; margin-bottom: 20px;
+    border-bottom: 1px solid var(--gray-200); padding-bottom: 12px;
+  }
+  .store-auth-tab {
+    padding: 0; border: none; background: none;
+    font-size: 13px; font-weight: 500; color: var(--gray-400);
+    cursor: pointer; border-bottom: 2px solid transparent;
+    padding-bottom: 8px; transition: all 0.15s;
+    font-family: inherit;
+  }
+  .store-auth-tab.active { color: var(--black); border-bottom-color: var(--black); }
+
+  .store-auth-form { display: none; }
+  .store-auth-form.active { display: block; }
+
+  .store-form-field { margin-bottom: 14px; }
+  .store-form-label { font-size: 11px; font-weight: 600; color: var(--gray-600); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .store-form-input {
+    width: 100%; padding: 11px 14px;
+    border: 1.5px solid var(--gray-200); border-radius: 10px;
+    font-size: 13px; color: var(--black);
+    background: var(--white); font-family: inherit;
+    outline: none; transition: border-color 0.15s;
+  }
+  .store-form-input:focus { border-color: var(--black); }
+
+  .store-oauth-btns { display: flex; flex-direction: column; gap: 10px; margin: 16px 0; }
+  .store-oauth-btn {
+    width: 100%; padding: 11px 14px;
+    border: 1.5px solid var(--gray-200); border-radius: 10px;
+    background: var(--white); color: var(--black);
+    font-size: 13px; font-weight: 500; cursor: pointer;
+    font-family: inherit; transition: all 0.15s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .store-oauth-btn:hover { border-color: var(--black); background: var(--gray-100); }
+
+  .store-login-submit {
+    width: 100%; padding: 12px;
+    background: var(--black); color: var(--white);
+    border: none; border-radius: 10px;
+    font-size: 14px; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+    transition: opacity 0.15s; margin-top: 10px;
+  }
+  .store-login-submit:hover { opacity: 0.9; }
+
+  .store-logged-in {
+    display: none; padding: 16px;
+    background: rgba(0,208,132,0.08); border: 1.5px solid var(--live);
+    border-radius: 12px; margin-bottom: 20px;
+  }
+  .store-logged-in.active { display: block; }
+  .store-logged-in-text { font-size: 13px; color: var(--black); margin-bottom: 12px; font-weight: 500; }
+  .store-logout-btn {
+    padding: 8px 14px; background: none; color: var(--live);
+    border: 1px solid var(--live); border-radius: 8px;
+    font-size: 12px; font-weight: 600; cursor: pointer;
+    font-family: inherit; transition: all 0.15s;
+  }
+  .store-logout-btn:hover { background: rgba(0,208,132,0.1); }
+
+  /* ─── Edit Mode ─── */
+  .store-edit-section { display: none; }
+  .store-edit-section.active { display: block; }
+
+  .editable-field {
+    position: relative; margin-bottom: 16px;
+    padding: 12px 14px; background: var(--white);
+    border: 1.5px solid var(--gray-200); border-radius: 10px;
+    transition: all 0.15s;
+  }
+  .editable-field:hover { border-color: var(--black); }
+
+  .editable-field.edit-mode { padding: 0; border: none; background: none; }
+  .editable-field.edit-mode input,
+  .editable-field.edit-mode textarea {
+    width: 100%; padding: 11px 14px;
+    border: 1.5px solid var(--black); border-radius: 10px;
+    font-size: 13px; font-family: inherit;
+    outline: none; min-height: 44px;
+  }
+  .editable-field.edit-mode textarea { min-height: 100px; resize: vertical; }
+
+  .edit-mode-controls {
+    display: none; gap: 10px; padding-top: 20px;
+    border-top: 1px solid var(--gray-200); margin-top: 20px;
+  }
+  .edit-mode-controls.active { display: flex; }
+
+  .edit-save-btn {
+    flex: 1; padding: 12px;
+    background: var(--live); color: var(--white);
+    border: none; border-radius: 10px;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+    transition: opacity 0.15s;
+  }
+  .edit-save-btn:hover { opacity: 0.9; }
+
+  .edit-cancel-btn {
+    flex: 1; padding: 12px;
+    background: none; color: var(--black);
+    border: 1.5px solid var(--gray-200); border-radius: 10px;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+    transition: all 0.15s;
+  }
+  .edit-cancel-btn:hover { background: var(--gray-100); }
+
+  .field-label { font-size: 10px; font-weight: 700; color: var(--gray-400); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+  .field-value { font-size: 13px; color: var(--black); line-height: 1.5; }
+  .edit-icon {
+    position: absolute; top: 12px; right: 12px;
+    font-size: 14px; opacity: 0.5; cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .editable-field:hover .edit-icon { opacity: 1; }
+  .editable-field.edit-mode .edit-icon { display: none; }
 </style>
 </head>
 <body>
@@ -937,6 +1085,114 @@
     </div><!-- /reviews-section -->
   </div>
 
+  <!-- Store Login & Edit Section -->
+  <div class="store-login-section">
+    <button class="store-login-tab" onclick="toggleStoreLoginPanel(this)" data-ja="店舗ログイン" data-en="Store Login" data-th="เข้าสู่ระบบร้านค้า">店舗ログイン</button>
+
+    <div class="store-login-panel" id="store-login-panel">
+      <!-- Logged In State -->
+      <div class="store-logged-in" id="store-logged-in-state">
+        <div class="store-logged-in-text">
+          <span data-ja="ログイン中：" data-en="Logged in as: " data-th="เข้าสู่ระบบแล้ว: "></span>
+          <strong id="store-logged-email"></strong>
+        </div>
+        <button class="store-logout-btn" onclick="storeLogout()" data-ja="ログアウト" data-en="Logout" data-th="ออกจากระบบ">ログアウト</button>
+      </div>
+
+      <!-- Login Forms -->
+      <div id="store-login-forms" style="display:none;">
+        <div class="store-login-header" data-ja="店舗情報を編集する" data-en="Edit Store Info" data-th="แก้ไขข้อมูลร้านค้า">店舗情報を編集する</div>
+
+        <div class="store-auth-tabs">
+          <button class="store-auth-tab active" onclick="switchStoreAuthTab('email', this)" data-ja="メール" data-en="Email" data-th="อีเมล">メール</button>
+          <button class="store-auth-tab" onclick="switchStoreAuthTab('line', this)">LINE</button>
+          <button class="store-auth-tab" onclick="switchStoreAuthTab('google', this)">Google</button>
+        </div>
+
+        <!-- Email + Password Form -->
+        <form class="store-auth-form active" id="store-email-form" onsubmit="storeEmailLogin(event)">
+          <div class="store-form-field">
+            <label class="store-form-label" data-ja="メールアドレス" data-en="Email" data-th="ที่อยู่อีเมล">メールアドレス</label>
+            <input type="email" class="store-form-input" id="store-email-input" placeholder="info@restaurant.com" required>
+          </div>
+          <div class="store-form-field">
+            <label class="store-form-label" data-ja="パスワード" data-en="Password" data-th="รหัสผ่าน">パスワード</label>
+            <input type="password" class="store-form-input" id="store-password-input" placeholder="••••••••" required>
+          </div>
+          <button type="submit" class="store-login-submit" data-ja="ログイン" data-en="Login" data-th="เข้าสู่ระบบ">ログイン</button>
+        </form>
+
+        <!-- LINE Login Form -->
+        <div class="store-auth-form" id="store-line-form">
+          <button type="button" class="store-oauth-btn" onclick="storeLineLogin()">
+            <span style="font-size:16px;">💚</span>
+            <span data-ja="LINEでログイン" data-en="Login with LINE" data-th="เข้าสู่ระบบด้วย LINE">LINEでログイン</span>
+          </button>
+        </div>
+
+        <!-- Google Login Form -->
+        <div class="store-auth-form" id="store-google-form">
+          <button type="button" class="store-oauth-btn" onclick="storeGoogleLogin()">
+            <span style="font-size:16px;">🔍</span>
+            <span data-ja="Googleでログイン" data-en="Login with Google" data-th="เข้าสู่ระบบด้วย Google">Googleでログイン</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Editable Store Fields (Only visible when logged in) -->
+    <div class="store-edit-section" id="store-edit-section">
+      <div style="margin-top: 20px; margin-bottom: 20px;">
+        <button class="store-login-submit" onclick="toggleStoreEditMode()" id="store-edit-toggle-btn" data-ja="店舗情報を編集" data-en="Edit Store Info" data-th="แก้ไขข้อมูลร้านค้า" style="background: var(--ai); color: var(--white);">店舗情報を編集</button>
+      </div>
+
+      <!-- Shop Name -->
+      <div class="editable-field" id="store-name-field">
+        <div class="field-label" data-ja="店舗名" data-en="Shop Name" data-th="ชื่อร้านค้า">店舗名</div>
+        <div class="field-value" id="store-name-display">鮨 さいとう トンロー店</div>
+        <input type="text" class="store-form-input" id="store-name-input" value="鮨 さいとう トンロー店" style="display:none;">
+        <span class="edit-icon" onclick="focusEditField('store-name')">✎</span>
+      </div>
+
+      <!-- Operating Hours -->
+      <div class="editable-field" id="store-hours-field">
+        <div class="field-label" data-ja="営業時間" data-en="Hours" data-th="เวลา">営業時間</div>
+        <div class="field-value" id="store-hours-display" style="white-space: pre-line;">月〜金 11:30〜14:00 / 17:30〜22:00<br>土日祝 11:30〜22:00（通し）</div>
+        <textarea class="store-form-input" id="store-hours-input" style="display:none;">月〜金 11:30〜14:00 / 17:30〜22:00
+土日祝 11:30〜22:00（通し）</textarea>
+        <span class="edit-icon" onclick="focusEditField('store-hours')">✎</span>
+      </div>
+
+      <!-- Congestion Status -->
+      <div class="editable-field" id="store-congestion-field">
+        <div class="field-label" data-ja="混雑状況" data-en="Congestion" data-th="สถานะความแออัด">混雑状況</div>
+        <div class="field-value" id="store-congestion-display">やや混雑</div>
+        <select class="store-form-input" id="store-congestion-input" style="display:none;">
+          <option value="空いている" data-ja="空いている" data-en="Not Busy" data-th="ไม่แออัด">空いている</option>
+          <option value="やや空いている" data-ja="やや空いている" data-en="Slightly Empty" data-th="ค่อนข้างว่าง">やや空いている</option>
+          <option value="普通" data-ja="普通" data-en="Moderate" data-th="ปานกลาง">普通</option>
+          <option value="やや混雑" data-ja="やや混雑" data-en="Slightly Busy" data-th="ค่อนข้างแออัด">やや混雑</option>
+          <option value="混雑" data-ja="混雑" data-en="Busy" data-th="แออัด">混雑</option>
+          <option value="非常に混雑" data-ja="非常に混雑" data-en="Very Busy" data-th="แออัดมาก">非常に混雑</option>
+        </select>
+        <span class="edit-icon" onclick="focusEditField('store-congestion')">✎</span>
+      </div>
+
+      <!-- Menu Note -->
+      <div class="editable-field" id="store-menu-note-field">
+        <div class="field-label" data-ja="本日のメモ" data-en="Today's Note" data-th="หมายเหตุประจำวัน">本日のメモ</div>
+        <div class="field-value" id="store-menu-note-display">本日限定メニューあります。季節の食材をメインに仕入れました。</div>
+        <textarea class="store-form-input" id="store-menu-note-input" style="display:none;">本日限定メニューあります。季節の食材をメインに仕入れました。</textarea>
+        <span class="edit-icon" onclick="focusEditField('store-menu-note')">✎</span>
+      </div>
+
+      <!-- Edit Mode Controls -->
+      <div class="edit-mode-controls" id="edit-mode-controls">
+        <button class="edit-save-btn" onclick="saveStoreEdits()" data-ja="保存" data-en="Save" data-th="บันทึก">保存</button>
+        <button class="edit-cancel-btn" onclick="cancelStoreEdits()" data-ja="キャンセル" data-en="Cancel" data-th="ยกเลิก">キャンセル</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- Login Prompt Modal -->
@@ -1264,6 +1520,260 @@
     t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 2500);
   }
+
+  // ─── Store Login & Edit Mode ───
+  // Initialize store session on page load
+  function initializeStoreSession() {
+    const storeSession = localStorage.getItem('jeeb-store-session');
+    if (storeSession) {
+      const store = JSON.parse(storeSession);
+      displayStoreLoggedIn(store);
+    } else {
+      displayStoreLoginForms();
+    }
+  }
+
+  function toggleStoreLoginPanel(btn) {
+    const panel = document.getElementById('store-login-panel');
+    panel.classList.toggle('active');
+    btn.classList.toggle('active');
+
+    // Close other sections when opening login
+    if (panel.classList.contains('active')) {
+      document.getElementById('store-edit-section').classList.remove('active');
+    }
+  }
+
+  function displayStoreLoginForms() {
+    document.getElementById('store-logged-in-state').classList.remove('active');
+    document.getElementById('store-login-forms').style.display = 'block';
+    document.getElementById('store-edit-section').classList.remove('active');
+  }
+
+  function displayStoreLoggedIn(store) {
+    document.getElementById('store-logged-in-state').classList.add('active');
+    document.getElementById('store-logged-email').textContent = store.email;
+    document.getElementById('store-login-forms').style.display = 'none';
+    document.getElementById('store-edit-section').classList.add('active');
+  }
+
+  function switchStoreAuthTab(authType, btn) {
+    // Hide all forms
+    document.getElementById('store-email-form').classList.remove('active');
+    document.getElementById('store-line-form').classList.remove('active');
+    document.getElementById('store-google-form').classList.remove('active');
+
+    // Remove active from all buttons
+    document.querySelectorAll('.store-auth-tab').forEach(b => b.classList.remove('active'));
+
+    // Show selected form and activate button
+    btn.classList.add('active');
+    if (authType === 'email') {
+      document.getElementById('store-email-form').classList.add('active');
+    } else if (authType === 'line') {
+      document.getElementById('store-line-form').classList.add('active');
+    } else if (authType === 'google') {
+      document.getElementById('store-google-form').classList.add('active');
+    }
+  }
+
+  function storeEmailLogin(event) {
+    event.preventDefault();
+    const email = document.getElementById('store-email-input').value;
+    const password = document.getElementById('store-password-input').value;
+
+    if (!email || !password) {
+      showToast('❌ メールアドレスとパスワードを入力してください');
+      return;
+    }
+
+    // Mock authentication - in production, this would call your backend API
+    const storeData = {
+      email: email,
+      password: password,
+      loginMethod: 'email',
+      loginTime: new Date().toISOString(),
+      restaurantId: 'saitou-thonglor' // Mock restaurant ID
+    };
+
+    // Save to localStorage
+    localStorage.setItem('jeeb-store-session', JSON.stringify(storeData));
+
+    showToast('✓ ログインしました');
+    displayStoreLoggedIn(storeData);
+
+    // Clear form
+    document.getElementById('store-email-form').reset();
+  }
+
+  function storeLineLogin() {
+    // Mock LINE OAuth - in production, this would open OAuth flow
+    const mockLineId = 'U' + Math.random().toString(36).substr(2, 9).toUpperCase();
+    const storeData = {
+      email: `line_${mockLineId}@line.jp`,
+      loginMethod: 'line',
+      lineId: mockLineId,
+      loginTime: new Date().toISOString(),
+      restaurantId: 'saitou-thonglor'
+    };
+
+    localStorage.setItem('jeeb-store-session', JSON.stringify(storeData));
+    showToast('✓ LINEでログインしました');
+    displayStoreLoggedIn(storeData);
+  }
+
+  function storeGoogleLogin() {
+    // Mock Google OAuth - in production, this would open OAuth flow
+    const mockGoogleId = Math.random().toString(36).substr(2, 21);
+    const storeData = {
+      email: `google_${mockGoogleId}@gmail.com`,
+      loginMethod: 'google',
+      googleId: mockGoogleId,
+      loginTime: new Date().toISOString(),
+      restaurantId: 'saitou-thonglor'
+    };
+
+    localStorage.setItem('jeeb-store-session', JSON.stringify(storeData));
+    showToast('✓ Googleでログインしました');
+    displayStoreLoggedIn(storeData);
+  }
+
+  function storeLogout() {
+    if (confirm('ログアウトしますか？')) {
+      localStorage.removeItem('jeeb-store-session');
+      showToast('✓ ログアウトしました');
+
+      // Reset edit mode
+      cancelStoreEdits();
+
+      // Show login forms
+      displayStoreLoginForms();
+      document.getElementById('store-login-panel').classList.add('active');
+      document.querySelector('.store-login-tab').classList.add('active');
+    }
+  }
+
+  function toggleStoreEditMode() {
+    const btn = document.getElementById('store-edit-toggle-btn');
+    const controls = document.getElementById('edit-mode-controls');
+    const fields = [
+      document.getElementById('store-name-field'),
+      document.getElementById('store-hours-field'),
+      document.getElementById('store-congestion-field'),
+      document.getElementById('store-menu-note-field')
+    ];
+
+    // Check if already in edit mode
+    const inEditMode = fields[0].classList.contains('edit-mode');
+
+    if (inEditMode) {
+      cancelStoreEdits();
+    } else {
+      // Enter edit mode
+      fields.forEach(field => field.classList.add('edit-mode'));
+      controls.classList.add('active');
+      btn.textContent = btn.getAttribute('data-ja') || '保存';
+
+      // Show inputs
+      document.getElementById('store-name-display').style.display = 'none';
+      document.getElementById('store-name-input').style.display = 'block';
+
+      document.getElementById('store-hours-display').style.display = 'none';
+      document.getElementById('store-hours-input').style.display = 'block';
+
+      document.getElementById('store-congestion-display').style.display = 'none';
+      document.getElementById('store-congestion-input').style.display = 'block';
+
+      document.getElementById('store-menu-note-display').style.display = 'none';
+      document.getElementById('store-menu-note-input').style.display = 'block';
+
+      // Focus on first field
+      document.getElementById('store-name-input').focus();
+    }
+  }
+
+  function focusEditField(fieldName) {
+    // Quick toggle for specific field
+    const displayEl = document.getElementById(`store-${fieldName}-display`);
+    const inputEl = document.getElementById(`store-${fieldName}-input`);
+    const fieldEl = document.getElementById(`store-${fieldName}-field`);
+
+    if (!fieldEl.classList.contains('edit-mode')) {
+      // Enter field edit mode
+      fieldEl.classList.add('edit-mode');
+      displayEl.style.display = 'none';
+      inputEl.style.display = 'block';
+      inputEl.focus();
+
+      // Show controls
+      document.getElementById('edit-mode-controls').classList.add('active');
+    }
+  }
+
+  function saveStoreEdits() {
+    const storeSession = localStorage.getItem('jeeb-store-session');
+    if (!storeSession) {
+      showToast('❌ ログインしてください');
+      return;
+    }
+
+    // Collect edited values
+    const edits = {
+      name: document.getElementById('store-name-input').value || document.getElementById('store-name-display').textContent,
+      hours: document.getElementById('store-hours-input').value || document.getElementById('store-hours-display').textContent,
+      congestion: document.getElementById('store-congestion-input').value || document.getElementById('store-congestion-display').textContent,
+      menuNote: document.getElementById('store-menu-note-input').value || document.getElementById('store-menu-note-display').textContent,
+      savedAt: new Date().toISOString()
+    };
+
+    // Update localStorage with edits
+    const store = JSON.parse(storeSession);
+    store.lastEdits = edits;
+    localStorage.setItem('jeeb-store-session', JSON.stringify(store));
+
+    // Update display
+    document.getElementById('store-name-display').textContent = edits.name;
+    document.getElementById('store-hours-display').innerHTML = edits.hours.replace(/\n/g, '<br>');
+    document.getElementById('store-congestion-display').textContent = edits.congestion;
+    document.getElementById('store-menu-note-display').textContent = edits.menuNote;
+
+    cancelStoreEdits();
+    showToast('✓ 店舗情報を保存しました');
+  }
+
+  function cancelStoreEdits() {
+    const fields = [
+      document.getElementById('store-name-field'),
+      document.getElementById('store-hours-field'),
+      document.getElementById('store-congestion-field'),
+      document.getElementById('store-menu-note-field')
+    ];
+
+    fields.forEach(field => field.classList.remove('edit-mode'));
+    document.getElementById('edit-mode-controls').classList.remove('active');
+
+    // Hide all inputs
+    document.getElementById('store-name-display').style.display = 'block';
+    document.getElementById('store-name-input').style.display = 'none';
+
+    document.getElementById('store-hours-display').style.display = 'block';
+    document.getElementById('store-hours-input').style.display = 'none';
+
+    document.getElementById('store-congestion-display').style.display = 'block';
+    document.getElementById('store-congestion-input').style.display = 'none';
+
+    document.getElementById('store-menu-note-display').style.display = 'block';
+    document.getElementById('store-menu-note-input').style.display = 'none';
+
+    // Reset button
+    const btn = document.getElementById('store-edit-toggle-btn');
+    btn.textContent = btn.getAttribute('data-ja') || '店舗情報を編集';
+  }
+
+  // Initialize on page load
+  window.addEventListener('load', () => {
+    initializeStoreSession();
+  });
 </script>
 </body>
 </html>
