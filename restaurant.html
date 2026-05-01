@@ -125,6 +125,27 @@
   .rest-name {
     font-size: 24px; font-weight: 700;
     letter-spacing: -0.02em; margin-bottom: 4px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all 0.2s;
+  }
+  .rest-name:hover {
+    background: rgba(0,0,0,0.03);
+  }
+  .rest-name[data-editable="true"] {
+    border: 1px dashed var(--gray-300);
+  }
+  .rest-summary {
+    font-size: 13px; color: var(--gray-600); margin-bottom: 16px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all 0.2s;
+  }
+  .rest-summary:hover {
+    background: rgba(0,0,0,0.03);
+  }
+  .rest-summary[data-editable="true"] {
+    border: 1px dashed var(--gray-300);
   }
   .rest-sub {
     font-size: 13px; color: var(--gray-400); margin-bottom: 20px;
@@ -825,11 +846,18 @@
     <!-- Store Authority Badges -->
     <div id="store-authority-badges" style="margin-bottom: 12px;"></div>
 
-    <div class="rest-name" id="store-name-display" data-ja="鮨 さいとう トンロー店" data-en="Saitou Sushi Thonglor" data-th="ซูชิ ไซโต้ ทองหล่อ" style="cursor: pointer; position: relative;">
+    <div class="rest-name" id="store-name-display" data-ja="鮨 さいとう トンロー店" data-en="Saitou Sushi Thonglor" data-th="ซูชิ ไซโต้ ทองหล่อ" data-editable="true" style="cursor: pointer; position: relative;">
       鮨 さいとう トンロー店
-      <span id="store-name-edit-icon" style="display: none; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 16px; opacity: 0.5;">✎</span>
+      <span id="store-name-edit-icon" style="display: none; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 16px;">✎</span>
     </div>
     <input type="text" id="store-name-edit-input" style="display: none; width: 100%; padding: 8px; font-size: 28px; font-weight: 700; border: 2px solid var(--black); border-radius: 8px; font-family: inherit;">
+
+    <div class="rest-summary" id="store-summary-display" data-editable="true" style="cursor: pointer; position: relative;">
+      当店は江戸前寿司の伝統を大切にしながら、季節ごとの最高の食材を厳選しています。寿司職人の技とこだわりが光る一品です。
+      <span id="store-summary-edit-icon" style="display: none; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 14px;">✎</span>
+    </div>
+    <textarea id="store-summary-edit-input" style="display: none; width: 100%; padding: 8px; font-size: 13px; border: 2px solid var(--black); border-radius: 8px; font-family: inherit; resize: none; min-height: 60px;"></textarea>
+
     <div class="rest-sub" data-ja="和食・寿司 · Thonglor · ¥¥¥" data-en="Japanese · Sushi · Thonglor · ¥¥¥" data-th="ญี่ปุ่น · ซูชิ · ทองหล่อ · ¥¥¥">和食・寿司 · Thonglor · ¥¥¥</div>
 
     <div class="status-tags">
@@ -1598,6 +1626,34 @@
       });
     }
 
+    // Store summary editing
+    const storeSummaryDisplay = document.getElementById('store-summary-display');
+    const storeSummaryInput = document.getElementById('store-summary-edit-input');
+    const storeSummaryEditIcon = document.getElementById('store-summary-edit-icon');
+
+    if (storeSummaryDisplay) {
+      storeSummaryDisplay.style.cursor = 'pointer';
+      storeSummaryEditIcon.style.display = 'inline';
+
+      storeSummaryDisplay.addEventListener('click', () => {
+        storeSummaryDisplay.style.display = 'none';
+        storeSummaryInput.style.display = 'block';
+        storeSummaryInput.value = storeSummaryDisplay.textContent.trim();
+        storeSummaryInput.focus();
+      });
+
+      storeSummaryInput.addEventListener('blur', () => {
+        saveInlineEdit('storeSummary', storeSummaryInput.value, storeSummaryDisplay, storeSummaryInput, storeSummaryEditIcon);
+      });
+
+      storeSummaryInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          storeSummaryDisplay.style.display = 'block';
+          storeSummaryInput.style.display = 'none';
+        }
+      });
+    }
+
     // Store hours editing
     const storeHoursDisplay = document.getElementById('store-hours-display');
     const storeHoursInput = document.getElementById('store-hours-edit-input');
@@ -1640,6 +1696,9 @@
     if (fieldName === 'storeName') {
       store.storeName = value;
       displayEl.textContent = value;
+    } else if (fieldName === 'storeSummary') {
+      store.storeSummary = value;
+      displayEl.textContent = value;
     } else if (fieldName === 'storeHours') {
       store.storeHours = value;
       displayEl.innerHTML = value.replace(/\n/g, '<br>');
@@ -1652,6 +1711,7 @@
 
     const fieldLabels = {
       'storeName': '店舗名',
+      'storeSummary': '店舗概要',
       'storeHours': '営業時間'
     };
 
