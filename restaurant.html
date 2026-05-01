@@ -284,6 +284,76 @@
     letter-spacing: 0.02em;
   }
 
+  /* ─── Today's Note Section ─── */
+  .menu-note-section {
+    padding: 12px 0; margin-bottom: 12px;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .menu-note-content { }
+  .menu-note-label {
+    font-size: 11px; font-weight: 600; color: var(--gray-400);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+  .menu-note-text {
+    font-size: 13px; color: var(--gray-600); line-height: 1.5;
+    padding: 8px 12px; border-radius: 6px;
+    background: var(--gray-100);
+  }
+  .menu-note-text:hover {
+    background: rgba(0,0,0,0.05);
+  }
+  .ai-help-row {
+    display: flex; gap: 8px; margin-top: 8px;
+  }
+  .ai-generate-btn, .ai-refresh-btn {
+    flex: 1; padding: 10px; font-size: 12px; font-weight: 500;
+    border: 1.5px solid var(--gray-200); border-radius: 6px;
+    background: var(--white); cursor: pointer;
+    transition: all 0.15s; font-family: inherit;
+  }
+  .ai-generate-btn {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    border-color: var(--ai); color: var(--ai);
+  }
+  .ai-generate-btn:hover { background: var(--ai-dim); }
+  .ai-refresh-btn:hover { background: var(--gray-100); }
+
+  /* ─── Hours Editor ─── */
+  .hours-editor {
+    margin: 12px 0; padding: 12px; background: var(--gray-100);
+    border-radius: 8px;
+  }
+  .hours-day-group {
+    margin-bottom: 16px;
+  }
+  .hours-day-group:last-child { margin-bottom: 0; }
+  .hours-day-label {
+    display: block; font-size: 12px; font-weight: 600; color: var(--black);
+    margin-bottom: 8px;
+  }
+  .hours-time-inputs {
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .time-slot {
+    background: var(--white); padding: 8px; border-radius: 6px;
+  }
+  .time-label {
+    font-size: 11px; color: var(--gray-600); margin-bottom: 4px;
+  }
+  .time-row {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .time-input {
+    flex: 1; padding: 6px 8px; font-size: 13px;
+    border: 1.5px solid var(--gray-200); border-radius: 4px;
+    font-family: inherit;
+  }
+  .time-input:focus { outline: none; border-color: var(--black); }
+  .time-dash {
+    font-size: 12px; color: var(--gray-400); flex-shrink: 0;
+  }
+
   /* ─── Info Block ─── */
   .info-list { display: flex; flex-direction: column; }
   .info-row {
@@ -992,6 +1062,23 @@
       <button class="menu-tab" data-ja="ドリンク" data-en="Drinks" data-th="เครื่องดื่ม">ドリンク</button>
     </div>
 
+    <!-- Today's Note -->
+    <div class="menu-note-section" id="menu-note-section">
+      <div class="menu-note-content">
+        <div class="menu-note-label" data-ja="本日のメモ" data-en="Today's Note" data-th="หมายเหตุประจำวัน">本日のメモ</div>
+        <div class="menu-note-text" id="menu-note-display" style="cursor: pointer; position: relative;">本日限定メニューあります。季節の食材をメインに仕入れました。<span style="display: none; position: absolute; right: 10px; top: 0; font-size: 14px; opacity: 0.5; pointer-events: none;">✎</span></div>
+        <textarea id="menu-note-edit-input" style="display: none; width: 100%; padding: 12px; font-size: 13px; border: 1.5px solid var(--black); border-radius: 8px; font-family: inherit; resize: none; min-height: 60px;"></textarea>
+
+        <!-- AI Help Row (Only for authorized stores) -->
+        <div class="ai-help-row" id="menu-ai-help-row" style="display:none;">
+          <button class="ai-generate-btn" onclick="generateMenuNoteAI()" id="menu-ai-generate-btn">
+            <span>🤖</span>
+            <span data-ja="AIで自動生成" data-en="Generate with AI" data-th="สร้างด้วย AI">AIで自動生成</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
     <div class="menu-items">
       <div class="menu-item">
         <div>
@@ -1209,12 +1296,67 @@
         <span class="edit-icon" onclick="focusEditField('store-name')">✎</span>
       </div>
 
-      <!-- Operating Hours -->
+      <!-- Operating Hours (Structured) -->
       <div class="editable-field" id="store-hours-field">
         <div class="field-label" data-ja="営業時間" data-en="Hours" data-th="เวลา">営業時間</div>
-        <div class="field-value" id="store-hours-display" style="white-space: pre-line;">月〜金 11:30〜14:00 / 17:30〜22:00<br>土日祝 11:30〜22:00（通し）</div>
-        <textarea class="store-form-input" id="store-hours-input" style="display:none;">月〜金 11:30〜14:00 / 17:30〜22:00
-土日祝 11:30〜22:00（通し）</textarea>
+        <div class="field-value" id="store-hours-display" style="white-space: pre-line;">月〜金 11:30〜14:00 / 17:30〜22:00<br>土 11:30〜22:00<br>日 11:30〜22:00</div>
+
+        <!-- Structured Hours Editor -->
+        <div class="hours-editor" id="store-hours-editor" style="display:none;">
+          <!-- Weekdays -->
+          <div class="hours-day-group">
+            <label class="hours-day-label" data-ja="月〜金（平日）" data-en="Mon–Fri (Weekdays)" data-th="จ.–ศ. (วันธรรมดา)">月〜金（平日）</label>
+            <div class="hours-time-inputs">
+              <div class="time-slot">
+                <div class="time-label" data-ja="営業時間" data-en="Hours" data-th="เวลาทำการ">営業時間</div>
+                <div class="time-row">
+                  <input type="time" class="time-input" id="weekdays-open-1" value="11:30">
+                  <span class="time-dash">〜</span>
+                  <input type="time" class="time-input" id="weekdays-close-1" value="14:00">
+                </div>
+              </div>
+              <div class="time-slot">
+                <div class="time-label" data-ja="営業時間（再開）" data-en="Hours (Resume)" data-th="เวลาเปิด（ต่อ）">営業時間（再開）</div>
+                <div class="time-row">
+                  <input type="time" class="time-input" id="weekdays-open-2" value="17:30">
+                  <span class="time-dash">〜</span>
+                  <input type="time" class="time-input" id="weekdays-close-2" value="22:00">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Saturday -->
+          <div class="hours-day-group">
+            <label class="hours-day-label" data-ja="土" data-en="Saturday" data-th="วันเสาร์">土（土曜日）</label>
+            <div class="hours-time-inputs">
+              <div class="time-slot">
+                <div class="time-label" data-ja="営業時間" data-en="Hours" data-th="เวลาทำการ">営業時間</div>
+                <div class="time-row">
+                  <input type="time" class="time-input" id="saturday-open" value="11:30">
+                  <span class="time-dash">〜</span>
+                  <input type="time" class="time-input" id="saturday-close" value="22:00">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sunday -->
+          <div class="hours-day-group">
+            <label class="hours-day-label" data-ja="日" data-en="Sunday" data-th="วันอาทิตย์">日（日曜日・祝日）</label>
+            <div class="hours-time-inputs">
+              <div class="time-slot">
+                <div class="time-label" data-ja="営業時間" data-en="Hours" data-th="เวลาทำการ">営業時間</div>
+                <div class="time-row">
+                  <input type="time" class="time-input" id="sunday-open" value="11:30">
+                  <span class="time-dash">〜</span>
+                  <input type="time" class="time-input" id="sunday-close" value="22:00">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <span class="edit-icon" onclick="focusEditField('store-hours')">✎</span>
       </div>
 
@@ -1233,22 +1375,6 @@
         <span class="edit-icon" onclick="focusEditField('store-congestion')">✎</span>
       </div>
 
-      <!-- Menu Note with AI Support -->
-      <div class="editable-field" id="store-menu-note-field">
-        <div class="field-label" data-ja="本日のメモ" data-en="Today's Note" data-th="หมายเหตุประจำวัน">本日のメモ</div>
-        <div class="field-value" id="store-menu-note-display">本日限定メニューあります。季節の食材をメインに仕入れました。</div>
-        <textarea class="store-form-input" id="store-menu-note-input" style="display:none;">本日限定メニューあります。季節の食材をメインに仕入れました。</textarea>
-        <span class="edit-icon" onclick="focusEditField('store-menu-note')">✎</span>
-
-        <!-- AI Help Row (Only for authorized stores) -->
-        <div class="ai-help-row" id="ai-help-row" style="display:none;">
-          <button class="ai-generate-btn" onclick="generateMenuNoteAI()" id="ai-generate-btn">
-            <span>🤖</span>
-            <span data-ja="AIで自動生成" data-en="Generate with AI" data-th="สร้างด้วย AI">AIで自動生成</span>
-          </button>
-          <button class="ai-refresh-btn" onclick="focusEditField('store-menu-note')" data-ja="編集" data-en="Edit" data-th="แก้ไข">編集</button>
-        </div>
-      </div>
 
       <!-- Edit Mode Controls -->
       <div class="edit-mode-controls" id="edit-mode-controls">
@@ -1681,6 +1807,36 @@
         }
       });
     }
+
+    // Menu note editing
+    const menuNoteDisplay = document.getElementById('menu-note-display');
+    const menuNoteInput = document.getElementById('menu-note-edit-input');
+    const menuNoteEditIcon = menuNoteDisplay?.querySelector('span');
+
+    if (menuNoteDisplay) {
+      menuNoteDisplay.style.cursor = 'pointer';
+      if (menuNoteEditIcon) menuNoteEditIcon.style.display = 'inline';
+
+      menuNoteDisplay.addEventListener('click', () => {
+        menuNoteDisplay.style.display = 'none';
+        menuNoteInput.style.display = 'block';
+        menuNoteInput.value = menuNoteDisplay.textContent.replace(/✎/g, '').trim();
+        menuNoteInput.focus();
+      });
+
+      menuNoteInput.addEventListener('blur', () => {
+        saveInlineEdit('menuNote', menuNoteInput.value, menuNoteDisplay, menuNoteInput, menuNoteEditIcon);
+      });
+
+      menuNoteInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          menuNoteDisplay.style.display = 'block';
+          menuNoteInput.style.display = 'none';
+        } else if (e.key === 'Enter' && e.ctrlKey) {
+          saveInlineEdit('menuNote', menuNoteInput.value, menuNoteDisplay, menuNoteInput, menuNoteEditIcon);
+        }
+      });
+    }
   }
 
   function saveInlineEdit(fieldName, value, displayEl, inputEl, iconEl) {
@@ -1702,6 +1858,9 @@
     } else if (fieldName === 'storeHours') {
       store.storeHours = value;
       displayEl.innerHTML = value.replace(/\n/g, '<br>');
+    } else if (fieldName === 'menuNote') {
+      store.menuNote = value;
+      displayEl.textContent = value;
     }
 
     localStorage.setItem('jeeb-store-session', JSON.stringify(store));
@@ -1712,7 +1871,8 @@
     const fieldLabels = {
       'storeName': '店舗名',
       'storeSummary': '店舗概要',
-      'storeHours': '営業時間'
+      'storeHours': '営業時間',
+      'menuNote': '本日のメモ'
     };
 
     showToast(`✓ ${fieldLabels[fieldName] || 'その他'} を保存しました`);
@@ -1930,19 +2090,65 @@
   function focusEditField(fieldName) {
     // Quick toggle for specific field
     const displayEl = document.getElementById(`store-${fieldName}-display`);
-    const inputEl = document.getElementById(`store-${fieldName}-input`);
     const fieldEl = document.getElementById(`store-${fieldName}-field`);
 
-    if (!fieldEl.classList.contains('edit-mode')) {
-      // Enter field edit mode
-      fieldEl.classList.add('edit-mode');
-      displayEl.style.display = 'none';
-      inputEl.style.display = 'block';
-      inputEl.focus();
-
-      // Show controls
-      document.getElementById('edit-mode-controls').classList.add('active');
+    // Special handling for structured hours
+    if (fieldName === 'hours') {
+      const editor = document.getElementById('store-hours-editor');
+      if (editor.style.display === 'none') {
+        displayEl.style.display = 'none';
+        editor.style.display = 'block';
+        // Focus first time input
+        document.getElementById('weekdays-open-1').focus();
+      }
+    } else {
+      const inputEl = document.getElementById(`store-${fieldName}-input`);
+      if (!fieldEl.classList.contains('edit-mode')) {
+        // Enter field edit mode
+        fieldEl.classList.add('edit-mode');
+        displayEl.style.display = 'none';
+        inputEl.style.display = 'block';
+        inputEl.focus();
+      }
     }
+
+    // Show controls
+    document.getElementById('edit-mode-controls').classList.add('active');
+  }
+
+  function buildHoursDisplayString() {
+    // Collect structured hours from time inputs
+    const weekdaysOpen1 = document.getElementById('weekdays-open-1').value;
+    const weekdaysClose1 = document.getElementById('weekdays-close-1').value;
+    const weekdaysOpen2 = document.getElementById('weekdays-open-2').value;
+    const weekdaysClose2 = document.getElementById('weekdays-close-2').value;
+    const saturdayOpen = document.getElementById('saturday-open').value;
+    const saturdayClose = document.getElementById('saturday-close').value;
+    const sundayOpen = document.getElementById('sunday-open').value;
+    const sundayClose = document.getElementById('sunday-close').value;
+
+    const lines = [];
+
+    // Weekdays
+    if (weekdaysOpen1 && weekdaysClose1) {
+      let weekdaysStr = `月〜金 ${weekdaysOpen1.replace(':', ':')}〜${weekdaysClose1.replace(':', ':')}`;
+      if (weekdaysOpen2 && weekdaysClose2) {
+        weekdaysStr += ` / ${weekdaysOpen2.replace(':', ':')}〜${weekdaysClose2.replace(':', ':')}`;
+      }
+      lines.push(weekdaysStr);
+    }
+
+    // Saturday
+    if (saturdayOpen && saturdayClose) {
+      lines.push(`土 ${saturdayOpen.replace(':', '：')}〜${saturdayClose.replace(':', '：')}`);
+    }
+
+    // Sunday
+    if (sundayOpen && sundayClose) {
+      lines.push(`日 ${sundayOpen.replace(':', '：')}〜${sundayClose.replace(':', '：')}`);
+    }
+
+    return lines.join('\n');
   }
 
   function saveStoreEdits() {
@@ -1955,9 +2161,24 @@
     // Collect edited values
     const edits = {
       name: document.getElementById('store-name-input').value || document.getElementById('store-name-display').textContent,
-      hours: document.getElementById('store-hours-input').value || document.getElementById('store-hours-display').textContent,
+      hours: buildHoursDisplayString(),
+      hoursStructured: {
+        weekdays: {
+          open1: document.getElementById('weekdays-open-1').value,
+          close1: document.getElementById('weekdays-close-1').value,
+          open2: document.getElementById('weekdays-open-2').value,
+          close2: document.getElementById('weekdays-close-2').value
+        },
+        saturday: {
+          open: document.getElementById('saturday-open').value,
+          close: document.getElementById('saturday-close').value
+        },
+        sunday: {
+          open: document.getElementById('sunday-open').value,
+          close: document.getElementById('sunday-close').value
+        }
+      },
       congestion: document.getElementById('store-congestion-input').value || document.getElementById('store-congestion-display').textContent,
-      menuNote: document.getElementById('store-menu-note-input').value || document.getElementById('store-menu-note-display').textContent,
       savedAt: new Date().toISOString()
     };
 
@@ -1970,7 +2191,6 @@
     document.getElementById('store-name-display').textContent = edits.name;
     document.getElementById('store-hours-display').innerHTML = edits.hours.replace(/\n/g, '<br>');
     document.getElementById('store-congestion-display').textContent = edits.congestion;
-    document.getElementById('store-menu-note-display').textContent = edits.menuNote;
 
     cancelStoreEdits();
     showToast('✓ 店舗情報を保存しました');
@@ -1980,8 +2200,7 @@
     const fields = [
       document.getElementById('store-name-field'),
       document.getElementById('store-hours-field'),
-      document.getElementById('store-congestion-field'),
-      document.getElementById('store-menu-note-field')
+      document.getElementById('store-congestion-field')
     ];
 
     fields.forEach(field => field.classList.remove('edit-mode'));
@@ -1992,7 +2211,7 @@
     document.getElementById('store-name-input').style.display = 'none';
 
     document.getElementById('store-hours-display').style.display = 'block';
-    document.getElementById('store-hours-input').style.display = 'none';
+    document.getElementById('store-hours-editor').style.display = 'none';
 
     document.getElementById('store-congestion-display').style.display = 'block';
     document.getElementById('store-congestion-input').style.display = 'none';
@@ -2027,8 +2246,9 @@
     const hasAuthority = store.loginMethod && store.email;
 
     if (hasAuthority) {
-      // Show AI help button
-      document.getElementById('ai-help-row').style.display = 'flex';
+      // Show AI help button in menu section
+      const menuAIHelpRow = document.getElementById('menu-ai-help-row');
+      if (menuAIHelpRow) menuAIHelpRow.style.display = 'flex';
 
       // Show authority badges
       const badges = [
@@ -2070,14 +2290,15 @@
   }
 
   function hideAIHelp() {
-    document.getElementById('ai-help-row').style.display = 'none';
+    const menuAIHelpRow = document.getElementById('menu-ai-help-row');
+    if (menuAIHelpRow) menuAIHelpRow.style.display = 'none';
   }
 
   // ─── AI Menu Note Generation ───
   async function generateMenuNoteAI() {
-    const btn = document.getElementById('ai-generate-btn');
-    const textarea = document.getElementById('store-menu-note-input');
-    const displayDiv = document.getElementById('store-menu-note-display');
+    const btn = document.getElementById('menu-ai-generate-btn');
+    const textarea = document.getElementById('menu-note-edit-input');
+    const displayDiv = document.getElementById('menu-note-display');
 
     // Disable button and show loading
     btn.disabled = true;
