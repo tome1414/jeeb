@@ -795,10 +795,14 @@
   .field-value { font-size: 13px; color: var(--black); line-height: 1.5; }
   .edit-icon {
     position: absolute; top: 12px; right: 12px;
-    font-size: 14px; opacity: 0.5; cursor: pointer;
-    transition: opacity 0.15s;
+    width: 24px; height: 24px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: opacity 0.15s;
+    opacity: 0.4;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%230066FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L21 6.5z"></path></svg>') center no-repeat;
+    background-size: 100%;
   }
-  .editable-field:hover .edit-icon { opacity: 1; }
+  .editable-field:hover .edit-icon { opacity: 0.8; }
   .editable-field.edit-mode .edit-icon { display: none; }
 
   /* ─── AI Support & Store Authority ─── */
@@ -920,7 +924,7 @@
       鮨 さいとう トンロー店
       <span id="store-name-edit-icon" style="display: none; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 16px;">✎</span>
     </div>
-    <input type="text" id="store-name-edit-input" style="display: none; width: 100%; padding: 8px; font-size: 28px; font-weight: 700; border: 2px solid var(--black); border-radius: 8px; font-family: inherit;">
+    <input type="text" id="store-name-edit-input" style="display: none; width: 100%; padding: 8px; font-size: 16px; font-weight: 700; border: 2px solid var(--black); border-radius: 8px; font-family: inherit;">
 
     <div class="rest-summary" id="store-summary-display" data-editable="true" style="cursor: pointer; position: relative;">
       当店は江戸前寿司の伝統を大切にしながら、季節ごとの最高の食材を厳選しています。寿司職人の技とこだわりが光る一品です。
@@ -1215,78 +1219,27 @@
         <button class="store-logout-btn" onclick="storeLogout()" data-ja="ログアウト" data-en="Logout" data-th="ออกจากระบบ">ログアウト</button>
       </div>
 
-      <!-- Login Forms -->
+      <!-- Store Registration Request Form (Simple) -->
       <div id="store-login-forms" style="display:none;">
-        <div class="store-login-header" data-ja="店舗情報を編集する" data-en="Edit Store Info" data-th="แก้ไขข้อมูลร้านค้า">店舗情報を編集する</div>
+        <div class="store-login-header" data-ja="店舗登録をリクエスト" data-en="Request Store Registration" data-th="ร้องขอการลงทะเบียนร้านค้า">店舗登録をリクエスト</div>
+        <p style="font-size: 12px; color: var(--gray-600); margin-bottom: 16px;" data-ja="店舗登録のご依頼をお送りください。確認後、登録用リンクをお送りします。" data-en="Send us your store registration request. After verification, we'll send you a registration link." data-th="ส่งคำขอลงทะเบียนร้านค้าของคุณ หลังจากการตรวจสอบ เราจะส่งลิงก์การลงทะเบียนให้คุณ">店舗登録のご依頼をお送りください。確認後、登録用リンクをお送りします。</p>
 
-        <div class="store-auth-tabs">
-          <button class="store-auth-tab active" onclick="switchStoreAuthTab('email', this)" data-ja="ログイン" data-en="Login" data-th="เข้าสู่ระบบ">ログイン</button>
-          <button class="store-auth-tab" onclick="switchStoreAuthTab('signup', this)" data-ja="新規アカウント" data-en="Create Account" data-th="สร้างบัญชี">新規アカウント</button>
-          <button class="store-auth-tab" onclick="switchStoreAuthTab('line', this)">LINE</button>
-          <button class="store-auth-tab" onclick="switchStoreAuthTab('google', this)">Google</button>
-        </div>
-
-        <!-- Email + Password Form -->
-        <form class="store-auth-form active" id="store-email-form" onsubmit="storeEmailLogin(event)">
-          <div class="store-form-field">
-            <label class="store-form-label" data-ja="メールアドレス" data-en="Email" data-th="ที่อยู่อีเมล">メールアドレス</label>
-            <input type="email" class="store-form-input" id="store-email-input" placeholder="info@restaurant.com" required>
-          </div>
-          <div class="store-form-field">
-            <label class="store-form-label" data-ja="パスワード" data-en="Password" data-th="รหัสผ่าน">パスワード</label>
-            <input type="password" class="store-form-input" id="store-password-input" placeholder="••••••••" required>
-          </div>
-          <button type="submit" class="store-login-submit" data-ja="ログイン" data-en="Login" data-th="เข้าสู่ระบบ">ログイン</button>
-        </form>
-
-        <!-- Account Creation Form -->
-        <form class="store-auth-form" id="store-signup-form" onsubmit="storeAccountSignup(event)">
-          <div class="store-form-field">
-            <label class="store-form-label" data-ja="メールアドレス" data-en="Email" data-th="ที่อยู่อีเมล">メールアドレス</label>
-            <input type="email" class="store-form-input" id="store-signup-email-input" placeholder="info@restaurant.com" required>
-          </div>
-          <div class="store-form-field">
-            <label class="store-form-label" data-ja="パスワード" data-en="Password" data-th="รหัสผ่าน">パスワード</label>
-            <input type="password" class="store-form-input" id="store-signup-password-input" placeholder="••••••••" required minlength="6">
-          </div>
-          <div class="store-form-field">
-            <label class="store-form-label" data-ja="パスワード（確認）" data-en="Confirm Password" data-th="ยืนยันรหัสผ่าน">パスワード（確認）</label>
-            <input type="password" class="store-form-input" id="store-signup-password-confirm-input" placeholder="••••••••" required minlength="6">
-          </div>
+        <form id="store-request-form" onsubmit="submitStoreRegistrationRequest(event)">
           <div class="store-form-field">
             <label class="store-form-label" data-ja="店舗名" data-en="Restaurant Name" data-th="ชื่อร้านค้า">店舗名</label>
-            <input type="text" class="store-form-input" id="store-signup-name-input" placeholder="例：鮨 さいとう" required>
+            <input type="text" class="store-form-input" id="store-request-name" placeholder="例：鮨 さいとう" required>
           </div>
           <div class="store-form-field">
-            <label class="store-form-label" data-ja="電話番号（オプション）" data-en="Phone Number (Optional)" data-th="หมายเลขโทรศัพท์ (ไม่บังคับ)">電話番号（オプション）</label>
-            <input type="tel" class="store-form-input" id="store-signup-phone-input" placeholder="+66 2-123-4567">
+            <label class="store-form-label" data-ja="メールアドレス" data-en="Email" data-th="ที่อยู่อีเมล">メールアドレス</label>
+            <input type="email" class="store-form-input" id="store-request-email" placeholder="info@restaurant.com" required>
           </div>
-          <button type="submit" class="store-login-submit" data-ja="アカウント作成" data-en="Create Account" data-th="สร้างบัญชี">アカウント作成</button>
-          <p style="font-size: 12px; color: var(--gray-600); margin-top: 12px; line-height: 1.5;" data-ja="新規登録後、店舗権限の付与には確認が必要になります。" data-en="After registration, store authority will require verification." data-th="หลังจากลงทะเบียน การให้สิทธิ์ร้านค้าจะต้องมีการยืนยัน">新規登録後、店舗権限の付与には確認が必要になります。</p>
+          <button type="submit" class="store-login-submit" data-ja="リクエストを送信" data-en="Send Request" data-th="ส่งคำขอ">リクエストを送信</button>
         </form>
-
-        <!-- LINE Login Form -->
-        <div class="store-auth-form" id="store-line-form">
-          <button type="button" class="store-oauth-btn" onclick="storeLineLogin()">
-            <span style="font-size:16px;">💚</span>
-            <span data-ja="LINEでログイン" data-en="Login with LINE" data-th="เข้าสู่ระบบด้วย LINE">LINEでログイン</span>
-          </button>
-        </div>
-
-        <!-- Google Login Form -->
-        <div class="store-auth-form" id="store-google-form">
-          <button type="button" class="store-oauth-btn" onclick="storeGoogleLogin()">
-            <span style="font-size:16px;">🔍</span>
-            <span data-ja="Googleでログイン" data-en="Login with Google" data-th="เข้าสู่ระบบด้วย Google">Googleでログイン</span>
-          </button>
-        </div>
       </div>
 
       <!-- Editable Store Fields (Only visible when logged in) -->
-      <div class="store-edit-section" id="store-edit-section">
-      <div style="margin-top: 20px; margin-bottom: 20px;">
-        <button class="store-login-submit" onclick="toggleStoreEditMode()" id="store-edit-toggle-btn" data-ja="店舗情報を編集" data-en="Edit Store Info" data-th="แก้ไขข้อมูลร้านค้า" style="background: var(--ai); color: var(--white);">店舗情報を編集</button>
-      </div>
+      <div class="store-edit-section" id="store-edit-section" style="display:none;">
+      <div style="margin-top: 20px; margin-bottom: 20px;"></div>
 
       <!-- Shop Name -->
       <div class="editable-field" id="store-name-field">
@@ -1921,6 +1874,22 @@
     } else if (authType === 'google') {
       document.getElementById('store-google-form').classList.add('active');
     }
+  }
+
+  function submitStoreRegistrationRequest(event) {
+    event.preventDefault();
+    const name = document.getElementById('store-request-name').value;
+    const email = document.getElementById('store-request-email').value;
+
+    if (!name || !email) {
+      showToast('❌ 店舗名とメールアドレスを入力してください');
+      return;
+    }
+
+    // Mock: Send registration request
+    showToast('✓ 登録リクエストを送信しました。確認メールをお送りします。');
+    document.getElementById('store-request-form').reset();
+    toggleStoreLoginPanel();
   }
 
   function storeEmailLogin(event) {
