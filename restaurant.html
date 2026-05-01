@@ -1671,13 +1671,14 @@
     if (storeSession) {
       const store = JSON.parse(storeSession);
       displayStoreLoggedIn(store);
-      setupInlineEditing(store);
     } else {
       displayStoreLoginForms();
     }
+    // Always setup inline editing listeners (will check auth when saving)
+    setupInlineEditing();
   }
 
-  function setupInlineEditing(store) {
+  function setupInlineEditing() {
     // Store name editing
     const storeNameDisplay = document.getElementById('store-name-display');
     const storeNameInput = document.getElementById('store-name-edit-input');
