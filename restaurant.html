@@ -884,7 +884,84 @@
     min-width: 160px;
   }
   .store-login-tab:hover { opacity: 0.9; }
-  .store-login-tab.active { background: var(--black); color: var(--white); }
+
+  /* ─── Store Login Panel ─── */
+  .store-login-panel {
+    background: var(--white); border: 1.5px solid var(--gray-200);
+    border-radius: 16px; padding: 24px 20px;
+    text-align: left; margin-top: 20px;
+  }
+
+  /* Auth Tabs (ログイン / 新規登録) */
+  .store-auth-tabs {
+    display: flex; gap: 0; margin-bottom: 20px;
+    border-bottom: 1.5px solid var(--gray-200);
+  }
+  .store-auth-tab {
+    flex: 1; padding: 10px 0; border: none; background: none;
+    font-size: 13px; font-weight: 600; color: var(--gray-400);
+    cursor: pointer; font-family: inherit;
+    border-bottom: 2px solid transparent; margin-bottom: -1.5px;
+    transition: all 0.15s;
+  }
+  .store-auth-tab.active { color: var(--black); border-bottom-color: var(--black); }
+
+  .store-tab-content { display: none; }
+  .store-tab-content.active { display: block; }
+
+  /* Form elements */
+  .store-form-field { margin-bottom: 14px; }
+  .store-form-label {
+    display: block; font-size: 11px; font-weight: 700;
+    color: var(--gray-400); letter-spacing: 0.06em; margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  .store-form-input {
+    width: 100%; padding: 11px 14px;
+    border: 1.5px solid var(--gray-200); border-radius: 10px;
+    font-size: 14px; font-family: inherit; background: var(--white);
+    outline: none; transition: border-color 0.15s; color: var(--black);
+  }
+  .store-form-input:focus { border-color: var(--black); }
+  .store-form-input[type="password"] { letter-spacing: 0.1em; }
+
+  .store-login-submit {
+    width: 100%; padding: 13px;
+    background: var(--black); color: var(--white);
+    border: none; border-radius: 12px; font-size: 14px; font-weight: 600;
+    cursor: pointer; font-family: inherit; transition: opacity 0.15s;
+    margin-top: 4px;
+  }
+  .store-login-submit:hover { opacity: 0.85; }
+
+  .store-login-header {
+    font-size: 15px; font-weight: 700; color: var(--black);
+    margin-bottom: 8px;
+  }
+  .store-login-note {
+    font-size: 12px; color: var(--gray-400); margin-bottom: 18px; line-height: 1.5;
+  }
+
+  /* Logged-in state */
+  .store-logged-in-header {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px;
+  }
+  .store-logged-in-text {
+    font-size: 13px; color: var(--gray-600); line-height: 1.4;
+  }
+  .store-logged-in-text strong { color: var(--black); font-weight: 600; }
+  .store-logout-btn {
+    padding: 8px 16px; border: 1.5px solid var(--gray-200);
+    border-radius: 8px; background: none; font-size: 12px;
+    font-weight: 600; color: var(--gray-600); cursor: pointer;
+    font-family: inherit; transition: all 0.15s; white-space: nowrap;
+  }
+  .store-logout-btn:hover { border-color: var(--black); color: var(--black); }
+
+  .store-edit-divider {
+    border: none; border-top: 1.5px solid var(--gray-200); margin: 20px 0;
+  }
 </style>
 </head>
 <body>
@@ -1207,38 +1284,68 @@
 
   <!-- Store Login & Edit Section -->
   <div class="store-login-section">
-    <button class="store-login-tab" onclick="toggleStoreLoginPanel()" data-ja="店舗ログイン" data-en="Store Login" data-th="เข้าสู่ระบบร้านค้า">店舗ログイン</button>
 
-    <div class="store-login-panel" id="store-login-panel" style="margin-top: 20px; display: none;">
-      <!-- Logged In State -->
-      <div class="store-logged-in" id="store-logged-in-state">
-        <div class="store-logged-in-text">
-          <span data-ja="ログイン中：" data-en="Logged in as: " data-th="เข้าสู่ระบบแล้ว: "></span>
-          <strong id="store-logged-email"></strong>
+    <!-- Trigger button (hidden when logged in) -->
+    <div id="store-login-trigger">
+      <button class="store-login-tab" onclick="toggleStoreLoginPanel()" data-ja="店舗ログイン" data-en="Store Login" data-th="เข้าสู่ระบบร้านค้า">店舗ログイン</button>
+    </div>
+
+    <!-- Panel (toggled open/close) -->
+    <div class="store-login-panel" id="store-login-panel" style="display:none;">
+
+      <!-- ① NOT LOGGED IN: login + register tabs -->
+      <div id="store-login-forms">
+        <div class="store-auth-tabs">
+          <button class="store-auth-tab active" onclick="switchStoreLoginTab('login', this)" data-ja="ログイン" data-en="Login" data-th="เข้าสู่ระบบ">ログイン</button>
+          <button class="store-auth-tab" onclick="switchStoreLoginTab('register', this)" data-ja="新規登録リクエスト" data-en="Register Request" data-th="ขอลงทะเบียน">新規登録リクエスト</button>
         </div>
-        <button class="store-logout-btn" onclick="storeLogout()" data-ja="ログアウト" data-en="Logout" data-th="ออกจากระบบ">ログアウト</button>
-      </div>
 
-      <!-- Store Registration Request Form (Simple) -->
-      <div id="store-login-forms" style="display:none;">
-        <div class="store-login-header" data-ja="店舗登録をリクエスト" data-en="Request Store Registration" data-th="ร้องขอการลงทะเบียนร้านค้า">店舗登録をリクエスト</div>
-        <p style="font-size: 12px; color: var(--gray-600); margin-bottom: 16px;" data-ja="店舗登録のご依頼をお送りください。確認後、登録用リンクをお送りします。" data-en="Send us your store registration request. After verification, we'll send you a registration link." data-th="ส่งคำขอลงทะเบียนร้านค้าของคุณ หลังจากการตรวจสอบ เราจะส่งลิงก์การลงทะเบียนให้คุณ">店舗登録のご依頼をお送りください。確認後、登録用リンクをお送りします。</p>
-
-        <form id="store-request-form" onsubmit="submitStoreRegistrationRequest(event)">
+        <!-- Login Form -->
+        <div id="store-email-form" class="store-tab-content active">
           <div class="store-form-field">
-            <label class="store-form-label" data-ja="店舗名" data-en="Restaurant Name" data-th="ชื่อร้านค้า">店舗名</label>
-            <input type="text" class="store-form-input" id="store-request-name" placeholder="例：鮨 さいとう" required>
+            <label class="store-form-label" data-ja="メールアドレス" data-en="Email" data-th="อีเมล">メールアドレス</label>
+            <input type="email" class="store-form-input" id="store-login-email" placeholder="info@restaurant.com">
           </div>
           <div class="store-form-field">
-            <label class="store-form-label" data-ja="メールアドレス" data-en="Email" data-th="ที่อยู่อีเมล">メールアドレス</label>
-            <input type="email" class="store-form-input" id="store-request-email" placeholder="info@restaurant.com" required>
+            <label class="store-form-label" data-ja="パスワード" data-en="Password" data-th="รหัสผ่าน">パスワード</label>
+            <input type="password" class="store-form-input" id="store-login-password" placeholder="••••••••">
           </div>
-          <button type="submit" class="store-login-submit" data-ja="リクエストを送信" data-en="Send Request" data-th="ส่งคำขอ">リクエストを送信</button>
-        </form>
+          <button class="store-login-submit" onclick="storeEmailLogin()" data-ja="ログイン" data-en="Login" data-th="เข้าสู่ระบบ">ログイン</button>
+        </div>
+
+        <!-- Registration Request Form -->
+        <div id="store-register-form" class="store-tab-content">
+          <p class="store-login-note" data-ja="店舗登録のご依頼をお送りください。確認後、登録用リンクをお送りします。" data-en="Send us your request. After review, we'll send a registration link." data-th="ส่งคำขอ จากนั้นเราจะส่งลิงก์ลงทะเบียน">店舗登録のご依頼をお送りください。確認後、登録用リンクをお送りします。</p>
+          <form id="store-request-form" onsubmit="submitStoreRegistrationRequest(event)">
+            <div class="store-form-field">
+              <label class="store-form-label" data-ja="店舗名" data-en="Restaurant Name" data-th="ชื่อร้าน">店舗名</label>
+              <input type="text" class="store-form-input" id="store-request-name" placeholder="例：鮨 さいとう" required>
+            </div>
+            <div class="store-form-field">
+              <label class="store-form-label" data-ja="メールアドレス" data-en="Email" data-th="อีเมล">メールアドレス</label>
+              <input type="email" class="store-form-input" id="store-request-email" placeholder="info@restaurant.com" required>
+            </div>
+            <button type="submit" class="store-login-submit" data-ja="リクエストを送信" data-en="Send Request" data-th="ส่งคำขอ">リクエストを送信</button>
+          </form>
+        </div>
       </div>
 
-      <!-- Editable Store Fields (Only visible when logged in) -->
-      <div class="store-edit-section" id="store-edit-section" style="display:none;">
+      <!-- ② LOGGED IN: account info + logout -->
+      <div id="store-logged-in-state" style="display:none;">
+        <div class="store-logged-in-header">
+          <div class="store-logged-in-text">
+            <span data-ja="ログイン中：" data-en="Logged in as: " data-th="เข้าสู่ระบบแล้ว: ">ログイン中：</span>
+            <strong id="store-logged-email"></strong>
+          </div>
+          <button class="store-logout-btn" onclick="storeLogout()" data-ja="ログアウト" data-en="Logout" data-th="ออกจากระบบ">ログアウト</button>
+        </div>
+        <hr class="store-edit-divider">
+      </div>
+
+    </div><!-- /store-login-panel -->
+
+    <!-- Editable Store Fields (shown below panel when logged in) -->
+    <div id="store-edit-section" style="display:none; text-align:left;">
       <div style="margin-top: 20px; margin-bottom: 20px;"></div>
 
       <!-- Shop Name -->
@@ -1329,14 +1436,38 @@
       </div>
 
 
+      <!-- Prepayment -->
+      <div class="editable-field" id="store-prepay-field">
+        <div class="field-label" data-ja="事前支払い" data-en="Prepayment" data-th="ชำระเงินล่วงหน้า">事前支払い</div>
+        <div class="field-value" id="store-prepay-display">不要</div>
+        <select class="store-form-input" id="store-prepay-input" style="display:none;">
+          <option value="不要" data-ja="不要" data-en="Not Required" data-th="ไม่จำเป็น">不要</option>
+          <option value="デポジットあり" data-ja="デポジットあり" data-en="Deposit Required" data-th="ต้องมัดจำ">デポジットあり</option>
+          <option value="全額前払い" data-ja="全額前払い" data-en="Full Prepayment" data-th="ชำระเต็มจำนวน">全額前払い</option>
+        </select>
+        <span class="edit-icon" onclick="focusEditField('store-prepay')"></span>
+      </div>
+
+      <!-- BYOB / Bring-in Policy -->
+      <div class="editable-field" id="store-byob-field">
+        <div class="field-label" data-ja="持ち込み" data-en="Bring-in Policy" data-th="นโยบายนำเข้า">持ち込み</div>
+        <div class="field-value" id="store-byob-display">不可</div>
+        <select class="store-form-input" id="store-byob-input" style="display:none;">
+          <option value="不可" data-ja="不可" data-en="Not Allowed" data-th="ไม่อนุญาต">不可</option>
+          <option value="ドリンクのみ可（コルカージュあり）" data-ja="ドリンクのみ可（コルカージュあり）" data-en="Drinks OK (corkage fee)" data-th="เครื่องดื่มได้ (มีค่าธรรมเนียม)">ドリンクのみ可（コルカージュあり）</option>
+          <option value="ドリンクのみ可（コルカージュ無料）" data-ja="ドリンクのみ可（コルカージュ無料）" data-en="Drinks OK (no corkage)" data-th="เครื่องดื่มได้ (ฟรี)">ドリンクのみ可（コルカージュ無料）</option>
+          <option value="食べ物・ドリンク可" data-ja="食べ物・ドリンク可" data-en="Food & Drinks Allowed" data-th="อาหารและเครื่องดื่มได้">食べ物・ドリンク可</option>
+        </select>
+        <span class="edit-icon" onclick="focusEditField('store-byob')"></span>
+      </div>
+
       <!-- Edit Mode Controls -->
       <div class="edit-mode-controls" id="edit-mode-controls">
         <button class="edit-save-btn" onclick="saveStoreEdits()" data-ja="保存" data-en="Save" data-th="บันทึก">保存</button>
         <button class="edit-cancel-btn" onclick="cancelStoreEdits()" data-ja="キャンセル" data-en="Cancel" data-th="ยกเลิก">キャンセル</button>
       </div>
-    </div>
-  </div>
-</div>
+    </div><!-- /store-edit-section -->
+  </div><!-- /store-login-section -->
 
 <!-- Login Prompt Modal -->
 <div class="login-prompt-overlay" id="login-prompt-overlay" onclick="closeLoginPrompt(event)">
@@ -1838,42 +1969,42 @@
     panel.style.display = isVisible ? 'none' : 'block';
   }
 
-  function displayStoreLoginForms() {
-    document.getElementById('store-logged-in-state').classList.remove('active');
+  function displayStoreLoginForms(autoOpen = false) {
+    // Show login panel contents, hide logged-in state and edit section
     document.getElementById('store-login-forms').style.display = 'block';
-    document.getElementById('store-edit-section').classList.remove('active');
+    document.getElementById('store-logged-in-state').style.display = 'none';
+    document.getElementById('store-edit-section').style.display = 'none';
+    // Reset trigger button to original state
+    document.getElementById('store-login-trigger').innerHTML =
+      '<button class="store-login-tab" onclick="toggleStoreLoginPanel()" data-ja="店舗ログイン" data-en="Store Login" data-th="เข้าสู่ระบบร้านค้า">店舗ログイン</button>';
+    // Only auto-open panel after explicit actions (logout), not on initial page load
+    if (autoOpen) {
+      document.getElementById('store-login-panel').style.display = 'block';
+    }
   }
 
   function displayStoreLoggedIn(store) {
-    document.getElementById('store-logged-in-state').classList.add('active');
-    document.getElementById('store-logged-email').textContent = store.email;
+    // Hide login forms, show logged-in state and edit section
     document.getElementById('store-login-forms').style.display = 'none';
-    document.getElementById('store-edit-section').classList.add('active');
-
+    document.getElementById('store-logged-in-state').style.display = 'block';
+    document.getElementById('store-logged-email').textContent = store.email || '';
+    document.getElementById('store-edit-section').style.display = 'block';
+    // Change button to show "編集中" and open panel
+    const trigger = document.getElementById('store-login-trigger');
+    trigger.innerHTML = '<button class="store-login-tab" onclick="toggleStoreLoginPanel()" style="background:var(--live);color:var(--white);">✓ 店舗ログイン中</button>';
+    document.getElementById('store-login-panel').style.display = 'block';
     // Check store authority after login
     setTimeout(() => checkStoreAuthority(), 100);
   }
 
-  function switchStoreAuthTab(authType, btn) {
-    // Hide all forms
-    document.getElementById('store-email-form').classList.remove('active');
-    document.getElementById('store-signup-form').classList.remove('active');
-    document.getElementById('store-line-form').classList.remove('active');
-    document.getElementById('store-google-form').classList.remove('active');
-
-    // Remove active from all buttons
+  function switchStoreLoginTab(tabName, btn) {
     document.querySelectorAll('.store-auth-tab').forEach(b => b.classList.remove('active'));
-
-    // Show selected form and activate button
+    document.querySelectorAll('.store-tab-content').forEach(el => el.classList.remove('active'));
     btn.classList.add('active');
-    if (authType === 'email') {
+    if (tabName === 'login') {
       document.getElementById('store-email-form').classList.add('active');
-    } else if (authType === 'signup') {
-      document.getElementById('store-signup-form').classList.add('active');
-    } else if (authType === 'line') {
-      document.getElementById('store-line-form').classList.add('active');
-    } else if (authType === 'google') {
-      document.getElementById('store-google-form').classList.add('active');
+    } else {
+      document.getElementById('store-register-form').classList.add('active');
     }
   }
 
@@ -1890,36 +2021,34 @@
     // Mock: Send registration request
     showToast('✓ 登録リクエストを送信しました。確認メールをお送りします。');
     document.getElementById('store-request-form').reset();
-    toggleStoreLoginPanel();
+    document.getElementById('store-login-panel').style.display = 'none';
   }
 
-  function storeEmailLogin(event) {
-    event.preventDefault();
-    const email = document.getElementById('store-email-input').value;
-    const password = document.getElementById('store-password-input').value;
+  function storeEmailLogin() {
+    const email = document.getElementById('store-login-email').value;
+    const password = document.getElementById('store-login-password').value;
 
     if (!email || !password) {
       showToast('❌ メールアドレスとパスワードを入力してください');
       return;
     }
 
-    // Mock authentication - in production, this would call your backend API
+    // Mock authentication (replace with real API call in production)
     const storeData = {
       email: email,
       password: password,
       loginMethod: 'email',
       loginTime: new Date().toISOString(),
-      restaurantId: 'saitou-thonglor' // Mock restaurant ID
+      restaurantId: 'store-' + Math.random().toString(36).substr(2, 9),
+      authority: 'owner',
+      accountStatus: 'active'
     };
 
-    // Save to localStorage
     localStorage.setItem('jeeb-store-session', JSON.stringify(storeData));
-
     showToast('✓ ログインしました');
     displayStoreLoggedIn(storeData);
-
-    // Clear form
-    document.getElementById('store-email-form').reset();
+    document.getElementById('store-login-email').value = '';
+    document.getElementById('store-login-password').value = '';
   }
 
   function storeLineLogin() {
@@ -2010,8 +2139,8 @@
       // Reset edit mode
       cancelStoreEdits();
 
-      // Show login forms in modal
-      displayStoreLoginForms();
+      // Show login forms and auto-open panel after logout
+      displayStoreLoginForms(true);
 
       // Check authority after logout
       setTimeout(() => checkStoreAuthority(), 100);
@@ -2149,6 +2278,8 @@
         }
       },
       congestion: document.getElementById('store-congestion-input').value || document.getElementById('store-congestion-display').textContent,
+      prepay: document.getElementById('store-prepay-input').value || document.getElementById('store-prepay-display').textContent,
+      byob: document.getElementById('store-byob-input').value || document.getElementById('store-byob-display').textContent,
       savedAt: new Date().toISOString()
     };
 
@@ -2161,37 +2292,41 @@
     document.getElementById('store-name-display').textContent = edits.name;
     document.getElementById('store-hours-display').innerHTML = edits.hours.replace(/\n/g, '<br>');
     document.getElementById('store-congestion-display').textContent = edits.congestion;
+    document.getElementById('store-prepay-display').textContent = edits.prepay;
+    document.getElementById('store-byob-display').textContent = edits.byob;
 
     cancelStoreEdits();
     showToast('✓ 店舗情報を保存しました');
   }
 
   function cancelStoreEdits() {
-    const fields = [
-      document.getElementById('store-name-field'),
-      document.getElementById('store-hours-field'),
-      document.getElementById('store-congestion-field')
+    const fieldIds = ['store-name-field', 'store-hours-field', 'store-congestion-field', 'store-prepay-field', 'store-byob-field'];
+    fieldIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('edit-mode');
+    });
+    const controls = document.getElementById('edit-mode-controls');
+    if (controls) controls.classList.remove('active');
+
+    // Reset each field: show display, hide input
+    const fieldPairs = [
+      ['store-name-display', 'store-name-input'],
+      ['store-congestion-display', 'store-congestion-input'],
+      ['store-prepay-display', 'store-prepay-input'],
+      ['store-byob-display', 'store-byob-input']
     ];
+    fieldPairs.forEach(([displayId, inputId]) => {
+      const d = document.getElementById(displayId);
+      const i = document.getElementById(inputId);
+      if (d) d.style.display = 'block';
+      if (i) i.style.display = 'none';
+    });
 
-    fields.forEach(field => field.classList.remove('edit-mode'));
-    document.getElementById('edit-mode-controls').classList.remove('active');
-
-    // Hide all inputs
-    document.getElementById('store-name-display').style.display = 'block';
-    document.getElementById('store-name-input').style.display = 'none';
-
-    document.getElementById('store-hours-display').style.display = 'block';
-    document.getElementById('store-hours-editor').style.display = 'none';
-
-    document.getElementById('store-congestion-display').style.display = 'block';
-    document.getElementById('store-congestion-input').style.display = 'none';
-
-    document.getElementById('store-menu-note-display').style.display = 'block';
-    document.getElementById('store-menu-note-input').style.display = 'none';
-
-    // Reset button
-    const btn = document.getElementById('store-edit-toggle-btn');
-    btn.textContent = btn.getAttribute('data-ja') || '店舗情報を編集';
+    // Hours: hide editor, show display
+    const hoursDisplay = document.getElementById('store-hours-display');
+    const hoursEditor = document.getElementById('store-hours-editor');
+    if (hoursDisplay) hoursDisplay.style.display = 'block';
+    if (hoursEditor) hoursEditor.style.display = 'none';
   }
 
   // Initialize on page load
