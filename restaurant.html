@@ -651,94 +651,6 @@
   .compare-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   /* ─── Store Login & Edit Mode ─── */
-  .store-login-section {
-    margin-top: 40px; padding-top: 20px;
-    border-top: 2px solid var(--gray-200);
-  }
-  .store-login-tab {
-    padding: 12px 20px; text-align: center;
-    background: var(--gray-100); border-radius: 12px;
-    cursor: pointer; transition: all 0.15s;
-    font-size: 12px; font-weight: 600; color: var(--gray-600);
-    letter-spacing: 0.05em;
-  }
-  .store-login-tab:hover { background: var(--gray-200); }
-  .store-login-tab.active { background: var(--black); color: var(--white); }
-
-  .store-login-panel {
-    display: none; margin-top: 20px;
-    background: var(--white); border: 1.5px solid var(--gray-200);
-    border-radius: 14px; padding: 20px;
-  }
-  .store-login-panel.active { display: block; }
-
-  .store-login-header {
-    font-size: 15px; font-weight: 700;
-    margin-bottom: 16px; color: var(--black);
-  }
-
-  .store-auth-tabs {
-    display: flex; gap: 8px; margin-bottom: 20px;
-    border-bottom: 1px solid var(--gray-200); padding-bottom: 12px;
-  }
-  .store-auth-tab {
-    padding: 0; border: none; background: none;
-    font-size: 13px; font-weight: 500; color: var(--gray-400);
-    cursor: pointer; border-bottom: 2px solid transparent;
-    padding-bottom: 8px; transition: all 0.15s;
-    font-family: inherit;
-  }
-  .store-auth-tab.active { color: var(--black); border-bottom-color: var(--black); }
-
-  .store-auth-form { display: none; }
-  .store-auth-form.active { display: block; }
-
-  .store-form-field { margin-bottom: 14px; }
-  .store-form-label { font-size: 11px; font-weight: 600; color: var(--gray-600); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.06em; }
-  .store-form-input {
-    width: 100%; padding: 11px 14px;
-    border: 1.5px solid var(--gray-200); border-radius: 10px;
-    font-size: 13px; color: var(--black);
-    background: var(--white); font-family: inherit;
-    outline: none; transition: border-color 0.15s;
-  }
-  .store-form-input:focus { border-color: var(--black); }
-
-  .store-oauth-btns { display: flex; flex-direction: column; gap: 10px; margin: 16px 0; }
-  .store-oauth-btn {
-    width: 100%; padding: 11px 14px;
-    border: 1.5px solid var(--gray-200); border-radius: 10px;
-    background: var(--white); color: var(--black);
-    font-size: 13px; font-weight: 500; cursor: pointer;
-    font-family: inherit; transition: all 0.15s;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-  }
-  .store-oauth-btn:hover { border-color: var(--black); background: var(--gray-100); }
-
-  .store-login-submit {
-    width: 100%; padding: 12px;
-    background: var(--black); color: var(--white);
-    border: none; border-radius: 10px;
-    font-size: 14px; font-weight: 600;
-    cursor: pointer; font-family: inherit;
-    transition: opacity 0.15s; margin-top: 10px;
-  }
-  .store-login-submit:hover { opacity: 0.9; }
-
-  .store-logged-in {
-    display: none; padding: 16px;
-    background: rgba(0,208,132,0.08); border: 1.5px solid var(--live);
-    border-radius: 12px; margin-bottom: 20px;
-  }
-  .store-logged-in.active { display: block; }
-  .store-logged-in-text { font-size: 13px; color: var(--black); margin-bottom: 12px; font-weight: 500; }
-  .store-logout-btn {
-    padding: 8px 14px; background: none; color: var(--live);
-    border: 1px solid var(--live); border-radius: 8px;
-    font-size: 12px; font-weight: 600; cursor: pointer;
-    font-family: inherit; transition: all 0.15s;
-  }
-  .store-logout-btn:hover { background: rgba(0,208,132,0.1); }
 
   /* ─── Edit Mode ─── */
   .store-edit-section { display: none; }
@@ -860,53 +772,24 @@
   }
   .no-authority-message strong { font-weight: 600; }
 
-  /* ─── Store Login Modal ─── */
-  .store-login-modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.5);
-    z-index: 500; display: flex; align-items: flex-end;
-    opacity: 0; pointer-events: none; transition: opacity 0.25s;
-  }
-  .store-login-modal-overlay.active { opacity: 1; pointer-events: auto; }
-
-  .store-login-sheet {
-    width: 100%; background: var(--bg);
-    border-radius: 20px 20px 0 0;
-    transform: translateY(100%);
-    transition: transform 0.3s cubic-bezier(0.32,0.72,0,1);
-    max-height: 94vh; overflow-y: auto;
-    padding-bottom: 40px;
-  }
-  .store-login-modal-overlay.active .store-login-sheet {
-    transform: translateY(0);
+  /* ─── Store Login Section ─── */
+  .store-login-section {
+    margin-top: 60px; padding: 40px 20px 80px;
+    border-top: 2px solid var(--gray-200);
+    text-align: center;
   }
 
-  .store-login-sheet-header {
-    position: sticky; top: 0;
-    background: var(--bg);
-    padding: 16px 20px;
-    display: flex; justify-content: space-between; align-items: center;
-    border-bottom: 1px solid var(--gray-200);
-    z-index: 10;
-  }
-  .store-login-sheet-title {
-    font-size: 15px; font-weight: 700; color: var(--black);
-  }
-  .store-login-sheet-close {
-    width: 32px; height: 32px;
-    display: flex; align-items: center; justify-content: center;
-    background: none; border: none; color: var(--black);
-    font-size: 20px; cursor: pointer; transition: background 0.15s;
-  }
-  .store-login-sheet-close:hover { background: var(--gray-100); border-radius: 50%; }
-
-  .store-login-sheet-content {
-    padding: 20px;
-  }
-
-  /* Hide original store-login-section */
   .store-login-tab {
-    cursor: pointer;
+    padding: 14px 28px; text-align: center;
+    background: var(--black); color: var(--white);
+    border-radius: 14px; cursor: pointer; transition: all 0.15s;
+    font-size: 14px; font-weight: 600;
+    border: none; font-family: inherit;
+    display: inline-block;
+    min-width: 160px;
   }
+  .store-login-tab:hover { opacity: 0.9; }
+  .store-login-tab.active { background: var(--black); color: var(--white); }
 </style>
 </head>
 <body>
@@ -1198,23 +1081,11 @@
     </div><!-- /reviews-section -->
   </div>
 
-  <!-- Store Login Modal Trigger (Simple Tab) -->
+  <!-- Store Login & Edit Section -->
   <div class="store-login-section">
-    <button class="store-login-tab" onclick="openStoreLoginModal()" data-ja="店舗ログイン" data-en="Store Login" data-th="เข้าสู่ระบบร้านค้า">店舗ログイン</button>
-  </div>
-</div>
+    <button class="store-login-tab" onclick="toggleStoreLoginPanel()" data-ja="店舗ログイン" data-en="Store Login" data-th="เข้าสู่ระบบร้านค้า">店舗ログイン</button>
 
-<!-- Store Login Modal -->
-<div class="store-login-modal-overlay" id="store-login-modal" onclick="closeStoreLoginModal(event)">
-  <div class="store-login-sheet" onclick="event.stopPropagation()">
-    <!-- Modal Header -->
-    <div class="store-login-sheet-header">
-      <div class="store-login-sheet-title" data-ja="店舗ログイン" data-en="Store Login" data-th="เข้าสู่ระบบร้านค้า">店舗ログイン</div>
-      <button class="store-login-sheet-close" onclick="closeStoreLoginModal()">✕</button>
-    </div>
-
-    <!-- Modal Content -->
-    <div class="store-login-sheet-content">
+    <div class="store-login-panel" id="store-login-panel" style="margin-top: 20px; display: none;">
       <!-- Logged In State -->
       <div class="store-logged-in" id="store-logged-in-state">
         <div class="store-logged-in-text">
@@ -1229,7 +1100,8 @@
         <div class="store-login-header" data-ja="店舗情報を編集する" data-en="Edit Store Info" data-th="แก้ไขข้อมูลร้านค้า">店舗情報を編集する</div>
 
         <div class="store-auth-tabs">
-          <button class="store-auth-tab active" onclick="switchStoreAuthTab('email', this)" data-ja="メール" data-en="Email" data-th="อีเมล">メール</button>
+          <button class="store-auth-tab active" onclick="switchStoreAuthTab('email', this)" data-ja="ログイン" data-en="Login" data-th="เข้าสู่ระบบ">ログイン</button>
+          <button class="store-auth-tab" onclick="switchStoreAuthTab('signup', this)" data-ja="新規アカウント" data-en="Create Account" data-th="สร้างบัญชี">新規アカウント</button>
           <button class="store-auth-tab" onclick="switchStoreAuthTab('line', this)">LINE</button>
           <button class="store-auth-tab" onclick="switchStoreAuthTab('google', this)">Google</button>
         </div>
@@ -1245,6 +1117,32 @@
             <input type="password" class="store-form-input" id="store-password-input" placeholder="••••••••" required>
           </div>
           <button type="submit" class="store-login-submit" data-ja="ログイン" data-en="Login" data-th="เข้าสู่ระบบ">ログイン</button>
+        </form>
+
+        <!-- Account Creation Form -->
+        <form class="store-auth-form" id="store-signup-form" onsubmit="storeAccountSignup(event)">
+          <div class="store-form-field">
+            <label class="store-form-label" data-ja="メールアドレス" data-en="Email" data-th="ที่อยู่อีเมล">メールアドレス</label>
+            <input type="email" class="store-form-input" id="store-signup-email-input" placeholder="info@restaurant.com" required>
+          </div>
+          <div class="store-form-field">
+            <label class="store-form-label" data-ja="パスワード" data-en="Password" data-th="รหัสผ่าน">パスワード</label>
+            <input type="password" class="store-form-input" id="store-signup-password-input" placeholder="••••••••" required minlength="6">
+          </div>
+          <div class="store-form-field">
+            <label class="store-form-label" data-ja="パスワード（確認）" data-en="Confirm Password" data-th="ยืนยันรหัสผ่าน">パスワード（確認）</label>
+            <input type="password" class="store-form-input" id="store-signup-password-confirm-input" placeholder="••••••••" required minlength="6">
+          </div>
+          <div class="store-form-field">
+            <label class="store-form-label" data-ja="店舗名" data-en="Restaurant Name" data-th="ชื่อร้านค้า">店舗名</label>
+            <input type="text" class="store-form-input" id="store-signup-name-input" placeholder="例：鮨 さいとう" required>
+          </div>
+          <div class="store-form-field">
+            <label class="store-form-label" data-ja="電話番号（オプション）" data-en="Phone Number (Optional)" data-th="หมายเลขโทรศัพท์ (ไม่บังคับ)">電話番号（オプション）</label>
+            <input type="tel" class="store-form-input" id="store-signup-phone-input" placeholder="+66 2-123-4567">
+          </div>
+          <button type="submit" class="store-login-submit" data-ja="アカウント作成" data-en="Create Account" data-th="สร้างบัญชี">アカウント作成</button>
+          <p style="font-size: 12px; color: var(--gray-600); margin-top: 12px; line-height: 1.5;" data-ja="新規登録後、店舗権限の付与には確認が必要になります。" data-en="After registration, store authority will require verification." data-th="หลังจากลงทะเบียน การให้สิทธิ์ร้านค้าจะต้องมีการยืนยัน">新規登録後、店舗権限の付与には確認が必要になります。</p>
         </form>
 
         <!-- LINE Login Form -->
@@ -1323,7 +1221,6 @@
       <div class="edit-mode-controls" id="edit-mode-controls">
         <button class="edit-save-btn" onclick="saveStoreEdits()" data-ja="保存" data-en="Save" data-th="บันทึก">保存</button>
         <button class="edit-cancel-btn" onclick="cancelStoreEdits()" data-ja="キャンセル" data-en="Cancel" data-th="ยกเลิก">キャンセル</button>
-      </div>
       </div>
     </div>
   </div>
@@ -1667,26 +1564,16 @@
     }
   }
 
-  function openStoreLoginModal() {
-    const modal = document.getElementById('store-login-modal');
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeStoreLoginModal(e) {
-    // Close only if clicking overlay background, not content
-    if (e && e.target.id !== 'store-login-modal') return;
-
-    const modal = document.getElementById('store-login-modal');
-    modal.classList.remove('active');
-    document.body.style.overflow = '';
+  function toggleStoreLoginPanel() {
+    const panel = document.getElementById('store-login-panel');
+    const isVisible = panel.style.display === 'block';
+    panel.style.display = isVisible ? 'none' : 'block';
   }
 
   function displayStoreLoginForms() {
     document.getElementById('store-logged-in-state').classList.remove('active');
     document.getElementById('store-login-forms').style.display = 'block';
     document.getElementById('store-edit-section').classList.remove('active');
-    openStoreLoginModal();
   }
 
   function displayStoreLoggedIn(store) {
@@ -1702,6 +1589,7 @@
   function switchStoreAuthTab(authType, btn) {
     // Hide all forms
     document.getElementById('store-email-form').classList.remove('active');
+    document.getElementById('store-signup-form').classList.remove('active');
     document.getElementById('store-line-form').classList.remove('active');
     document.getElementById('store-google-form').classList.remove('active');
 
@@ -1712,6 +1600,8 @@
     btn.classList.add('active');
     if (authType === 'email') {
       document.getElementById('store-email-form').classList.add('active');
+    } else if (authType === 'signup') {
+      document.getElementById('store-signup-form').classList.add('active');
     } else if (authType === 'line') {
       document.getElementById('store-line-form').classList.add('active');
     } else if (authType === 'google') {
@@ -1778,6 +1668,54 @@
     localStorage.setItem('jeeb-store-session', JSON.stringify(storeData));
     showToast('✓ Googleでログインしました');
     displayStoreLoggedIn(storeData);
+  }
+
+  function storeAccountSignup(event) {
+    event.preventDefault();
+    const email = document.getElementById('store-signup-email-input').value;
+    const password = document.getElementById('store-signup-password-input').value;
+    const passwordConfirm = document.getElementById('store-signup-password-confirm-input').value;
+    const storeName = document.getElementById('store-signup-name-input').value;
+    const phone = document.getElementById('store-signup-phone-input').value;
+
+    // Validation
+    if (!email || !password || !passwordConfirm || !storeName) {
+      showToast('❌ 必須項目を入力してください');
+      return;
+    }
+
+    if (password !== passwordConfirm) {
+      showToast('❌ パスワードが一致しません');
+      return;
+    }
+
+    if (password.length < 6) {
+      showToast('❌ パスワードは6文字以上を設定してください');
+      return;
+    }
+
+    // Mock account creation - in production, this would call your backend API
+    const storeData = {
+      email: email,
+      password: password, // In production, never store plain password
+      storeName: storeName,
+      phone: phone || '',
+      loginMethod: 'email',
+      registrationTime: new Date().toISOString(),
+      loginTime: new Date().toISOString(),
+      restaurantId: `store-${Math.random().toString(36).substr(2, 9)}`,
+      authority: 'pending_verification', // Will need admin verification
+      accountStatus: 'active'
+    };
+
+    // Save to localStorage (mock)
+    localStorage.setItem('jeeb-store-session', JSON.stringify(storeData));
+
+    showToast('✓ アカウントを作成しました。権限の付与には確認が必要です。');
+    displayStoreLoggedIn(storeData);
+
+    // Clear form
+    document.getElementById('store-signup-form').reset();
   }
 
   function storeLogout() {
