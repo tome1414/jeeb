@@ -797,6 +797,68 @@
   }
   .editable-field:hover .edit-icon { opacity: 1; }
   .editable-field.edit-mode .edit-icon { display: none; }
+
+  /* ─── AI Support & Store Authority ─── */
+  .ai-help-row {
+    display: flex; gap: 8px; margin-top: 10px;
+    align-items: center;
+  }
+  .ai-generate-btn {
+    flex: 1; padding: 9px 12px;
+    background: var(--ai); color: var(--white);
+    border: none; border-radius: 8px;
+    font-size: 12px; font-weight: 600; cursor: pointer;
+    font-family: inherit; transition: all 0.15s;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    white-space: nowrap;
+  }
+  .ai-generate-btn:hover { opacity: 0.9; }
+  .ai-generate-btn:disabled {
+    opacity: 0.6; cursor: not-allowed;
+  }
+  .ai-loading {
+    display: inline-block; width: 12px; height: 12px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .ai-refresh-btn {
+    padding: 9px 12px;
+    background: var(--gray-200); color: var(--black);
+    border: none; border-radius: 8px;
+    font-size: 12px; font-weight: 600; cursor: pointer;
+    font-family: inherit; transition: all 0.15s;
+  }
+  .ai-refresh-btn:hover { background: var(--gray-300); }
+
+  /* Store Authority Badge */
+  .store-authority-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 6px 12px; border-radius: 20px;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
+    background: rgba(0,102,255,0.1); color: var(--ai);
+    margin-bottom: 12px;
+  }
+  .store-authority-badge.verified {
+    background: rgba(0,208,132,0.1); color: var(--live);
+  }
+  .store-authority-badge.owner {
+    background: rgba(255,165,0,0.1); color: #FF9800;
+  }
+
+  /* No Authority Message */
+  .no-authority-message {
+    padding: 16px; background: rgba(255,59,48,0.08);
+    border: 1.5px solid rgba(255,59,48,0.3);
+    border-radius: 10px; margin-bottom: 20px;
+    color: #C62828; font-size: 12px; line-height: 1.6;
+  }
+  .no-authority-message strong { font-weight: 600; }
 </style>
 </head>
 <body>
@@ -829,6 +891,9 @@
 
   <!-- Name + Status -->
   <div class="block">
+    <!-- Store Authority Badges -->
+    <div id="store-authority-badges" style="margin-bottom: 12px;"></div>
+
     <div class="rest-name" data-ja="鮨 さいとう トンロー店" data-en="Saitou Sushi Thonglor" data-th="ซูชิ ไซโต้ ทองหล่อ">鮨 さいとう トンロー店</div>
     <div class="rest-sub" data-ja="和食・寿司 · Thonglor · ¥¥¥" data-en="Japanese · Sushi · Thonglor · ¥¥¥" data-th="ญี่ปุ่น · ซูชิ · ทองหล่อ · ¥¥¥">和食・寿司 · Thonglor · ¥¥¥</div>
 
@@ -1178,12 +1243,21 @@
         <span class="edit-icon" onclick="focusEditField('store-congestion')">✎</span>
       </div>
 
-      <!-- Menu Note -->
+      <!-- Menu Note with AI Support -->
       <div class="editable-field" id="store-menu-note-field">
         <div class="field-label" data-ja="本日のメモ" data-en="Today's Note" data-th="หมายเหตุประจำวัน">本日のメモ</div>
         <div class="field-value" id="store-menu-note-display">本日限定メニューあります。季節の食材をメインに仕入れました。</div>
         <textarea class="store-form-input" id="store-menu-note-input" style="display:none;">本日限定メニューあります。季節の食材をメインに仕入れました。</textarea>
         <span class="edit-icon" onclick="focusEditField('store-menu-note')">✎</span>
+
+        <!-- AI Help Row (Only for authorized stores) -->
+        <div class="ai-help-row" id="ai-help-row" style="display:none;">
+          <button class="ai-generate-btn" onclick="generateMenuNoteAI()" id="ai-generate-btn">
+            <span>🤖</span>
+            <span data-ja="AIで自動生成" data-en="Generate with AI" data-th="สร้างด้วย AI">AIで自動生成</span>
+          </button>
+          <button class="ai-refresh-btn" onclick="focusEditField('store-menu-note')" data-ja="編集" data-en="Edit" data-th="แก้ไข">編集</button>
+        </div>
       </div>
 
       <!-- Edit Mode Controls -->
@@ -1555,6 +1629,9 @@
     document.getElementById('store-logged-email').textContent = store.email;
     document.getElementById('store-login-forms').style.display = 'none';
     document.getElementById('store-edit-section').classList.add('active');
+
+    // Check store authority after login
+    setTimeout(() => checkStoreAuthority(), 100);
   }
 
   function switchStoreAuthTab(authType, btn) {
@@ -1650,6 +1727,9 @@
       displayStoreLoginForms();
       document.getElementById('store-login-panel').classList.add('active');
       document.querySelector('.store-login-tab').classList.add('active');
+
+      // Check authority after logout
+      setTimeout(() => checkStoreAuthority(), 100);
     }
   }
 
@@ -1773,7 +1853,169 @@
   // Initialize on page load
   window.addEventListener('load', () => {
     initializeStoreSession();
+    checkStoreAuthority();
   });
+
+  // ─── Store Authority & Permissions ───
+  function checkStoreAuthority() {
+    const storeSession = localStorage.getItem('jeeb-store-session');
+    if (!storeSession) {
+      hideAIHelp();
+      displayAuthorityBadges([]);
+      return;
+    }
+
+    const store = JSON.parse(storeSession);
+
+    // Mock: Check if store has authority
+    // In production, this would be verified by backend
+    const hasAuthority = store.loginMethod && store.email;
+
+    if (hasAuthority) {
+      // Show AI help button
+      document.getElementById('ai-help-row').style.display = 'flex';
+
+      // Show authority badges
+      const badges = [
+        {
+          type: 'verified',
+          icon: '✓',
+          label: 'オーナー確認済み',
+          labelEn: 'Owner Verified',
+          labelTh: 'เจ้าของยืนยัน'
+        },
+        {
+          type: 'authorized',
+          icon: '🔐',
+          label: '公認店舗',
+          labelEn: 'Authorized Store',
+          labelTh: 'ร้านค้าที่ได้รับการอนุมัติ'
+        }
+      ];
+      displayAuthorityBadges(badges);
+    } else {
+      hideAIHelp();
+      displayAuthorityBadges([]);
+    }
+  }
+
+  function displayAuthorityBadges(badges) {
+    const container = document.getElementById('store-authority-badges');
+    if (!badges || badges.length === 0) {
+      container.innerHTML = '';
+      return;
+    }
+
+    container.innerHTML = badges.map(badge => `
+      <div class="store-authority-badge ${badge.type}">
+        <span>${badge.icon}</span>
+        <span data-ja="${badge.label}" data-en="${badge.labelEn}" data-th="${badge.labelTh}">${badge.label}</span>
+      </div>
+    `).join('');
+  }
+
+  function hideAIHelp() {
+    document.getElementById('ai-help-row').style.display = 'none';
+  }
+
+  // ─── AI Menu Note Generation ───
+  async function generateMenuNoteAI() {
+    const btn = document.getElementById('ai-generate-btn');
+    const textarea = document.getElementById('store-menu-note-input');
+    const displayDiv = document.getElementById('store-menu-note-display');
+
+    // Disable button and show loading
+    btn.disabled = true;
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<span class="ai-loading"></span><span data-ja="生成中..." data-en="Generating..." data-th="กำลังสร้าง...">生成中...</span>';
+
+    try {
+      // Gather context from store info
+      const storeName = document.getElementById('store-name-display').textContent || '鮨 さいとう トンロー店';
+      const storeHours = document.getElementById('store-hours-display').textContent || '';
+      const congestion = document.getElementById('store-congestion-display').textContent || '';
+
+      // Create prompt for Claude
+      const prompt = `
+以下の寿司店舗の本日のメモを作成してください。
+自然で、顧客に魅力的で、毎日異なる内容になるようにしてください。
+営業時間や混雑状況に配慮した内容にしてください。
+
+店舗名: ${storeName}
+営業時間: ${storeHours}
+本日の混雑状況: ${congestion}
+
+要件:
+- 2-3文程度の自然な日本語テキスト
+- 本日の特別メニュー、旬の食材、営業状況などを含める
+- 顧客にアピールできる内容
+- 毎回異なる内容を生成する
+
+メモのみを出力してください。説明文は不要です。
+`;
+
+      // Call Claude API via backend
+      // For now, use mock data - replace with real API call
+      const generatedText = await callClaudeAPI(prompt);
+
+      // Update both display and textarea
+      displayDiv.textContent = generatedText;
+      textarea.value = generatedText;
+
+      showToast('✓ AIがメモを生成しました');
+    } catch (error) {
+      console.error('AI generation error:', error);
+      showToast('❌ メモ生成に失敗しました。もう一度試してください');
+    } finally {
+      // Restore button
+      btn.disabled = false;
+      btn.innerHTML = originalText;
+    }
+  }
+
+  async function callClaudeAPI(prompt) {
+    // Mock implementation - in production, call your backend API
+    // Backend would make authenticated call to Claude API
+
+    // For demo, return realistic mock suggestions
+    const suggestions = [
+      '本日のおすすめはマグロ大トロ。築地直送の最高級品です。夜22時まで営業いたします。',
+      '本日は北海道産の毛ガニと北寄貝を特別に仕入れました。在庫がなくなり次第終了いたします。',
+      '季節の穴子が旬を迎えています。昨年より濃厚な味わいになっており、多くのお客様に好評です。',
+      '本日は長野県産の信州蕎麦を使った特別セットを用意しております。数量限定のため、お早めにご来店ください。',
+      'カリフォルニア産の本マグロが入荷いたしました。新鮮なうちにお召し上がりください。現在やや混雑しておりますため、お待たせする可能性がございます。',
+      '本日限定で、春の旬菜を使った特別握りセットをご用意いたしました。旬の野菜と上質なネタの組み合わせをお楽しみください。'
+    ];
+
+    // Return random suggestion
+    return suggestions[Math.floor(Math.random() * suggestions.length)];
+
+    /* Real implementation (uncomment when backend is ready):
+    const response = await fetch('/api/store/generate-memo', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${getStoreAuthToken()}`
+      },
+      body: JSON.stringify({ prompt: prompt })
+    });
+
+    if (!response.ok) {
+      throw new Error('API call failed');
+    }
+
+    const data = await response.json();
+    return data.generatedText;
+    */
+  }
+
+  function getStoreAuthToken() {
+    const session = localStorage.getItem('jeeb-store-session');
+    if (session) {
+      return session; // In real app, this would be a JWT token
+    }
+    return null;
+  }
 </script>
 </body>
 </html>
