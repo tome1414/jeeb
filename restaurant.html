@@ -141,12 +141,65 @@
     border-radius: 8px;
     transition: all 0.2s;
   }
-  .rest-summary:hover {
-    background: rgba(0,0,0,0.03);
+  .rest-summary:hover { background: rgba(0,0,0,0.03); }
+
+  /* ─── Inline Edit Indicator (blue pulsing dot, visible in store-owner-mode) ─── */
+  .inline-edit-dot {
+    display: none;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--ai);
+    flex-shrink: 0; margin-left: 6px; margin-top: 4px;
+    animation: edit-pulse 2.5s infinite;
   }
-  .rest-summary[data-editable="true"] {
-    border: 1px dashed var(--gray-300);
+  @keyframes edit-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(0,102,255,0.55); }
+    65%  { box-shadow: 0 0 0 7px rgba(0,102,255,0); }
+    100% { box-shadow: 0 0 0 0 rgba(0,102,255,0); }
   }
+  /* Show dots only when store owner logged in */
+  body.store-owner-mode .inline-edit-dot { display: inline-block; }
+  body.store-owner-mode .editable-hint { display: inline-flex; }
+
+  /* Editable hint wrapper (shown store-owner-mode only) */
+  .editable-hint {
+    display: none;
+    align-items: flex-start; gap: 2px; cursor: pointer;
+  }
+
+  /* Info row editable state */
+  .info-row.owner-editable { cursor: pointer; }
+  .info-row.owner-editable:hover .info-val { color: var(--ai); }
+
+  /* Congestion inline picker */
+  .congestion-picker {
+    display: none;
+    flex-wrap: wrap; gap: 6px; margin-top: 10px;
+    padding: 12px 16px 14px;
+    background: var(--white); border: 1.5px solid var(--gray-200);
+    border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  }
+  .congestion-picker.open { display: flex; }
+  .congestion-opt {
+    padding: 6px 14px; border-radius: 20px; font-size: 12px;
+    font-weight: 600; border: 1.5px solid var(--gray-200);
+    cursor: pointer; transition: all 0.12s; font-family: inherit;
+    background: var(--white); color: var(--gray-600);
+  }
+  .congestion-opt:hover { border-color: var(--black); color: var(--black); }
+  .congestion-opt.selected {
+    background: var(--black); color: var(--white); border-color: var(--black);
+  }
+
+  /* Info row inline select (事前支払い / 持ち込み) */
+  .info-val-select {
+    display: none; width: 100%; padding: 6px 10px;
+    border: 1.5px solid var(--black); border-radius: 8px;
+    font-size: 13px; font-family: inherit; background: var(--white);
+    color: var(--black); outline: none; margin-top: 4px;
+    cursor: pointer;
+  }
+  .info-row.editing .info-val-text { display: none; }
+  .info-row.editing .info-val-select { display: block; }
   .rest-sub {
     font-size: 13px; color: var(--gray-400); margin-bottom: 20px;
   }
@@ -1003,9 +1056,11 @@
     </div>
     <input type="text" id="store-name-edit-input" style="display: none; width: 100%; padding: 8px; font-size: 16px; font-weight: 700; border: 2px solid var(--black); border-radius: 8px; font-family: inherit;">
 
-    <div class="rest-summary" id="store-summary-display" data-editable="true" style="cursor: pointer; position: relative;">
-      当店は江戸前寿司の伝統を大切にしながら、季節ごとの最高の食材を厳選しています。寿司職人の技とこだわりが光る一品です。
-      <span id="store-summary-edit-icon" style="display: none; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 14px;">✎</span>
+    <div style="display:flex; align-items:flex-start; gap:4px;">
+      <div class="rest-summary" id="store-summary-display" data-editable="true" style="cursor: pointer; flex:1;">
+        当店は江戸前寿司の伝統を大切にしながら、季節ごとの最高の食材を厳選しています。寿司職人の技とこだわりが光る一品です。
+      </div>
+      <span class="inline-edit-dot" title="タップして編集"></span>
     </div>
     <textarea id="store-summary-edit-input" style="display: none; width: 100%; padding: 8px; font-size: 13px; border: 2px solid var(--black); border-radius: 8px; font-family: inherit; resize: none; min-height: 60px;"></textarea>
 
@@ -1016,12 +1071,23 @@
         <span style="width:6px;height:6px;background:#00D084;border-radius:50%;"></span>
         <span data-ja="営業中" data-en="Open Now" data-th="เปิดแล้ว">営業中</span>
       </span>
-      <span class="status-tag tag-busy">
-        <span data-ja="やや混雑" data-en="Slightly Busy" data-th="ค่อนข้างแออัด">やや混雑</span>
+      <span class="status-tag tag-busy" id="congestion-tag" onclick="toggleCongestionPicker()" style="cursor:default;">
+        <span id="congestion-tag-text" data-ja="やや混雑" data-en="Slightly Busy" data-th="ค่อนข้างแออัด">やや混雑</span>
+        <span class="inline-edit-dot" style="margin-top:0; margin-left:4px;" title="タップして編集"></span>
       </span>
       <span class="status-tag tag-updated">
         <span data-ja="🕐 2分前更新" data-en="🕐 Updated 2 min ago" data-th="🕐 อัปเดต 2 นาทีที่แล้ว">🕐 2分前更新</span>
       </span>
+    </div>
+
+    <!-- Congestion Inline Picker (store owner only) -->
+    <div class="congestion-picker" id="congestion-picker">
+      <button class="congestion-opt" onclick="setCongestion('空いている')" data-ja="空いている" data-en="Not Busy" data-th="ไม่แออัด">空いている</button>
+      <button class="congestion-opt" onclick="setCongestion('やや空いている')" data-ja="やや空いている" data-en="Slightly Empty" data-th="ค่อนข้างว่าง">やや空いている</button>
+      <button class="congestion-opt" onclick="setCongestion('普通')" data-ja="普通" data-en="Moderate" data-th="ปานกลาง">普通</button>
+      <button class="congestion-opt selected" onclick="setCongestion('やや混雑')" data-ja="やや混雑" data-en="Slightly Busy" data-th="ค่อนข้างแออัด">やや混雑</button>
+      <button class="congestion-opt" onclick="setCongestion('混雑')" data-ja="混雑" data-en="Busy" data-th="แออัด">混雑</button>
+      <button class="congestion-opt" onclick="setCongestion('非常に混雑')" data-ja="非常に混雑" data-en="Very Busy" data-th="แออัดมาก">非常に混雑</button>
     </div>
 
     <!-- Crowd Chart -->
@@ -1209,6 +1275,39 @@
       <div class="info-row">
         <span class="info-key" data-ja="認証" data-en="Status" data-th="สถานะ">認証</span>
         <span class="info-val"><span class="verified-badge">✓ <span data-ja="オーナー確認済み · 2025年4月" data-en="Owner Verified · Apr 2025" data-th="เจ้าของยืนยัน · เม.ย. 2025">オーナー確認済み · 2025年4月</span></span></span>
+      </div>
+
+      <!-- Prepayment row (editable when store owner logged in) -->
+      <div class="info-row owner-editable" id="info-prepay-row" onclick="toggleInfoRowEdit('prepay')">
+        <span class="info-key" data-ja="事前支払い" data-en="Prepayment" data-th="ชำระล่วงหน้า">事前支払い</span>
+        <div style="flex:1;">
+          <span class="info-val info-val-text" id="info-prepay-display" style="display:flex; align-items:center; gap:4px;">
+            <span id="info-prepay-text">不要</span>
+            <span class="inline-edit-dot" style="margin-top:3px;"></span>
+          </span>
+          <select class="info-val-select" id="info-prepay-select" onchange="saveInfoRow('prepay', this.value)" onblur="closeInfoRowEdit('prepay')">
+            <option value="不要" data-ja="不要" data-en="Not Required" data-th="ไม่จำเป็น">不要</option>
+            <option value="デポジットあり" data-ja="デポジットあり" data-en="Deposit Required" data-th="ต้องมัดจำ">デポジットあり</option>
+            <option value="全額前払い" data-ja="全額前払い" data-en="Full Prepayment" data-th="ชำระเต็มจำนวน">全額前払い</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- BYOB row (editable when store owner logged in) -->
+      <div class="info-row owner-editable" id="info-byob-row" onclick="toggleInfoRowEdit('byob')">
+        <span class="info-key" data-ja="持ち込み" data-en="Bring-in" data-th="นำเข้า">持ち込み</span>
+        <div style="flex:1;">
+          <span class="info-val info-val-text" id="info-byob-display" style="display:flex; align-items:center; gap:4px;">
+            <span id="info-byob-text">不可</span>
+            <span class="inline-edit-dot" style="margin-top:3px;"></span>
+          </span>
+          <select class="info-val-select" id="info-byob-select" onchange="saveInfoRow('byob', this.value)" onblur="closeInfoRowEdit('byob')">
+            <option value="不可" data-ja="不可" data-en="Not Allowed" data-th="ไม่อนุญาต">不可</option>
+            <option value="ドリンクのみ可（コルカージュあり）">ドリンクのみ可（コルカージュあり）</option>
+            <option value="ドリンクのみ可（コルカージュ無料）">ドリンクのみ可（コルカージュ無料）</option>
+            <option value="食べ物・ドリンク可">食べ物・ドリンク可</option>
+          </select>
+        </div>
       </div>
     </div>
   </div>
@@ -1795,6 +1894,69 @@
     setTimeout(() => t.classList.remove('show'), 2500);
   }
 
+  // ─── Congestion Inline Picker ───
+  function toggleCongestionPicker() {
+    if (!localStorage.getItem('jeeb-store-session')) return;
+    document.getElementById('congestion-picker').classList.toggle('open');
+  }
+
+  function setCongestion(value) {
+    const storeSession = localStorage.getItem('jeeb-store-session');
+    if (!storeSession) return;
+    // Update tag text
+    document.getElementById('congestion-tag-text').textContent = value;
+    // Update selected state in picker
+    document.querySelectorAll('.congestion-opt').forEach(btn => {
+      btn.classList.toggle('selected', btn.textContent.trim() === value);
+    });
+    // Also update edit section display
+    const editDisplay = document.getElementById('store-congestion-display');
+    if (editDisplay) editDisplay.textContent = value;
+    // Save to localStorage
+    const store = JSON.parse(storeSession);
+    if (!store.lastEdits) store.lastEdits = {};
+    store.lastEdits.congestion = value;
+    store.lastEdits.savedAt = new Date().toISOString();
+    localStorage.setItem('jeeb-store-session', JSON.stringify(store));
+    // Close picker
+    document.getElementById('congestion-picker').classList.remove('open');
+    showToast('✓ 混雑状況を更新しました');
+  }
+
+  // ─── Info Row Inline Edit (事前支払い / 持ち込み) ───
+  function toggleInfoRowEdit(field) {
+    if (!localStorage.getItem('jeeb-store-session')) return;
+    const row = document.getElementById(`info-${field}-row`);
+    const isEditing = row.classList.contains('editing');
+    if (isEditing) return; // already editing
+    row.classList.add('editing');
+    const select = document.getElementById(`info-${field}-select`);
+    const currentText = document.getElementById(`info-${field}-text`).textContent;
+    select.value = currentText;
+    setTimeout(() => select.focus(), 0);
+  }
+
+  function closeInfoRowEdit(field) {
+    const row = document.getElementById(`info-${field}-row`);
+    row.classList.remove('editing');
+  }
+
+  function saveInfoRow(field, value) {
+    const storeSession = localStorage.getItem('jeeb-store-session');
+    if (!storeSession) return;
+    document.getElementById(`info-${field}-text`).textContent = value;
+    // Also sync to edit panel
+    const editDisplay = document.getElementById(`store-${field === 'prepay' ? 'prepay' : 'byob'}-display`);
+    if (editDisplay) editDisplay.textContent = value;
+    // Save to localStorage
+    const store = JSON.parse(storeSession);
+    if (!store.lastEdits) store.lastEdits = {};
+    store.lastEdits[field] = value;
+    localStorage.setItem('jeeb-store-session', JSON.stringify(store));
+    setTimeout(() => closeInfoRowEdit(field), 100);
+    showToast(`✓ ${field === 'prepay' ? '事前支払い' : '持ち込み'}を更新しました`);
+  }
+
   // ─── Store Login & Edit Mode ───
   // Initialize store session on page load
   function initializeStoreSession() {
@@ -1977,6 +2139,10 @@
     // Reset trigger button to original state
     document.getElementById('store-login-trigger').innerHTML =
       '<button class="store-login-tab" onclick="toggleStoreLoginPanel()" data-ja="店舗ログイン" data-en="Store Login" data-th="เข้าสู่ระบบร้านค้า">店舗ログイン</button>';
+    // Remove store-owner-mode: hide edit indicators
+    document.body.classList.remove('store-owner-mode');
+    document.getElementById('congestion-tag').style.cursor = 'default';
+    document.getElementById('congestion-picker').classList.remove('open');
     // Only auto-open panel after explicit actions (logout), not on initial page load
     if (autoOpen) {
       document.getElementById('store-login-panel').style.display = 'block';
@@ -1993,6 +2159,9 @@
     const trigger = document.getElementById('store-login-trigger');
     trigger.innerHTML = '<button class="store-login-tab" onclick="toggleStoreLoginPanel()" style="background:var(--live);color:var(--white);">✓ 店舗ログイン中</button>';
     document.getElementById('store-login-panel').style.display = 'block';
+    // Enable store-owner-mode: show edit indicators, enable inline edits
+    document.body.classList.add('store-owner-mode');
+    document.getElementById('congestion-tag').style.cursor = 'pointer';
     // Check store authority after login
     setTimeout(() => checkStoreAuthority(), 100);
   }
