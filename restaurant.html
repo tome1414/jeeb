@@ -57,6 +57,32 @@
   }
   .lang-btn.active { background: var(--black); color: var(--white); }
 
+  /* ─── Store Owner Badge (top-bar) ─── */
+  .store-owner-badge {
+    display: none;
+    align-items: center; gap: 5px;
+    padding: 5px 10px;
+    background: var(--live-dim);
+    border: 1px solid var(--live);
+    border-radius: 20px;
+    font-size: 11px; font-weight: 600;
+    color: var(--live);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .store-owner-badge:hover { background: rgba(0,208,132,0.18); }
+  .store-owner-badge .badge-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--live); flex-shrink: 0;
+    animation: pulse-live 1.8s ease-in-out infinite;
+  }
+  @keyframes pulse-live {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.5; transform: scale(0.7); }
+  }
+  body.store-owner-mode .store-owner-badge { display: flex; }
+
   /* ─── Hero Image ─── */
   .hero-img {
     height: 260px; position: relative; overflow: hidden;
@@ -371,41 +397,6 @@
   }
   .ai-generate-btn:hover { background: var(--ai-dim); }
   .ai-refresh-btn:hover { background: var(--gray-100); }
-
-  /* ─── Hours Editor ─── */
-  .hours-editor {
-    margin: 12px 0; padding: 12px; background: var(--gray-100);
-    border-radius: 8px;
-  }
-  .hours-day-group {
-    margin-bottom: 16px;
-  }
-  .hours-day-group:last-child { margin-bottom: 0; }
-  .hours-day-label {
-    display: block; font-size: 12px; font-weight: 600; color: var(--black);
-    margin-bottom: 8px;
-  }
-  .hours-time-inputs {
-    display: flex; flex-direction: column; gap: 8px;
-  }
-  .time-slot {
-    background: var(--white); padding: 8px; border-radius: 6px;
-  }
-  .time-label {
-    font-size: 11px; color: var(--gray-600); margin-bottom: 4px;
-  }
-  .time-row {
-    display: flex; align-items: center; gap: 8px;
-  }
-  .time-input {
-    flex: 1; padding: 6px 8px; font-size: 13px;
-    border: 1.5px solid var(--gray-200); border-radius: 4px;
-    font-family: inherit;
-  }
-  .time-input:focus { outline: none; border-color: var(--black); }
-  .time-dash {
-    font-size: 12px; color: var(--gray-400); flex-shrink: 0;
-  }
 
   /* ─── Inline Hours Editor ─── */
   .inline-hours-editor {
@@ -861,68 +852,6 @@
 
   /* ─── Store Login & Edit Mode ─── */
 
-  /* ─── Edit Mode ─── */
-  .store-edit-section { display: none; }
-  .store-edit-section.active { display: block; }
-
-  .editable-field {
-    position: relative; margin-bottom: 16px;
-    padding: 12px 14px; background: var(--white);
-    border: 1.5px solid var(--gray-200); border-radius: 10px;
-    transition: all 0.15s;
-  }
-  .editable-field:hover { border-color: var(--black); }
-
-  .editable-field.edit-mode { padding: 0; border: none; background: none; }
-  .editable-field.edit-mode input,
-  .editable-field.edit-mode textarea {
-    width: 100%; padding: 11px 14px;
-    border: 1.5px solid var(--black); border-radius: 10px;
-    font-size: 13px; font-family: inherit;
-    outline: none; min-height: 44px;
-  }
-  .editable-field.edit-mode textarea { min-height: 100px; resize: vertical; }
-
-  .edit-mode-controls {
-    display: none; gap: 10px; padding-top: 20px;
-    border-top: 1px solid var(--gray-200); margin-top: 20px;
-  }
-  .edit-mode-controls.active { display: flex; }
-
-  .edit-save-btn {
-    flex: 1; padding: 12px;
-    background: var(--live); color: var(--white);
-    border: none; border-radius: 10px;
-    font-size: 13px; font-weight: 600;
-    cursor: pointer; font-family: inherit;
-    transition: opacity 0.15s;
-  }
-  .edit-save-btn:hover { opacity: 0.9; }
-
-  .edit-cancel-btn {
-    flex: 1; padding: 12px;
-    background: none; color: var(--black);
-    border: 1.5px solid var(--gray-200); border-radius: 10px;
-    font-size: 13px; font-weight: 600;
-    cursor: pointer; font-family: inherit;
-    transition: all 0.15s;
-  }
-  .edit-cancel-btn:hover { background: var(--gray-100); }
-
-  .field-label { font-size: 10px; font-weight: 700; color: var(--gray-400); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
-  .field-value { font-size: 13px; color: var(--black); line-height: 1.5; }
-  .edit-icon {
-    position: absolute; top: 12px; right: 12px;
-    width: 24px; height: 24px;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: opacity 0.15s;
-    opacity: 0.4;
-    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%230066FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L21 6.5z"></path></svg>') center no-repeat;
-    background-size: 100%;
-  }
-  .editable-field:hover .edit-icon { opacity: 0.8; }
-  .editable-field.edit-mode .edit-icon { display: none; }
-
   /* ─── AI Support & Store Authority ─── */
   .ai-help-row {
     display: flex; gap: 8px; margin-top: 10px;
@@ -1097,6 +1026,10 @@
 
 <div class="top-bar">
   <a href="index.html" class="back-btn">←</a>
+  <button class="store-owner-badge" id="store-owner-badge" onclick="toggleStoreLoginPanel()" title="店舗ログイン中">
+    <span class="badge-dot"></span>
+    <span id="store-owner-badge-label" data-ja="店舗管理中" data-en="Store Mode" data-th="โหมดร้านค้า">店舗管理中</span>
+  </button>
   <div class="lang-group">
     <button class="lang-btn active" onclick="switchLang('ja', this)">JP</button>
     <button class="lang-btn" onclick="switchLang('en', this)">EN</button>
@@ -1579,129 +1512,7 @@
 
     </div><!-- /store-login-panel -->
 
-    <!-- Editable Store Fields (shown below panel when logged in) -->
-    <div id="store-edit-section" style="display:none; text-align:left;">
-      <div style="margin-top: 20px; margin-bottom: 20px;"></div>
 
-      <!-- Shop Name -->
-      <div class="editable-field" id="store-name-field">
-        <div class="field-label" data-ja="店舗名" data-en="Shop Name" data-th="ชื่อร้านค้า">店舗名</div>
-        <div class="field-value" id="store-name-display">鮨 さいとう トンロー店</div>
-        <input type="text" class="store-form-input" id="store-name-input" value="鮨 さいとう トンロー店" style="display:none;">
-        <span class="edit-icon" onclick="focusEditField('store-name')">✎</span>
-      </div>
-
-      <!-- Operating Hours (Structured) -->
-      <div class="editable-field" id="store-hours-field">
-        <div class="field-label" data-ja="営業時間" data-en="Hours" data-th="เวลา">営業時間</div>
-        <div class="field-value" id="store-hours-panel-display" style="white-space: pre-line;">月〜金 11:30〜14:00 / 17:30〜22:00<br>土 11:30〜22:00<br>日 11:30〜22:00</div>
-
-        <!-- Structured Hours Editor -->
-        <div class="hours-editor" id="store-hours-editor" style="display:none;">
-          <!-- Weekdays -->
-          <div class="hours-day-group">
-            <label class="hours-day-label" data-ja="月〜金（平日）" data-en="Mon–Fri (Weekdays)" data-th="จ.–ศ. (วันธรรมดา)">月〜金（平日）</label>
-            <div class="hours-time-inputs">
-              <div class="time-slot">
-                <div class="time-label" data-ja="営業時間" data-en="Hours" data-th="เวลาทำการ">営業時間</div>
-                <div class="time-row">
-                  <input type="time" class="time-input" id="weekdays-open-1" value="11:30">
-                  <span class="time-dash">〜</span>
-                  <input type="time" class="time-input" id="weekdays-close-1" value="14:00">
-                </div>
-              </div>
-              <div class="time-slot">
-                <div class="time-label" data-ja="営業時間（再開）" data-en="Hours (Resume)" data-th="เวลาเปิด（ต่อ）">営業時間（再開）</div>
-                <div class="time-row">
-                  <input type="time" class="time-input" id="weekdays-open-2" value="17:30">
-                  <span class="time-dash">〜</span>
-                  <input type="time" class="time-input" id="weekdays-close-2" value="22:00">
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Saturday -->
-          <div class="hours-day-group">
-            <label class="hours-day-label" data-ja="土" data-en="Saturday" data-th="วันเสาร์">土（土曜日）</label>
-            <div class="hours-time-inputs">
-              <div class="time-slot">
-                <div class="time-label" data-ja="営業時間" data-en="Hours" data-th="เวลาทำการ">営業時間</div>
-                <div class="time-row">
-                  <input type="time" class="time-input" id="saturday-open" value="11:30">
-                  <span class="time-dash">〜</span>
-                  <input type="time" class="time-input" id="saturday-close" value="22:00">
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Sunday -->
-          <div class="hours-day-group">
-            <label class="hours-day-label" data-ja="日" data-en="Sunday" data-th="วันอาทิตย์">日（日曜日・祝日）</label>
-            <div class="hours-time-inputs">
-              <div class="time-slot">
-                <div class="time-label" data-ja="営業時間" data-en="Hours" data-th="เวลาทำการ">営業時間</div>
-                <div class="time-row">
-                  <input type="time" class="time-input" id="sunday-open" value="11:30">
-                  <span class="time-dash">〜</span>
-                  <input type="time" class="time-input" id="sunday-close" value="22:00">
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <span class="edit-icon" onclick="focusEditField('store-hours')">✎</span>
-      </div>
-
-      <!-- Congestion Status -->
-      <div class="editable-field" id="store-congestion-field">
-        <div class="field-label" data-ja="混雑状況" data-en="Congestion" data-th="สถานะความแออัด">混雑状況</div>
-        <div class="field-value" id="store-congestion-display">やや混雑</div>
-        <select class="store-form-input" id="store-congestion-input" style="display:none;">
-          <option value="空いている" data-ja="空いている" data-en="Not Busy" data-th="ไม่แออัด">空いている</option>
-          <option value="やや空いている" data-ja="やや空いている" data-en="Slightly Empty" data-th="ค่อนข้างว่าง">やや空いている</option>
-          <option value="普通" data-ja="普通" data-en="Moderate" data-th="ปานกลาง">普通</option>
-          <option value="やや混雑" data-ja="やや混雑" data-en="Slightly Busy" data-th="ค่อนข้างแออัด">やや混雑</option>
-          <option value="混雑" data-ja="混雑" data-en="Busy" data-th="แออัด">混雑</option>
-          <option value="非常に混雑" data-ja="非常に混雑" data-en="Very Busy" data-th="แออัดมาก">非常に混雑</option>
-        </select>
-        <span class="edit-icon" onclick="focusEditField('store-congestion')">✎</span>
-      </div>
-
-
-      <!-- Prepayment -->
-      <div class="editable-field" id="store-prepay-field">
-        <div class="field-label" data-ja="事前支払い" data-en="Prepayment" data-th="ชำระเงินล่วงหน้า">事前支払い</div>
-        <div class="field-value" id="store-prepay-display">不要</div>
-        <select class="store-form-input" id="store-prepay-input" style="display:none;">
-          <option value="不要" data-ja="不要" data-en="Not Required" data-th="ไม่จำเป็น">不要</option>
-          <option value="デポジットあり" data-ja="デポジットあり" data-en="Deposit Required" data-th="ต้องมัดจำ">デポジットあり</option>
-          <option value="全額前払い" data-ja="全額前払い" data-en="Full Prepayment" data-th="ชำระเต็มจำนวน">全額前払い</option>
-        </select>
-        <span class="edit-icon" onclick="focusEditField('store-prepay')"></span>
-      </div>
-
-      <!-- BYOB / Bring-in Policy -->
-      <div class="editable-field" id="store-byob-field">
-        <div class="field-label" data-ja="持ち込み" data-en="Bring-in Policy" data-th="นโยบายนำเข้า">持ち込み</div>
-        <div class="field-value" id="store-byob-display">不可</div>
-        <select class="store-form-input" id="store-byob-input" style="display:none;">
-          <option value="不可" data-ja="不可" data-en="Not Allowed" data-th="ไม่อนุญาต">不可</option>
-          <option value="ドリンクのみ可（コルカージュあり）" data-ja="ドリンクのみ可（コルカージュあり）" data-en="Drinks OK (corkage fee)" data-th="เครื่องดื่มได้ (มีค่าธรรมเนียม)">ドリンクのみ可（コルカージュあり）</option>
-          <option value="ドリンクのみ可（コルカージュ無料）" data-ja="ドリンクのみ可（コルカージュ無料）" data-en="Drinks OK (no corkage)" data-th="เครื่องดื่มได้ (ฟรี)">ドリンクのみ可（コルカージュ無料）</option>
-          <option value="食べ物・ドリンク可" data-ja="食べ物・ドリンク可" data-en="Food & Drinks Allowed" data-th="อาหารและเครื่องดื่มได้">食べ物・ドリンク可</option>
-        </select>
-        <span class="edit-icon" onclick="focusEditField('store-byob')"></span>
-      </div>
-
-      <!-- Edit Mode Controls -->
-      <div class="edit-mode-controls" id="edit-mode-controls">
-        <button class="edit-save-btn" onclick="saveStoreEdits()" data-ja="保存" data-en="Save" data-th="บันทึก">保存</button>
-        <button class="edit-cancel-btn" onclick="cancelStoreEdits()" data-ja="キャンセル" data-en="Cancel" data-th="ยกเลิก">キャンセル</button>
-      </div>
-    </div><!-- /store-edit-section -->
   </div><!-- /store-login-section -->
 
 <!-- Login Prompt Modal -->
@@ -2031,8 +1842,23 @@
   }
 
   // ─── Congestion Inline Picker ───
+  function requireStoreLogin() {
+    // Show a gentle nudge to login if not in store-owner-mode
+    if (!document.body.classList.contains('store-owner-mode')) {
+      // Scroll to store-login-section and open the panel
+      const section = document.getElementById('store-login-trigger');
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        document.getElementById('store-login-panel').style.display = 'block';
+      }
+      showToast('📝 編集するには店舗ログインが必要です');
+      return false;
+    }
+    return true;
+  }
+
   function toggleCongestionPicker() {
-    if (!localStorage.getItem('jeeb-store-session')) return;
+    if (!requireStoreLogin()) return;
     document.getElementById('congestion-picker').classList.toggle('open');
   }
 
@@ -2061,7 +1887,7 @@
 
   // ─── Info Row Inline Edit (事前支払い / 持ち込み) ───
   function toggleInfoRowEdit(field) {
-    if (!localStorage.getItem('jeeb-store-session')) return;
+    if (!requireStoreLogin()) return;
     const row = document.getElementById(`info-${field}-row`);
     const isEditing = row.classList.contains('editing');
     if (isEditing) return; // already editing
@@ -2096,14 +1922,36 @@
   // ─── Store Login & Edit Mode ───
   // Initialize store session on page load
   function initializeStoreSession() {
-    const storeSession = localStorage.getItem('jeeb-store-session');
-    if (storeSession) {
+    let storeSession = localStorage.getItem('jeeb-store-session');
+
+    // ── Demo / development auto-login ──
+    // This page represents a specific store. Always start in store-owner-mode
+    // so all inline editing features are immediately available.
+    // Remove or gate this block in production with real auth.
+    if (!storeSession) {
+      const demoStore = {
+        email: 'owner@saitou-thonglor.jp',
+        loginMethod: 'demo',
+        storeName: '鮨 さいとう トンロー店',
+        restaurantId: 'saitou-thonglor',
+        authority: 'owner',
+        accountStatus: 'active',
+        loginTime: new Date().toISOString()
+      };
+      localStorage.setItem('jeeb-store-session', JSON.stringify(demoStore));
+      storeSession = JSON.stringify(demoStore);
+    }
+
+    try {
       const store = JSON.parse(storeSession);
-      displayStoreLoggedIn(store);
-    } else {
+      // Silent restore: activate store-owner-mode without opening the panel
+      displayStoreLoggedIn(store, false);
+    } catch (e) {
+      localStorage.removeItem('jeeb-store-session');
       displayStoreLoginForms();
     }
-    // Always setup inline editing listeners (will check auth when saving)
+
+    // Always setup inline editing listeners
     setupInlineEditing();
   }
 
@@ -2118,6 +1966,7 @@
       if (storeNameEditIcon) storeNameEditIcon.style.display = 'inline';
 
       storeNameDisplay.addEventListener('click', () => {
+        if (!requireStoreLogin()) return;
         storeNameDisplay.style.display = 'none';
         storeNameInput.style.display = 'block';
         storeNameInput.value = storeNameDisplay.textContent.trim();
@@ -2145,6 +1994,7 @@
       if (storeSummaryEditIcon) storeSummaryEditIcon.style.display = 'inline';
 
       storeSummaryDisplay.addEventListener('click', () => {
+        if (!requireStoreLogin()) return;
         storeSummaryDisplay.style.display = 'none';
         storeSummaryInput.style.display = 'block';
         storeSummaryInput.value = storeSummaryDisplay.textContent.trim();
@@ -2175,6 +2025,7 @@
       if (menuNoteEditIcon) menuNoteEditIcon.style.display = 'inline';
 
       menuNoteDisplay.addEventListener('click', () => {
+        if (!requireStoreLogin()) return;
         menuNoteDisplay.style.display = 'none';
         menuNoteInput.style.display = 'block';
         menuNoteInput.value = menuNoteDisplay.textContent.replace(/✎/g, '').trim();
@@ -2288,8 +2139,8 @@
   }
 
   function toggleInlineHoursEditor() {
+    if (!requireStoreLogin()) return;
     const storeSession = localStorage.getItem('jeeb-store-session');
-    if (!storeSession) return;
     const editor = document.getElementById('inline-hours-editor');
     if (!editor) return;
     if (editor.style.display !== 'none') { cancelInlineHours(); return; }
@@ -2313,8 +2164,6 @@
 
     const disp = document.getElementById('store-hours-display');
     if (disp) disp.innerHTML = hoursHtml;
-    const panelDisp = document.getElementById('store-hours-panel-display');
-    if (panelDisp) panelDisp.innerHTML = hoursHtml;
 
     const store = JSON.parse(storeSession);
     if (!store.lastEdits) store.lastEdits = {};
@@ -2382,10 +2231,9 @@
   }
 
   function displayStoreLoginForms(autoOpen = false) {
-    // Show login panel contents, hide logged-in state and edit section
+    // Show login panel contents, hide logged-in state
     document.getElementById('store-login-forms').style.display = 'block';
     document.getElementById('store-logged-in-state').style.display = 'none';
-    document.getElementById('store-edit-section').style.display = 'none';
     // Reset trigger button to original state
     document.getElementById('store-login-trigger').innerHTML =
       '<button class="store-login-tab" onclick="toggleStoreLoginPanel()" data-ja="店舗ログイン" data-en="Store Login" data-th="เข้าสู่ระบบร้านค้า">店舗ログイン</button>';
@@ -2399,21 +2247,79 @@
     }
   }
 
-  function displayStoreLoggedIn(store) {
-    // Hide login forms, show logged-in state and edit section
+  function displayStoreLoggedIn(store, openPanel = true) {
+    // Hide login forms, show logged-in state
     document.getElementById('store-login-forms').style.display = 'none';
     document.getElementById('store-logged-in-state').style.display = 'block';
     document.getElementById('store-logged-email').textContent = store.email || '';
-    document.getElementById('store-edit-section').style.display = 'block';
-    // Change button to show "編集中" and open panel
+    // Change button to show logged-in state
     const trigger = document.getElementById('store-login-trigger');
     trigger.innerHTML = '<button class="store-login-tab" onclick="toggleStoreLoginPanel()" style="background:var(--live);color:var(--white);">✓ 店舗ログイン中</button>';
-    document.getElementById('store-login-panel').style.display = 'block';
-    // Enable store-owner-mode: show edit indicators, enable inline edits
+    // Only open the panel on explicit login, not on silent page-load restore
+    if (openPanel) {
+      document.getElementById('store-login-panel').style.display = 'block';
+    }
+    // Enable store-owner-mode: show edit indicators (blue dots), enable inline edits
     document.body.classList.add('store-owner-mode');
     document.getElementById('congestion-tag').style.cursor = 'pointer';
+    // Restore any previously saved edits
+    restoreSavedEdits(store);
     // Check store authority after login
     setTimeout(() => checkStoreAuthority(), 100);
+  }
+
+  // Restore all saved edits from localStorage session to the display
+  function restoreSavedEdits(store) {
+    const edits = store.lastEdits;
+    if (!edits) return;
+
+    // Store name
+    if (edits.name || store.storeName) {
+      const el = document.getElementById('store-name-display');
+      if (el) el.textContent = edits.name || store.storeName;
+    }
+
+    // Store summary
+    if (store.storeSummary) {
+      const el = document.getElementById('store-summary-display');
+      if (el) el.textContent = store.storeSummary;
+    }
+
+    // Menu note
+    if (edits.menuNote || store.menuNote) {
+      const el = document.getElementById('menu-note-display');
+      if (el) el.textContent = edits.menuNote || store.menuNote;
+    }
+
+    // Congestion
+    if (edits.congestion) {
+      const tagText = document.getElementById('congestion-tag-text');
+      if (tagText) tagText.textContent = edits.congestion;
+      document.querySelectorAll('.congestion-opt').forEach(btn => {
+        btn.classList.toggle('selected', btn.textContent.trim() === edits.congestion);
+      });
+    }
+
+    // 事前支払い
+    if (edits.prepay) {
+      const el = document.getElementById('info-prepay-text');
+      if (el) el.textContent = edits.prepay;
+    }
+
+    // 持ち込み
+    if (edits.byob) {
+      const el = document.getElementById('info-byob-text');
+      if (el) el.textContent = edits.byob;
+    }
+
+    // 営業時間 (HTML display)
+    if (edits.hoursHtml) {
+      const el = document.getElementById('store-hours-display');
+      if (el) el.innerHTML = edits.hoursHtml;
+    } else if (edits.hours) {
+      const el = document.getElementById('store-hours-display');
+      if (el) el.innerHTML = edits.hours.replace(/\n/g, '<br>');
+    }
   }
 
   function switchStoreLoginTab(tabName, btn) {
@@ -2555,200 +2461,12 @@
       localStorage.removeItem('jeeb-store-session');
       showToast('✓ ログアウトしました');
 
-      // Reset edit mode
-      cancelStoreEdits();
-
       // Show login forms and auto-open panel after logout
       displayStoreLoginForms(true);
 
       // Check authority after logout
       setTimeout(() => checkStoreAuthority(), 100);
     }
-  }
-
-  function toggleStoreEditMode() {
-    const btn = document.getElementById('store-edit-toggle-btn');
-    const controls = document.getElementById('edit-mode-controls');
-    const fields = [
-      document.getElementById('store-name-field'),
-      document.getElementById('store-hours-field'),
-      document.getElementById('store-congestion-field'),
-      document.getElementById('store-menu-note-field')
-    ];
-
-    // Check if already in edit mode
-    const inEditMode = fields[0].classList.contains('edit-mode');
-
-    if (inEditMode) {
-      cancelStoreEdits();
-    } else {
-      // Enter edit mode
-      fields.forEach(field => field.classList.add('edit-mode'));
-      controls.classList.add('active');
-      btn.textContent = btn.getAttribute('data-ja') || '保存';
-
-      // Show inputs
-      document.getElementById('store-name-display').style.display = 'none';
-      document.getElementById('store-name-input').style.display = 'block';
-
-      document.getElementById('store-hours-panel-display').style.display = 'none';
-      const hoursEditor = document.getElementById('store-hours-editor');
-      if (hoursEditor) hoursEditor.style.display = 'block';
-
-      document.getElementById('store-congestion-display').style.display = 'none';
-      document.getElementById('store-congestion-input').style.display = 'block';
-
-      document.getElementById('store-menu-note-display').style.display = 'none';
-      document.getElementById('store-menu-note-input').style.display = 'block';
-
-      // Focus on first field
-      document.getElementById('store-name-input').focus();
-    }
-  }
-
-  function focusEditField(fieldName) {
-    // Quick toggle for specific field
-    const displayEl = document.getElementById(`store-${fieldName}-display`);
-    const fieldEl = document.getElementById(`store-${fieldName}-field`);
-
-    // Special handling for structured hours
-    if (fieldName === 'hours') {
-      const editor = document.getElementById('store-hours-editor');
-      if (editor.style.display === 'none') {
-        displayEl.style.display = 'none';
-        editor.style.display = 'block';
-        // Focus first time input
-        document.getElementById('weekdays-open-1').focus();
-      }
-    } else {
-      const inputEl = document.getElementById(`store-${fieldName}-input`);
-      if (!fieldEl.classList.contains('edit-mode')) {
-        // Enter field edit mode
-        fieldEl.classList.add('edit-mode');
-        displayEl.style.display = 'none';
-        inputEl.style.display = 'block';
-        inputEl.focus();
-      }
-    }
-
-    // Show controls
-    document.getElementById('edit-mode-controls').classList.add('active');
-  }
-
-  function buildHoursDisplayString() {
-    // Collect structured hours from time inputs
-    const weekdaysOpen1 = document.getElementById('weekdays-open-1').value;
-    const weekdaysClose1 = document.getElementById('weekdays-close-1').value;
-    const weekdaysOpen2 = document.getElementById('weekdays-open-2').value;
-    const weekdaysClose2 = document.getElementById('weekdays-close-2').value;
-    const saturdayOpen = document.getElementById('saturday-open').value;
-    const saturdayClose = document.getElementById('saturday-close').value;
-    const sundayOpen = document.getElementById('sunday-open').value;
-    const sundayClose = document.getElementById('sunday-close').value;
-
-    const lines = [];
-
-    // Weekdays
-    if (weekdaysOpen1 && weekdaysClose1) {
-      let weekdaysStr = `月〜金 ${weekdaysOpen1.replace(':', ':')}〜${weekdaysClose1.replace(':', ':')}`;
-      if (weekdaysOpen2 && weekdaysClose2) {
-        weekdaysStr += ` / ${weekdaysOpen2.replace(':', ':')}〜${weekdaysClose2.replace(':', ':')}`;
-      }
-      lines.push(weekdaysStr);
-    }
-
-    // Saturday
-    if (saturdayOpen && saturdayClose) {
-      lines.push(`土 ${saturdayOpen}〜${saturdayClose}`);
-    }
-
-    // Sunday
-    if (sundayOpen && sundayClose) {
-      lines.push(`日 ${sundayOpen}〜${sundayClose}`);
-    }
-
-    return lines.join('\n');
-  }
-
-  function saveStoreEdits() {
-    const storeSession = localStorage.getItem('jeeb-store-session');
-    if (!storeSession) {
-      showToast('❌ ログインしてください');
-      return;
-    }
-
-    // Collect edited values
-    const edits = {
-      name: document.getElementById('store-name-input').value || document.getElementById('store-name-display').textContent,
-      hours: buildHoursDisplayString(),
-      hoursStructured: {
-        weekdays: {
-          open1: document.getElementById('weekdays-open-1').value,
-          close1: document.getElementById('weekdays-close-1').value,
-          open2: document.getElementById('weekdays-open-2').value,
-          close2: document.getElementById('weekdays-close-2').value
-        },
-        saturday: {
-          open: document.getElementById('saturday-open').value,
-          close: document.getElementById('saturday-close').value
-        },
-        sunday: {
-          open: document.getElementById('sunday-open').value,
-          close: document.getElementById('sunday-close').value
-        }
-      },
-      congestion: document.getElementById('store-congestion-input').value || document.getElementById('store-congestion-display').textContent,
-      prepay: document.getElementById('store-prepay-input').value || document.getElementById('store-prepay-display').textContent,
-      byob: document.getElementById('store-byob-input').value || document.getElementById('store-byob-display').textContent,
-      savedAt: new Date().toISOString()
-    };
-
-    // Update localStorage with edits
-    const store = JSON.parse(storeSession);
-    store.lastEdits = edits;
-    localStorage.setItem('jeeb-store-session', JSON.stringify(store));
-
-    // Update display
-    document.getElementById('store-name-display').textContent = edits.name;
-    document.getElementById('store-hours-display').innerHTML = edits.hours.replace(/\n/g, '<br>');
-    const panelHoursDisplay = document.getElementById('store-hours-panel-display');
-    if (panelHoursDisplay) panelHoursDisplay.innerHTML = edits.hours.replace(/\n/g, '<br>');
-    document.getElementById('store-congestion-display').textContent = edits.congestion;
-    document.getElementById('store-prepay-display').textContent = edits.prepay;
-    document.getElementById('store-byob-display').textContent = edits.byob;
-
-    cancelStoreEdits();
-    showToast('✓ 店舗情報を保存しました');
-  }
-
-  function cancelStoreEdits() {
-    const fieldIds = ['store-name-field', 'store-hours-field', 'store-congestion-field', 'store-prepay-field', 'store-byob-field'];
-    fieldIds.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.classList.remove('edit-mode');
-    });
-    const controls = document.getElementById('edit-mode-controls');
-    if (controls) controls.classList.remove('active');
-
-    // Reset each field: show display, hide input
-    const fieldPairs = [
-      ['store-name-display', 'store-name-input'],
-      ['store-congestion-display', 'store-congestion-input'],
-      ['store-prepay-display', 'store-prepay-input'],
-      ['store-byob-display', 'store-byob-input']
-    ];
-    fieldPairs.forEach(([displayId, inputId]) => {
-      const d = document.getElementById(displayId);
-      const i = document.getElementById(inputId);
-      if (d) d.style.display = 'block';
-      if (i) i.style.display = 'none';
-    });
-
-    // Hours: hide editor, show panel display
-    const hoursPanelDisplay = document.getElementById('store-hours-panel-display');
-    const hoursEditor = document.getElementById('store-hours-editor');
-    if (hoursPanelDisplay) hoursPanelDisplay.style.display = 'block';
-    if (hoursEditor) hoursEditor.style.display = 'none';
   }
 
   // Initialize on page load
@@ -2836,7 +2554,7 @@
       // Gather context from store info
       const storeName = document.getElementById('store-name-display').textContent || '鮨 さいとう トンロー店';
       const storeHours = document.getElementById('store-hours-display').textContent || '';
-      const congestion = document.getElementById('store-congestion-display').textContent || '';
+      const congestion = document.getElementById('congestion-tag-text')?.textContent || '';
 
       // Create prompt for Claude
       const prompt = `
