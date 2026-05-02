@@ -987,6 +987,17 @@
   }
   .store-login-submit:hover { opacity: 0.85; }
 
+  .store-social-btn {
+    width: 100%; padding: 11px; margin-bottom: 10px;
+    border-radius: 12px; font-size: 14px; font-weight: 600;
+    cursor: pointer; font-family: inherit; transition: opacity 0.15s;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    border: 1.5px solid transparent;
+  }
+  .store-social-btn:hover { opacity: 0.85; }
+  .store-line-btn { background: #06C755; color: var(--white); border-color: #06C755; }
+  .store-google-btn { background: var(--white); color: #3C4043; border-color: var(--gray-200); }
+
   .store-login-header {
     font-size: 15px; font-weight: 700; color: var(--black);
     margin-bottom: 8px;
@@ -1050,9 +1061,11 @@
     <!-- Store Authority Badges -->
     <div id="store-authority-badges" style="margin-bottom: 12px;"></div>
 
-    <div class="rest-name" id="store-name-display" data-ja="鮨 さいとう トンロー店" data-en="Saitou Sushi Thonglor" data-th="ซูชิ ไซโต้ ทองหล่อ" data-editable="true" style="cursor: pointer; position: relative;">
-      鮨 さいとう トンロー店
-      <span id="store-name-edit-icon" style="display: none; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 16px;">✎</span>
+    <div style="display:flex; align-items:flex-start; gap:4px;">
+      <div class="rest-name" id="store-name-display" data-ja="鮨 さいとう トンロー店" data-en="Saitou Sushi Thonglor" data-th="ซูชิ ไซโต้ ทองหล่อ" data-editable="true" style="cursor: pointer; flex:1;">
+        鮨 さいとう トンロー店
+      </div>
+      <span class="inline-edit-dot" style="margin-top:10px; flex-shrink:0;" title="タップして編集"></span>
     </div>
     <input type="text" id="store-name-edit-input" style="display: none; width: 100%; padding: 8px; font-size: 16px; font-weight: 700; border: 2px solid var(--black); border-radius: 8px; font-family: inherit;">
 
@@ -1213,7 +1226,10 @@
     <div class="menu-note-section" id="menu-note-section">
       <div class="menu-note-content">
         <div class="menu-note-label" data-ja="本日のメモ" data-en="Today's Note" data-th="หมายเหตุประจำวัน">本日のメモ</div>
-        <div class="menu-note-text" id="menu-note-display" style="cursor: pointer; position: relative;">本日限定メニューあります。季節の食材をメインに仕入れました。<span style="display: none; position: absolute; right: 10px; top: 0; font-size: 14px; opacity: 0.5; pointer-events: none;">✎</span></div>
+        <div style="display:flex; align-items:flex-start; gap:4px;">
+          <div class="menu-note-text" id="menu-note-display" style="cursor: pointer; flex:1;">本日限定メニューあります。季節の食材をメインに仕入れました。</div>
+          <span class="inline-edit-dot" style="margin-top:2px; flex-shrink:0;" title="タップして編集"></span>
+        </div>
         <textarea id="menu-note-edit-input" style="display: none; width: 100%; padding: 12px; font-size: 13px; border: 1.5px solid var(--black); border-radius: 8px; font-family: inherit; resize: none; min-height: 60px;"></textarea>
 
         <!-- AI Help Row (Only for authorized stores) -->
@@ -1259,10 +1275,15 @@
   <div class="block">
     <div class="block-label" data-ja="店舗情報" data-en="Info" data-th="ข้อมูลร้าน">店舗情報</div>
     <div class="info-list">
-      <div class="info-row">
+      <div class="info-row owner-editable" onclick="document.getElementById('store-hours-display').click()">
         <span class="info-key" data-ja="営業時間" data-en="Hours" data-th="เวลา">営業時間</span>
-        <span class="info-val" id="store-hours-display" data-ja="月〜金 11:30〜14:00 / 17:30〜22:00&#10;土日祝 11:30〜22:00（通し）" data-en="Mon–Fri 11:30–14:00 / 17:30–22:00&#10;Sat–Sun 11:30–22:00" data-th="จ.–ศ. 11:30–14:00 / 17:30–22:00&#10;ส.–อา. 11:30–22:00" style="cursor: pointer; position: relative;">月〜金 11:30〜14:00 / 17:30〜22:00<br>土日祝 11:30〜22:00（通し）<span style="display: none; position: absolute; right: 10px; top: 0; font-size: 14px; opacity: 0.5; pointer-events: none;">✎</span></span>
-        <textarea id="store-hours-edit-input" style="display: none; width: 100%; padding: 8px; font-size: 13px; border: 2px solid var(--black); border-radius: 8px; font-family: inherit; resize: none; min-height: 50px;"></textarea>
+        <div style="flex:1;">
+          <div style="display:flex; align-items:flex-start; gap:6px;">
+            <span class="info-val" id="store-hours-display" data-ja="月〜金 11:30〜14:00 / 17:30〜22:00&#10;土日祝 11:30〜22:00（通し）" data-en="Mon–Fri 11:30–14:00 / 17:30–22:00&#10;Sat–Sun 11:30–22:00" data-th="จ.–ศ. 11:30–14:00 / 17:30–22:00&#10;ส.–อา. 11:30–22:00" style="cursor: pointer; flex:1;">月〜金 11:30〜14:00 / 17:30〜22:00<br>土日祝 11:30〜22:00（通し）</span>
+            <span class="inline-edit-dot" style="margin-top:3px; flex-shrink:0;" title="タップして編集"></span>
+          </div>
+          <textarea id="store-hours-edit-input" style="display: none; width: 100%; padding: 8px; font-size: 13px; border: 2px solid var(--black); border-radius: 8px; font-family: inherit; resize: none; min-height: 50px;"></textarea>
+        </div>
       </div>
       <div class="info-row">
         <span class="info-key" data-ja="住所" data-en="Address" data-th="ที่อยู่">住所</span>
@@ -1410,6 +1431,24 @@
             <input type="password" class="store-form-input" id="store-login-password" placeholder="••••••••">
           </div>
           <button class="store-login-submit" onclick="storeEmailLogin()" data-ja="ログイン" data-en="Login" data-th="เข้าสู่ระบบ">ログイン</button>
+
+          <!-- Divider -->
+          <div style="display:flex; align-items:center; gap:10px; margin:16px 0;">
+            <div style="flex:1; height:1px; background:var(--gray-200);"></div>
+            <span style="font-size:11px; color:var(--gray-400); white-space:nowrap;">または</span>
+            <div style="flex:1; height:1px; background:var(--gray-200);"></div>
+          </div>
+
+          <!-- Social Login Buttons -->
+          <button class="store-social-btn store-line-btn" onclick="storeLineLogin()">
+            <svg width="18" height="18" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="8" fill="#06C755"/><path d="M33 19.1c0-6.1-6.1-11-13.5-11S6 13 6 19.1c0 5.4 4.8 10 11.3 10.8.4.1 1 .3 1.2.7.2.4.1.9.1.9l-.2 1.3c-.1.4-.4 1.5 1.3.8s9.4-5.5 12.8-9.5c2.4-2.5 3.5-5.1 3.5-8z" fill="white"/></svg>
+            <span data-ja="LINEでログイン" data-en="Login with LINE" data-th="เข้าสู่ระบบด้วย LINE">LINEでログイン</span>
+          </button>
+
+          <button class="store-social-btn store-google-btn" onclick="storeGoogleLogin()">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            <span data-ja="Googleでログイン" data-en="Login with Google" data-th="เข้าสู่ระบบด้วย Google">Googleでログイン</span>
+          </button>
         </div>
 
         <!-- Registration Request Form -->
