@@ -407,6 +407,54 @@
     font-size: 12px; color: var(--gray-400); flex-shrink: 0;
   }
 
+  /* ─── Inline Hours Editor ─── */
+  .inline-hours-editor {
+    margin-top: 10px; background: var(--gray-100);
+    border-radius: 10px; padding: 12px 14px;
+    border: 1.5px solid var(--gray-200);
+  }
+  .hours-irow {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 0; border-bottom: 1px solid var(--gray-200);
+  }
+  .hours-irow:last-of-type { border-bottom: none; }
+  .hours-iday {
+    font-size: 12px; font-weight: 600; color: var(--black);
+    width: 48px; flex-shrink: 0;
+  }
+  .hours-islots { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+  .hours-islot { display: flex; align-items: center; gap: 6px; }
+  .hours-islot .time-input {
+    width: 76px; padding: 5px 6px; font-size: 13px;
+    border: 1.5px solid var(--gray-200); border-radius: 6px;
+    font-family: inherit;
+  }
+  .hours-islot .time-input:focus { outline: none; border-color: var(--black); }
+  .hours-closed-check {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 3px; flex-shrink: 0; width: 36px;
+  }
+  .hours-closed-check input[type=checkbox] { width: 15px; height: 15px; cursor: pointer; }
+  .hours-closed-check label {
+    font-size: 10px; color: var(--gray-600); cursor: pointer;
+    writing-mode: horizontal-tb; text-align: center; line-height: 1.2;
+  }
+  .hours-closed-check input:checked ~ label { color: var(--gray-400); text-decoration: line-through; }
+  .hours-irow.closed .hours-islots { opacity: 0.3; pointer-events: none; }
+  .hours-editor-actions {
+    display: flex; gap: 8px; margin-top: 12px;
+  }
+  .hours-save-btn {
+    flex: 1; padding: 9px; background: var(--black); color: var(--white);
+    border: none; border-radius: 8px; font-size: 13px; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+  }
+  .hours-cancel-btn {
+    padding: 9px 16px; background: var(--white); color: var(--gray-600);
+    border: 1.5px solid var(--gray-200); border-radius: 8px;
+    font-size: 13px; cursor: pointer; font-family: inherit;
+  }
+
   /* ─── Info Block ─── */
   .info-list { display: flex; flex-direction: column; }
   .info-row {
@@ -1275,14 +1323,71 @@
   <div class="block">
     <div class="block-label" data-ja="店舗情報" data-en="Info" data-th="ข้อมูลร้าน">店舗情報</div>
     <div class="info-list">
-      <div class="info-row owner-editable" onclick="document.getElementById('store-hours-display').click()">
+      <div class="info-row owner-editable" id="hours-info-row" onclick="toggleInlineHoursEditor()">
         <span class="info-key" data-ja="営業時間" data-en="Hours" data-th="เวลา">営業時間</span>
         <div style="flex:1;">
           <div style="display:flex; align-items:flex-start; gap:6px;">
-            <span class="info-val" id="store-hours-display" data-ja="月〜金 11:30〜14:00 / 17:30〜22:00&#10;土日祝 11:30〜22:00（通し）" data-en="Mon–Fri 11:30–14:00 / 17:30–22:00&#10;Sat–Sun 11:30–22:00" data-th="จ.–ศ. 11:30–14:00 / 17:30–22:00&#10;ส.–อา. 11:30–22:00" style="cursor: pointer; flex:1;">月〜金 11:30〜14:00 / 17:30〜22:00<br>土日祝 11:30〜22:00（通し）</span>
+            <span class="info-val" id="store-hours-display" style="flex:1;">月〜金 11:30〜14:00 / 17:30〜22:00<br>土日祝 11:30〜22:00（通し）</span>
             <span class="inline-edit-dot" style="margin-top:3px; flex-shrink:0;" title="タップして編集"></span>
           </div>
-          <textarea id="store-hours-edit-input" style="display: none; width: 100%; padding: 8px; font-size: 13px; border: 2px solid var(--black); border-radius: 8px; font-family: inherit; resize: none; min-height: 50px;"></textarea>
+          <!-- Inline structured hours editor -->
+          <div class="inline-hours-editor" id="inline-hours-editor" style="display:none;" onclick="event.stopPropagation()">
+            <!-- 月〜金 -->
+            <div class="hours-irow" id="irow-weekday">
+              <span class="hours-iday" data-ja="月〜金" data-en="Mon–Fri" data-th="จ.–ศ.">月〜金</span>
+              <div class="hours-islots">
+                <div class="hours-islot">
+                  <input type="time" class="time-input" id="ih-wd-open1" value="11:30">
+                  <span class="time-dash">〜</span>
+                  <input type="time" class="time-input" id="ih-wd-close1" value="14:00">
+                </div>
+                <div class="hours-islot" id="irow-wd-slot2">
+                  <input type="time" class="time-input" id="ih-wd-open2" value="17:30">
+                  <span class="time-dash">〜</span>
+                  <input type="time" class="time-input" id="ih-wd-close2" value="22:00">
+                </div>
+              </div>
+              <div class="hours-closed-check">
+                <input type="checkbox" id="ih-wd-closed" onchange="toggleDayClosed('weekday', this.checked)">
+                <label for="ih-wd-closed" data-ja="定休日" data-en="Closed" data-th="หยุด">定休日</label>
+              </div>
+            </div>
+            <!-- 土 -->
+            <div class="hours-irow" id="irow-sat">
+              <span class="hours-iday" data-ja="土" data-en="Sat" data-th="ส.">土</span>
+              <div class="hours-islots">
+                <div class="hours-islot">
+                  <input type="time" class="time-input" id="ih-sat-open" value="11:30">
+                  <span class="time-dash">〜</span>
+                  <input type="time" class="time-input" id="ih-sat-close" value="22:00">
+                </div>
+              </div>
+              <div class="hours-closed-check">
+                <input type="checkbox" id="ih-sat-closed" onchange="toggleDayClosed('sat', this.checked)">
+                <label for="ih-sat-closed" data-ja="定休日" data-en="Closed" data-th="หยุด">定休日</label>
+              </div>
+            </div>
+            <!-- 日・祝 -->
+            <div class="hours-irow" id="irow-sun">
+              <span class="hours-iday" data-ja="日・祝" data-en="Sun/Hol" data-th="อา./ว.หยุด">日・祝</span>
+              <div class="hours-islots">
+                <div class="hours-islot">
+                  <input type="time" class="time-input" id="ih-sun-open" value="11:30">
+                  <span class="time-dash">〜</span>
+                  <input type="time" class="time-input" id="ih-sun-close" value="22:00">
+                </div>
+              </div>
+              <div class="hours-closed-check">
+                <input type="checkbox" id="ih-sun-closed" onchange="toggleDayClosed('sun', this.checked)">
+                <label for="ih-sun-closed" data-ja="定休日" data-en="Closed" data-th="หยุด">定休日</label>
+              </div>
+            </div>
+            <!-- Actions -->
+            <div class="hours-editor-actions">
+              <button class="hours-save-btn" onclick="saveInlineHours()" data-ja="保存" data-en="Save" data-th="บันทึก">保存</button>
+              <button class="hours-cancel-btn" onclick="cancelInlineHours()" data-ja="キャンセル" data-en="Cancel" data-th="ยกเลิก">キャンセル</button>
+            </div>
+          </div>
         </div>
       </div>
       <div class="info-row">
@@ -2066,33 +2171,7 @@
       });
     }
 
-    // Store hours editing
-    const storeHoursDisplay = document.getElementById('store-hours-display');
-    const storeHoursInput = document.getElementById('store-hours-edit-input');
-
-    if (storeHoursDisplay) {
-      storeHoursDisplay.style.cursor = 'pointer';
-
-      storeHoursDisplay.addEventListener('click', () => {
-        storeHoursDisplay.style.display = 'none';
-        storeHoursInput.style.display = 'block';
-        storeHoursInput.value = storeHoursDisplay.textContent.trim();
-        storeHoursInput.focus();
-      });
-
-      storeHoursInput.addEventListener('blur', () => {
-        saveInlineEdit('storeHours', storeHoursInput.value, storeHoursDisplay, storeHoursInput);
-      });
-
-      storeHoursInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-          storeHoursDisplay.style.display = 'block';
-          storeHoursInput.style.display = 'none';
-        } else if (e.key === 'Enter' && e.ctrlKey) {
-          saveInlineEdit('storeHours', storeHoursInput.value, storeHoursDisplay, storeHoursInput);
-        }
-      });
-    }
+    // Store hours: handled by toggleInlineHoursEditor() / saveInlineHours() below
 
     // Menu note editing
     const menuNoteDisplay = document.getElementById('menu-note-display');
@@ -2124,6 +2203,137 @@
       });
     }
   }
+
+  // ─── Inline Hours Editor ────────────────────────────────────────────────
+  function toggleInlineHoursEditor() {
+    const storeSession = localStorage.getItem('jeeb-store-session');
+    if (!storeSession) return;
+    const editor = document.getElementById('inline-hours-editor');
+    if (!editor) return;
+    const isOpen = editor.style.display !== 'none';
+    if (isOpen) {
+      cancelInlineHours();
+    } else {
+      // 保存済みの構造化データから時間を復元
+      const store = JSON.parse(storeSession);
+      const hs = store.lastEdits?.hoursStructured;
+      if (hs) {
+        if (hs.wd) {
+          document.getElementById('ih-wd-open1').value  = hs.wd.open1  || '11:30';
+          document.getElementById('ih-wd-close1').value = hs.wd.close1 || '14:00';
+          document.getElementById('ih-wd-open2').value  = hs.wd.open2  || '17:30';
+          document.getElementById('ih-wd-close2').value = hs.wd.close2 || '22:00';
+          document.getElementById('ih-wd-closed').checked = !!hs.wd.closed;
+          toggleDayClosed('weekday', !!hs.wd.closed);
+        }
+        if (hs.sat) {
+          document.getElementById('ih-sat-open').value  = hs.sat.open  || '11:30';
+          document.getElementById('ih-sat-close').value = hs.sat.close || '22:00';
+          document.getElementById('ih-sat-closed').checked = !!hs.sat.closed;
+          toggleDayClosed('sat', !!hs.sat.closed);
+        }
+        if (hs.sun) {
+          document.getElementById('ih-sun-open').value  = hs.sun.open  || '11:30';
+          document.getElementById('ih-sun-close').value = hs.sun.close || '22:00';
+          document.getElementById('ih-sun-closed').checked = !!hs.sun.closed;
+          toggleDayClosed('sun', !!hs.sun.closed);
+        }
+      }
+      editor.style.display = 'block';
+      document.getElementById('hours-info-row').classList.add('editing');
+    }
+  }
+
+  function toggleDayClosed(day, isClosed) {
+    const rowMap = { weekday: 'irow-weekday', sat: 'irow-sat', sun: 'irow-sun' };
+    const row = document.getElementById(rowMap[day]);
+    if (row) row.classList.toggle('closed', isClosed);
+  }
+
+  function buildInlineHoursString() {
+    const lines = [];
+
+    // 月〜金
+    if (document.getElementById('ih-wd-closed').checked) {
+      lines.push('月〜金: 定休日');
+    } else {
+      const o1 = document.getElementById('ih-wd-open1').value;
+      const c1 = document.getElementById('ih-wd-close1').value;
+      const o2 = document.getElementById('ih-wd-open2').value;
+      const c2 = document.getElementById('ih-wd-close2').value;
+      let str = `月〜金 ${o1}〜${c1}`;
+      if (o2 && c2) str += ` / ${o2}〜${c2}`;
+      lines.push(str);
+    }
+
+    // 土
+    if (document.getElementById('ih-sat-closed').checked) {
+      lines.push('土: 定休日');
+    } else {
+      const o = document.getElementById('ih-sat-open').value;
+      const c = document.getElementById('ih-sat-close').value;
+      lines.push(`土 ${o}〜${c}`);
+    }
+
+    // 日・祝
+    if (document.getElementById('ih-sun-closed').checked) {
+      lines.push('日・祝: 定休日');
+    } else {
+      const o = document.getElementById('ih-sun-open').value;
+      const c = document.getElementById('ih-sun-close').value;
+      lines.push(`日・祝 ${o}〜${c}`);
+    }
+
+    return lines.join('\n');
+  }
+
+  function saveInlineHours() {
+    const storeSession = localStorage.getItem('jeeb-store-session');
+    if (!storeSession) return;
+
+    const hoursStr = buildInlineHoursString();
+    // 表示更新（info-row + edit panel）
+    const display = document.getElementById('store-hours-display');
+    if (display) display.innerHTML = hoursStr.replace(/\n/g, '<br>');
+    const panelDisplay = document.getElementById('store-hours-panel-display');
+    if (panelDisplay) panelDisplay.innerHTML = hoursStr.replace(/\n/g, '<br>');
+
+    // localStorage 保存（テキスト + 構造化データ）
+    const store = JSON.parse(storeSession);
+    if (!store.lastEdits) store.lastEdits = {};
+    store.lastEdits.hours = hoursStr;
+    store.lastEdits.hoursStructured = {
+      wd: {
+        open1:  document.getElementById('ih-wd-open1').value,
+        close1: document.getElementById('ih-wd-close1').value,
+        open2:  document.getElementById('ih-wd-open2').value,
+        close2: document.getElementById('ih-wd-close2').value,
+        closed: document.getElementById('ih-wd-closed').checked
+      },
+      sat: {
+        open:   document.getElementById('ih-sat-open').value,
+        close:  document.getElementById('ih-sat-close').value,
+        closed: document.getElementById('ih-sat-closed').checked
+      },
+      sun: {
+        open:   document.getElementById('ih-sun-open').value,
+        close:  document.getElementById('ih-sun-close').value,
+        closed: document.getElementById('ih-sun-closed').checked
+      }
+    };
+    store.lastEdits.savedAt = new Date().toISOString();
+    localStorage.setItem('jeeb-store-session', JSON.stringify(store));
+
+    document.getElementById('inline-hours-editor').style.display = 'none';
+    document.getElementById('hours-info-row').classList.remove('editing');
+    showToast('✓ 営業時間を更新しました');
+  }
+
+  function cancelInlineHours() {
+    document.getElementById('inline-hours-editor').style.display = 'none';
+    document.getElementById('hours-info-row').classList.remove('editing');
+  }
+  // ────────────────────────────────────────────────────────────────────────
 
   function saveInlineEdit(fieldName, value, displayEl, inputEl, iconEl) {
     if (!value.trim()) {
@@ -2448,12 +2658,12 @@
 
     // Saturday
     if (saturdayOpen && saturdayClose) {
-      lines.push(`土 ${saturdayOpen.replace(':', '：')}〜${saturdayClose.replace(':', '：')}`);
+      lines.push(`土 ${saturdayOpen}〜${saturdayClose}`);
     }
 
     // Sunday
     if (sundayOpen && sundayClose) {
-      lines.push(`日 ${sundayOpen.replace(':', '：')}〜${sundayClose.replace(':', '：')}`);
+      lines.push(`日 ${sundayOpen}〜${sundayClose}`);
     }
 
     return lines.join('\n');
