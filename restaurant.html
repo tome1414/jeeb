@@ -1497,7 +1497,7 @@
       <!-- Operating Hours (Structured) -->
       <div class="editable-field" id="store-hours-field">
         <div class="field-label" data-ja="営業時間" data-en="Hours" data-th="เวลา">営業時間</div>
-        <div class="field-value" id="store-hours-display" style="white-space: pre-line;">月〜金 11:30〜14:00 / 17:30〜22:00<br>土 11:30〜22:00<br>日 11:30〜22:00</div>
+        <div class="field-value" id="store-hours-panel-display" style="white-space: pre-line;">月〜金 11:30〜14:00 / 17:30〜22:00<br>土 11:30〜22:00<br>日 11:30〜22:00</div>
 
         <!-- Structured Hours Editor -->
         <div class="hours-editor" id="store-hours-editor" style="display:none;">
@@ -2018,7 +2018,7 @@
 
     if (storeNameDisplay) {
       storeNameDisplay.style.cursor = 'pointer';
-      storeNameEditIcon.style.display = 'inline';
+      if (storeNameEditIcon) storeNameEditIcon.style.display = 'inline';
 
       storeNameDisplay.addEventListener('click', () => {
         storeNameDisplay.style.display = 'none';
@@ -2045,7 +2045,7 @@
 
     if (storeSummaryDisplay) {
       storeSummaryDisplay.style.cursor = 'pointer';
-      storeSummaryEditIcon.style.display = 'inline';
+      if (storeSummaryEditIcon) storeSummaryEditIcon.style.display = 'inline';
 
       storeSummaryDisplay.addEventListener('click', () => {
         storeSummaryDisplay.style.display = 'none';
@@ -2380,8 +2380,9 @@
       document.getElementById('store-name-display').style.display = 'none';
       document.getElementById('store-name-input').style.display = 'block';
 
-      document.getElementById('store-hours-display').style.display = 'none';
-      document.getElementById('store-hours-input').style.display = 'block';
+      document.getElementById('store-hours-panel-display').style.display = 'none';
+      const hoursEditor = document.getElementById('store-hours-editor');
+      if (hoursEditor) hoursEditor.style.display = 'block';
 
       document.getElementById('store-congestion-display').style.display = 'none';
       document.getElementById('store-congestion-input').style.display = 'block';
@@ -2499,6 +2500,8 @@
     // Update display
     document.getElementById('store-name-display').textContent = edits.name;
     document.getElementById('store-hours-display').innerHTML = edits.hours.replace(/\n/g, '<br>');
+    const panelHoursDisplay = document.getElementById('store-hours-panel-display');
+    if (panelHoursDisplay) panelHoursDisplay.innerHTML = edits.hours.replace(/\n/g, '<br>');
     document.getElementById('store-congestion-display').textContent = edits.congestion;
     document.getElementById('store-prepay-display').textContent = edits.prepay;
     document.getElementById('store-byob-display').textContent = edits.byob;
@@ -2530,10 +2533,10 @@
       if (i) i.style.display = 'none';
     });
 
-    // Hours: hide editor, show display
-    const hoursDisplay = document.getElementById('store-hours-display');
+    // Hours: hide editor, show panel display
+    const hoursPanelDisplay = document.getElementById('store-hours-panel-display');
     const hoursEditor = document.getElementById('store-hours-editor');
-    if (hoursDisplay) hoursDisplay.style.display = 'block';
+    if (hoursPanelDisplay) hoursPanelDisplay.style.display = 'block';
     if (hoursEditor) hoursEditor.style.display = 'none';
   }
 
