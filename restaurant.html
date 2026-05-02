@@ -420,7 +420,6 @@
   .hday-hdr {
     display: flex; align-items: center; gap: 8px; margin-bottom: 5px;
   }
-  .hday-hdr.is-closed { margin-bottom: 0; }
   .hday-name {
     font-size: 12px; font-weight: 700; color: var(--black);
     width: 20px; flex-shrink: 0;
@@ -440,10 +439,25 @@
   }
   .hday-slot .h-time:focus { outline: none; border-color: var(--black); }
   .hday-slot .h-sep { font-size: 12px; color: var(--gray-400); flex-shrink: 0; }
-  .hday-slot2-label {
-    font-size: 10px; color: var(--gray-400); padding-left: 28px;
-    margin-top: 1px;
+  /* ＋2部ボタン */
+  .hday-add2 {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--gray-200); color: var(--gray-600);
+    border: none; font-size: 15px; line-height: 1; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    transition: background 0.15s;
   }
+  .hday-add2:hover { background: var(--gray-400); color: var(--white); }
+  /* 2部スロット（デフォルト非表示） */
+  .hday-slot2 { display: none; }
+  .hday-rm2 {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--gray-200); color: var(--gray-600);
+    border: none; font-size: 16px; line-height: 1; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  /* 表示：定休日は赤字 */
+  .hours-closed-txt { color: #E53E3E; font-weight: 600; }
   .hours-editor-actions {
     display: flex; gap: 8px; margin-top: 12px;
   }
@@ -1333,128 +1347,32 @@
             <span class="info-val" id="store-hours-display" style="flex:1;">月〜金 11:30〜14:00 / 17:30〜22:00<br>土日祝 11:30〜22:00（通し）</span>
             <span class="inline-edit-dot" style="margin-top:3px; flex-shrink:0;" title="タップして編集"></span>
           </div>
-          <!-- Inline structured hours editor: 曜日ごと・各2部制 -->
+          <!-- Inline structured hours editor: 曜日ごと・＋ボタンで2部追加 -->
           <div class="inline-hours-editor" id="inline-hours-editor" style="display:none;" onclick="event.stopPropagation()">
 
             <!-- 月 -->
-            <div class="hday-row" id="hrow-mon">
-              <div class="hday-hdr">
-                <span class="hday-name">月</span>
-                <div class="hday-closed-wrap">
-                  <input type="checkbox" id="ih-mon-cl" onchange="toggleHDayClosed('mon',this.checked)">
-                  <label for="ih-mon-cl">定休日</label>
-                </div>
-              </div>
-              <div class="hday-slots">
-                <div class="hday-slot"><input type="time" class="h-time" id="ih-mon-o1" value="11:30"><span class="h-sep">〜</span><input type="time" class="h-time" id="ih-mon-c1" value="14:00"></div>
-                <div class="hday-slot"><input type="time" class="h-time" id="ih-mon-o2" value="17:30"><span class="h-sep">〜</span><input type="time" class="h-time" id="ih-mon-c2" value="22:00"><span class="hday-slot2-label" style="padding-left:4px;font-size:10px;color:var(--gray-400);">2部</span></div>
-              </div>
-            </div>
+            <div class="hday-row" id="hrow-mon"><div class="hday-hdr"><span class="hday-name">月</span><div class="hday-closed-wrap"><input type="checkbox" id="ih-mon-cl" onchange="toggleHDayClosed('mon',this.checked)"><label for="ih-mon-cl">定休日</label></div></div><div class="hday-slots"><div class="hday-slot"><input type="time" class="h-time" id="ih-mon-o1" value="11:30"><span class="h-sep">〜</span><input type="time" class="h-time" id="ih-mon-c1" value="14:00"><button class="hday-add2" id="hadd2-mon" onclick="showSlot2('mon')" title="2部追加">＋</button></div><div class="hday-slot hday-slot2" id="hslot2-mon"><input type="time" class="h-time" id="ih-mon-o2"><span class="h-sep">〜</span><input type="time" class="h-time" id="ih-mon-c2"><button class="hday-rm2" onclick="hideSlot2('mon')" title="削除">－</button></div></div></div>
 
             <!-- 火 -->
-            <div class="hday-row" id="hrow-tue">
-              <div class="hday-hdr">
-                <span class="hday-name">火</span>
-                <div class="hday-closed-wrap">
-                  <input type="checkbox" id="ih-tue-cl" onchange="toggleHDayClosed('tue',this.checked)">
-                  <label for="ih-tue-cl">定休日</label>
-                </div>
-              </div>
-              <div class="hday-slots">
-                <div class="hday-slot"><input type="time" class="h-time" id="ih-tue-o1" value="11:30"><span class="h-sep">〜</span><input type="time" class="h-time" id="ih-tue-c1" value="14:00"></div>
-                <div class="hday-slot"><input type="time" class="h-time" id="ih-tue-o2" value="17:30"><span class="h-sep">〜</span><input type="time" class="h-time" id="ih-tue-c2" value="22:00"><span class="hday-slot2-label" style="padding-left:4px;font-size:10px;color:var(--gray-400);">2部</span></div>
-              </div>
-            </div>
+            <div class="hday-row" id="hrow-tue"><div class="hday-hdr"><span class="hday-name">火</span><div class="hday-closed-wrap"><input type="checkbox" id="ih-tue-cl" onchange="toggleHDayClosed('tue',this.checked)"><label for="ih-tue-cl">定休日</label></div></div><div class="hday-slots"><div class="hday-slot"><input type="time" class="h-time" id="ih-tue-o1" value="11:30"><span class="h-sep">〜</span><input type="time" class="h-time" id="ih-tue-c1" value="14:00"><button class="hday-add2" id="hadd2-tue" onclick="showSlot2('tue')" title="2部追加">＋</button></div><div class="hday-slot hday-slot2" id="hslot2-tue"><input type="time" class="h-time" id="ih-tue-o2"><span class="h-sep">〜</span><input type="time" class="h-time" id="ih-tue-c2"><button class="hday-rm2" onclick="hideSlot2('tue')" title="削除">－</button></div></div></div>
 
             <!-- 水 -->
-            <div class="hday-row" id="hrow-wed">
-              <div class="hday-hdr">
-                <span class="hday-name">水</span>
-                <div class="hday-closed-wrap">
-                  <input type="checkbox" id="ih-wed-cl" onchange="toggleHDayClosed('wed',this.checked)">
-                  <label for="ih-wed-cl">定休日</label>
-                </div>
-              </div>
-              <div class="hday-slots">
-                <div class="hday-slot"><input type="time" class="h-time" id="ih-wed-o1" value="11:30"><span class="h-sep">〜</span><input type="time" class="h-time" id="ih-wed-c1" value="14:00"></div>
-                <div class="hday-slot"><input type="time" class="h-time" id="ih-wed-o2" value="17:30"><span class="h-sep">〜</span><input type="time" class="h-time" id="ih-wed-c2" value="22:00"><span class="hday-slot2-label" style="padding-left:4px;font-size:10px;color:var(--gray-400);">2部</span></div>
-              </div>
-            </div>
+            <div class="hday-row" id="hrow-wed"><div class="hday-hdr"><span class="hday-name">水</span><div class="hday-closed-wrap"><input type="checkbox" id="ih-wed-cl" onchange="toggleHDayClosed('wed',this.checked)"><label for="ih-wed-cl">定休日</label></div></div><div class="hday-slots"><div class="hday-slot"><input type="time" class="h-time" id="ih-wed-o1" value="11:30"><span class="h-sep">〜</span><input type="time" class="h-time" id="ih-wed-c1" value="14:00"><button class="hday-add2" id="hadd2-wed" onclick="showSlot2('wed')" title="2部追加">＋</button></div><div class="hday-slot hday-slot2" id="hslot2-wed"><input type="time" class="h-time" id="ih-wed-o2"><span class="h-sep">〜</span><input type="time" class="h-time" id="ih-wed-c2"><button class="hday-rm2" onclick="hideSlot2('wed')" title="削除">－</button></div></div></div>
 
             <!-- 木 -->
-            <div class="hday-row" id="hrow-thu">
-              <div class="hday-hdr">
-                <span class="hday-name">木</span>
-                <div class="hday-closed-wrap">
-                  <input type="checkbox" id="ih-thu-cl" onchange="toggleHDayClosed('thu',this.checked)">
-                  <label for="ih-thu-cl">定休日</label>
-                </div>
-              </div>
-              <div class="hday-slots">
-                <div class="hday-slot"><input type="time" class="h-time" id="ih-thu-o1" value="11:30"><span class="h-sep">〜</span><input type="time" class="h-time" id="ih-thu-c1" value="14:00"></div>
-                <div class="hday-slot"><input type="time" class="h-time" id="ih-thu-o2" value="17:30"><span class="h-sep">〜</span><input type="time" class="h-time" id="ih-thu-c2" value="22:00"><span class="hday-slot2-label" style="padding-left:4px;font-size:10px;color:var(--gray-400);">2部</span></div>
-              </div>
-            </div>
+            <div class="hday-row" id="hrow-thu"><div class="hday-hdr"><span class="hday-name">木</span><div class="hday-closed-wrap"><input type="checkbox" id="ih-thu-cl" onchange="toggleHDayClosed('thu',this.checked)"><label for="ih-thu-cl">定休日</label></div></div><div class="hday-slots"><div class="hday-slot"><input type="time" class="h-time" id="ih-thu-o1" value="11:30"><span class="h-sep">〜</span><input type="time" class="h-time" id="ih-thu-c1" value="14:00"><button class="hday-add2" id="hadd2-thu" onclick="showSlot2('thu')" title="2部追加">＋</button></div><div class="hday-slot hday-slot2" id="hslot2-thu"><input type="time" class="h-time" id="ih-thu-o2"><span class="h-sep">〜</span><input type="time" class="h-time" id="ih-thu-c2"><button class="hday-rm2" onclick="hideSlot2('thu')" title="削除">－</button></div></div></div>
 
             <!-- 金 -->
-            <div class="hday-row" id="hrow-fri">
-              <div class="hday-hdr">
-                <span class="hday-name">金</span>
-                <div class="hday-closed-wrap">
-                  <input type="checkbox" id="ih-fri-cl" onchange="toggleHDayClosed('fri',this.checked)">
-                  <label for="ih-fri-cl">定休日</label>
-                </div>
-              </div>
-              <div class="hday-slots">
-                <div class="hday-slot"><input type="time" class="h-time" id="ih-fri-o1" value="11:30"><span class="h-sep">〜</span><input type="time" class="h-time" id="ih-fri-c1" value="14:00"></div>
-                <div class="hday-slot"><input type="time" class="h-time" id="ih-fri-o2" value="17:30"><span class="h-sep">〜</span><input type="time" class="h-time" id="ih-fri-c2" value="22:00"><span class="hday-slot2-label" style="padding-left:4px;font-size:10px;color:var(--gray-400);">2部</span></div>
-              </div>
-            </div>
+            <div class="hday-row" id="hrow-fri"><div class="hday-hdr"><span class="hday-name">金</span><div class="hday-closed-wrap"><input type="checkbox" id="ih-fri-cl" onchange="toggleHDayClosed('fri',this.checked)"><label for="ih-fri-cl">定休日</label></div></div><div class="hday-slots"><div class="hday-slot"><input type="time" class="h-time" id="ih-fri-o1" value="11:30"><span class="h-sep">〜</span><input type="time" class="h-time" id="ih-fri-c1" value="14:00"><button class="hday-add2" id="hadd2-fri" onclick="showSlot2('fri')" title="2部追加">＋</button></div><div class="hday-slot hday-slot2" id="hslot2-fri"><input type="time" class="h-time" id="ih-fri-o2"><span class="h-sep">〜</span><input type="time" class="h-time" id="ih-fri-c2"><button class="hday-rm2" onclick="hideSlot2('fri')" title="削除">－</button></div></div></div>
 
             <!-- 土 -->
-            <div class="hday-row" id="hrow-sat">
-              <div class="hday-hdr">
-                <span class="hday-name">土</span>
-                <div class="hday-closed-wrap">
-                  <input type="checkbox" id="ih-sat-cl" onchange="toggleHDayClosed('sat',this.checked)">
-                  <label for="ih-sat-cl">定休日</label>
-                </div>
-              </div>
-              <div class="hday-slots">
-                <div class="hday-slot"><input type="time" class="h-time" id="ih-sat-o1" value="11:30"><span class="h-sep">〜</span><input type="time" class="h-time" id="ih-sat-c1" value="22:00"></div>
-                <div class="hday-slot"><input type="time" class="h-time" id="ih-sat-o2" value=""><span class="h-sep">〜</span><input type="time" class="h-time" id="ih-sat-c2" value=""><span class="hday-slot2-label" style="padding-left:4px;font-size:10px;color:var(--gray-400);">2部</span></div>
-              </div>
-            </div>
+            <div class="hday-row" id="hrow-sat"><div class="hday-hdr"><span class="hday-name">土</span><div class="hday-closed-wrap"><input type="checkbox" id="ih-sat-cl" onchange="toggleHDayClosed('sat',this.checked)"><label for="ih-sat-cl">定休日</label></div></div><div class="hday-slots"><div class="hday-slot"><input type="time" class="h-time" id="ih-sat-o1" value="11:30"><span class="h-sep">〜</span><input type="time" class="h-time" id="ih-sat-c1" value="22:00"><button class="hday-add2" id="hadd2-sat" onclick="showSlot2('sat')" title="2部追加">＋</button></div><div class="hday-slot hday-slot2" id="hslot2-sat"><input type="time" class="h-time" id="ih-sat-o2"><span class="h-sep">〜</span><input type="time" class="h-time" id="ih-sat-c2"><button class="hday-rm2" onclick="hideSlot2('sat')" title="削除">－</button></div></div></div>
 
             <!-- 日 -->
-            <div class="hday-row" id="hrow-sun">
-              <div class="hday-hdr">
-                <span class="hday-name">日</span>
-                <div class="hday-closed-wrap">
-                  <input type="checkbox" id="ih-sun-cl" onchange="toggleHDayClosed('sun',this.checked)">
-                  <label for="ih-sun-cl">定休日</label>
-                </div>
-              </div>
-              <div class="hday-slots">
-                <div class="hday-slot"><input type="time" class="h-time" id="ih-sun-o1" value="11:30"><span class="h-sep">〜</span><input type="time" class="h-time" id="ih-sun-c1" value="22:00"></div>
-                <div class="hday-slot"><input type="time" class="h-time" id="ih-sun-o2" value=""><span class="h-sep">〜</span><input type="time" class="h-time" id="ih-sun-c2" value=""><span class="hday-slot2-label" style="padding-left:4px;font-size:10px;color:var(--gray-400);">2部</span></div>
-              </div>
-            </div>
+            <div class="hday-row" id="hrow-sun"><div class="hday-hdr"><span class="hday-name">日</span><div class="hday-closed-wrap"><input type="checkbox" id="ih-sun-cl" onchange="toggleHDayClosed('sun',this.checked)"><label for="ih-sun-cl">定休日</label></div></div><div class="hday-slots"><div class="hday-slot"><input type="time" class="h-time" id="ih-sun-o1" value="11:30"><span class="h-sep">〜</span><input type="time" class="h-time" id="ih-sun-c1" value="22:00"><button class="hday-add2" id="hadd2-sun" onclick="showSlot2('sun')" title="2部追加">＋</button></div><div class="hday-slot hday-slot2" id="hslot2-sun"><input type="time" class="h-time" id="ih-sun-o2"><span class="h-sep">〜</span><input type="time" class="h-time" id="ih-sun-c2"><button class="hday-rm2" onclick="hideSlot2('sun')" title="削除">－</button></div></div></div>
 
             <!-- 祝 -->
-            <div class="hday-row" id="hrow-hol">
-              <div class="hday-hdr">
-                <span class="hday-name">祝</span>
-                <div class="hday-closed-wrap">
-                  <input type="checkbox" id="ih-hol-cl" onchange="toggleHDayClosed('hol',this.checked)">
-                  <label for="ih-hol-cl">定休日</label>
-                </div>
-              </div>
-              <div class="hday-slots">
-                <div class="hday-slot"><input type="time" class="h-time" id="ih-hol-o1" value="11:30"><span class="h-sep">〜</span><input type="time" class="h-time" id="ih-hol-c1" value="22:00"></div>
-                <div class="hday-slot"><input type="time" class="h-time" id="ih-hol-o2" value=""><span class="h-sep">〜</span><input type="time" class="h-time" id="ih-hol-c2" value=""><span class="hday-slot2-label" style="padding-left:4px;font-size:10px;color:var(--gray-400);">2部</span></div>
-              </div>
-            </div>
+            <div class="hday-row" id="hrow-hol"><div class="hday-hdr"><span class="hday-name">祝</span><div class="hday-closed-wrap"><input type="checkbox" id="ih-hol-cl" onchange="toggleHDayClosed('hol',this.checked)"><label for="ih-hol-cl">定休日</label></div></div><div class="hday-slots"><div class="hday-slot"><input type="time" class="h-time" id="ih-hol-o1" value="11:30"><span class="h-sep">〜</span><input type="time" class="h-time" id="ih-hol-c1" value="22:00"><button class="hday-add2" id="hadd2-hol" onclick="showSlot2('hol')" title="2部追加">＋</button></div><div class="hday-slot hday-slot2" id="hslot2-hol"><input type="time" class="h-time" id="ih-hol-o2"><span class="h-sep">〜</span><input type="time" class="h-time" id="ih-hol-c2"><button class="hday-rm2" onclick="hideSlot2('hol')" title="削除">－</button></div></div></div>
 
             <!-- Actions -->
             <div class="hours-editor-actions">
@@ -2278,21 +2196,41 @@
     }
   }
 
-  // ─── Inline Hours Editor (全曜日個別・各2部制) ──────────────────────────
-  const H_DAYS = ['mon','tue','wed','thu','fri','sat','sun','hol'];
+  // ─── Inline Hours Editor (全曜日個別・＋ボタンで2部追加) ────────────────
+  const H_DAYS   = ['mon','tue','wed','thu','fri','sat','sun','hol'];
   const H_LABELS = { mon:'月', tue:'火', wed:'水', thu:'木', fri:'金', sat:'土', sun:'日', hol:'祝' };
 
   function toggleHDayClosed(day, isClosed) {
-    const row = document.getElementById('hrow-' + day);
+    const row = document.getElementById('hrow-'+day);
     if (row) row.classList.toggle('closed', isClosed);
+  }
+
+  function showSlot2(day) {
+    const slot = document.getElementById('hslot2-'+day);
+    const btn  = document.getElementById('hadd2-'+day);
+    if (slot) slot.style.display = 'flex';
+    if (btn)  btn.style.display  = 'none';
+  }
+
+  function hideSlot2(day) {
+    const slot = document.getElementById('hslot2-'+day);
+    const btn  = document.getElementById('hadd2-'+day);
+    if (slot) {
+      slot.style.display = 'none';
+      const o2 = document.getElementById('ih-'+day+'-o2');
+      const c2 = document.getElementById('ih-'+day+'-c2');
+      if (o2) o2.value = '';
+      if (c2) c2.value = '';
+    }
+    if (btn) btn.style.display = 'flex';
   }
 
   function getHDayVal(day) {
     return {
-      o1: document.getElementById('ih-'+day+'-o1')?.value || '',
-      c1: document.getElementById('ih-'+day+'-c1')?.value || '',
-      o2: document.getElementById('ih-'+day+'-o2')?.value || '',
-      c2: document.getElementById('ih-'+day+'-c2')?.value || '',
+      o1:     document.getElementById('ih-'+day+'-o1')?.value  || '',
+      c1:     document.getElementById('ih-'+day+'-c1')?.value  || '',
+      o2:     document.getElementById('ih-'+day+'-o2')?.value  || '',
+      c2:     document.getElementById('ih-'+day+'-c2')?.value  || '',
       closed: document.getElementById('ih-'+day+'-cl')?.checked || false
     };
   }
@@ -2304,18 +2242,49 @@
     set('ih-'+day+'-o2', d.o2); set('ih-'+day+'-c2', d.c2);
     chk('ih-'+day+'-cl', d.closed);
     toggleHDayClosed(day, !!d.closed);
+    // 2部に値があれば自動表示
+    if (d.o2 && d.c2) showSlot2(day); else hideSlot2(day);
+  }
+
+  // 連続する同一時間帯の曜日をまとめる
+  function buildGroupedHoursLines(asHtml) {
+    const data = H_DAYS.map(day => {
+      const d = getHDayVal(day);
+      let key;
+      if (d.closed) { key = '__closed__'; }
+      else if (!d.o1 || !d.c1) { key = '__unset__'; }
+      else { key = d.o1+'〜'+d.c1 + (d.o2&&d.c2 ? '/'+d.o2+'〜'+d.c2 : ''); }
+      return { label: H_LABELS[day], closed: d.closed, o1:d.o1, c1:d.c1, o2:d.o2, c2:d.c2, key };
+    });
+
+    const groups = [];
+    let i = 0;
+    while (i < data.length) {
+      let j = i + 1;
+      while (j < data.length && data[j].key === data[i].key) j++;
+      groups.push({ s: i, e: j-1, d: data[i] });
+      i = j;
+    }
+
+    return groups.map(g => {
+      const rangeLabel = g.s === g.e
+        ? data[g.s].label
+        : data[g.s].label + '〜' + data[g.e].label;
+      const d = g.d;
+      if (d.closed) {
+        return asHtml
+          ? `${rangeLabel}: <span class="hours-closed-txt">定休日</span>`
+          : `${rangeLabel}: 定休日`;
+      }
+      if (d.key === '__unset__') return `${rangeLabel}: 未設定`;
+      let hours = `${d.o1}〜${d.c1}`;
+      if (d.o2 && d.c2) hours += ` / ${d.o2}〜${d.c2}`;
+      return `${rangeLabel}: ${hours}`;
+    });
   }
 
   function buildInlineHoursString() {
-    return H_DAYS.map(day => {
-      const d = getHDayVal(day);
-      const label = H_LABELS[day];
-      if (d.closed) return `${label}: 定休日`;
-      if (!d.o1 || !d.c1) return `${label}: 未設定`;
-      let str = `${label}: ${d.o1}〜${d.c1}`;
-      if (d.o2 && d.c2) str += ` / ${d.o2}〜${d.c2}`;
-      return str;
-    }).join('\n');
+    return buildGroupedHoursLines(false).join('\n');
   }
 
   function toggleInlineHoursEditor() {
@@ -2328,9 +2297,8 @@
     // 保存済み構造化データを復元
     const store = JSON.parse(storeSession);
     const hs = store.lastEdits?.hoursStructured;
-    if (hs) {
-      H_DAYS.forEach(day => { if (hs[day]) setHDayVal(day, hs[day]); });
-    }
+    if (hs) H_DAYS.forEach(day => { if (hs[day]) setHDayVal(day, hs[day]); });
+
     editor.style.display = 'block';
     document.getElementById('hours-info-row').classList.add('editing');
   }
@@ -2338,18 +2306,20 @@
   function saveInlineHours() {
     const storeSession = localStorage.getItem('jeeb-store-session');
     if (!storeSession) return;
-    const hoursStr = buildInlineHoursString();
 
-    // 表示更新
+    // 表示はHTMLで（定休日を赤字）、保存テキストはプレーン
+    const hoursHtml = buildGroupedHoursLines(true).join('<br>');
+    const hoursText = buildInlineHoursString();
+
     const disp = document.getElementById('store-hours-display');
-    if (disp) disp.innerHTML = hoursStr.replace(/\n/g, '<br>');
+    if (disp) disp.innerHTML = hoursHtml;
     const panelDisp = document.getElementById('store-hours-panel-display');
-    if (panelDisp) panelDisp.innerHTML = hoursStr.replace(/\n/g, '<br>');
+    if (panelDisp) panelDisp.innerHTML = hoursHtml;
 
-    // localStorage 保存（テキスト + 構造化データ）
     const store = JSON.parse(storeSession);
     if (!store.lastEdits) store.lastEdits = {};
-    store.lastEdits.hours = hoursStr;
+    store.lastEdits.hours = hoursText;
+    store.lastEdits.hoursHtml = hoursHtml;
     store.lastEdits.hoursStructured = {};
     H_DAYS.forEach(day => { store.lastEdits.hoursStructured[day] = getHDayVal(day); });
     store.lastEdits.savedAt = new Date().toISOString();
